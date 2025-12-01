@@ -8,7 +8,7 @@ export default function RootLayout({ children }: {
 }) {
   return (
     <html lang="en">
-      <body className="bg-[#0b0c0f] text-white min-h-screen antialiased">
+      <body className="min-h-screen bg-gradient-to-b from-[#040308] via-[#050712] to-[#05070b] text-white antialiased">
         <AppShell>{children}</AppShell>
       </body>
     </html>

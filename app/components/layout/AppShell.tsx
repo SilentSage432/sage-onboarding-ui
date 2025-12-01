@@ -1,31 +1,31 @@
-import TopBar from "@/components/layout/TopBar";
-import SideNav from "@/components/layout/SideNav";
+'use client';
 
-export default function AppShell({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+import React from "react";
+
+export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950 text-white">
-      <div className="flex min-h-screen">
-        {/* Side navigation rail */}
-        <aside className="hidden md:flex w-64 border-r border-neutral-800 bg-neutral-950/60">
-          <div className="flex flex-col w-full px-4 py-6">
-            <SideNav />
-          </div>
-        </aside>
-
-        {/* Main column */}
-        <div className="flex-1 flex flex-col">
-          <TopBar />
-          <main className="flex-1 px-4 sm:px-6 lg:px-8 py-6">
-            {children}
-          </main>
+    <div className="min-h-screen flex flex-col">
+      {/* Top chrome */}
+      <header className="flex items-center justify-between px-8 py-4 border-b border-white/5 bg-black/30 backdrop-blur-md">
+        <div className="text-sm tracking-[0.25em] uppercase text-white/60">
+          SAGE Onboarding
         </div>
-      </div>
+        <div className="flex items-center gap-6 text-xs text-white/50">
+          <span className="hidden md:inline-flex items-center gap-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400/80 animate-pulse" />
+            <span>Mesh link idle</span>
+          </span>
+          <span className="hidden md:inline text-white/40">
+            Operator&nbsp;prime
+          </span>
+        </div>
+      </header>
+
+      {/* Main content */}
+      <main className="flex-1 flex items-center justify-center px-4 py-10">
+        {children}
+      </main>
     </div>
   );
 }
-
 
