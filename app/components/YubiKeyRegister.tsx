@@ -1,6 +1,10 @@
 export function YubiKeyRegister() {
-  // Temporary placeholder to satisfy imports until full component is migrated.
-  return null;
+  return (
+    <div className="text-white">
+      YubiKey Register Component Placeholder
+    </div>
+  );
 }
 
+export default YubiKeyRegister;
 
