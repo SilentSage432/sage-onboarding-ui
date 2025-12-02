@@ -1,63 +1,120 @@
 import { create } from "zustand";
-import { getFlow, type FlowType } from "../steps";
 
-type WizardMode = FlowType | null;
+type PersonalData = {
+  preferences?: string | null;
+  region?: string | null;
+};
 
-interface WizardState {
-  mode: WizardMode;
-  stepIndex: number;
-  setMode: (mode: WizardMode) => void;
-  nextStep: () => void;
-  prevStep: () => void;
+type BusinessData = {
+  industry?: string | null;
+  securityProfile?: string | null;
+};
+
+type WizardData = {
+  personal?: PersonalData;
+  business?: BusinessData;
+};
+
+export interface WizardState {
+  mode: "personal" | "business" | null;
+  flow: "personal" | "business" | null;
+  step: number;
+  totalSteps: number;
+  data: WizardData;
+  next: () => void;
+  prev: () => void;
+  setMode: (mode: "personal" | "business") => void;
+  setFlow: (flow: "personal" | "business" | null) => void;
+  updateField: (path: string, value: string | null) => void;
   reset: () => void;
-  getCurrentStep: () => { id: string; title: string; component: React.ComponentType } | null;
-  canGoNext: () => boolean;
-  canGoPrev: () => boolean;
+}
+
+function getTotalSteps(mode: "personal" | "business" | null): number {
+  if (mode === "business") return 5;
+  if (mode === "personal") return 3;
+  return 0;
 }
 
 export const useWizardStore = create<WizardState>((set, get) => ({
   mode: null,
-  stepIndex: 0,
-  
+  flow: null,
+  step: 1,
+  totalSteps: 0,
+  data: {},
+
   setMode: (mode) => {
-    set({ mode, stepIndex: 0 });
+    set({
+      mode,
+      flow: mode,
+      step: 1,
+      totalSteps: getTotalSteps(mode),
+    });
   },
-  
-  nextStep: () => {
-    const { mode, stepIndex } = get();
-    const flow = getFlow(mode);
-    if (flow && stepIndex < flow.steps.length - 1) {
-      set({ stepIndex: stepIndex + 1 });
+
+  setFlow: (flow) => {
+    if (!flow) {
+      set({
+        flow: null,
+        mode: null,
+        step: 1,
+        totalSteps: 0,
+      });
+      return;
     }
+    get().setMode(flow);
   },
-  
-  prevStep: () => {
-    const { stepIndex } = get();
-    if (stepIndex > 0) {
-      set({ stepIndex: stepIndex - 1 });
-    }
+
+  next: () => {
+    const { step, totalSteps } = get();
+    if (!totalSteps) return;
+    set({
+      step: Math.min(step + 1, totalSteps),
+    });
   },
-  
+
+  prev: () => {
+    const { step } = get();
+    set({
+      step: Math.max(step - 1, 1),
+    });
+  },
+
+  updateField: (path, value) => {
+    if (!path) return;
+    const keys = path.split(".").filter(Boolean);
+    if (!keys.length) return;
+
+    set((state) => {
+      const newData: WizardData = {
+        personal: { ...(state.data.personal ?? {}) },
+        business: { ...(state.data.business ?? {}) },
+      };
+
+      let target: any = newData;
+      for (let i = 0; i < keys.length - 1; i++) {
+        const key = keys[i];
+        if (target[key] == null || typeof target[key] !== "object") {
+          target[key] = {};
+        } else {
+          target[key] = { ...target[key] };
+        }
+        target = target[key];
+      }
+
+      const lastKey = keys[keys.length - 1];
+      target[lastKey] = value;
+
+      return { data: newData };
+    });
+  },
+
   reset: () => {
-    set({ mode: null, stepIndex: 0 });
-  },
-  
-  getCurrentStep: () => {
-    const { mode, stepIndex } = get();
-    const flow = getFlow(mode);
-    if (!flow) return null;
-    return flow.steps[stepIndex] || null;
-  },
-  
-  canGoNext: () => {
-    const { mode, stepIndex } = get();
-    const flow = getFlow(mode);
-    if (!flow) return false;
-    return stepIndex < flow.steps.length - 1;
-  },
-  
-  canGoPrev: () => {
-    const { stepIndex } = get();
-    return stepIndex > 0;
+    set({
+      mode: null,
+      flow: null,
+      step: 1,
+      totalSteps: 0,
+      data: {},
+    });
   },
 }));
