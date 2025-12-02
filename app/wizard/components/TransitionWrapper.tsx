@@ -12,12 +12,12 @@ export default function TransitionWrapper({ children, stepId }: TransitionWrappe
   return (
     <motion.div
       key={stepId}
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95 }}
+      initial={{ opacity: 0, scale: 0.96, y: 8 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.96, y: -8 }}
       transition={{
-        duration: 0.3,
-        ease: "easeOut",
+        duration: 0.32,
+        ease: [0.23, 1, 0.32, 1], // Apple-style cubic bezier
       }}
     >
       {children}

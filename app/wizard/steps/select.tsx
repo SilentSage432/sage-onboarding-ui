@@ -26,7 +26,7 @@ const AccountTypeStep = () => {
         onClick={handleSelectPersonal}
       >
         <CardHeader>
-          <CardTitle className="text-base">Personal workspace</CardTitle>
+          <CardTitle>Personal workspace</CardTitle>
           <CardDescription>
             Set up SAGE for your own devices, experiments, and daily flow.
           </CardDescription>
@@ -45,7 +45,7 @@ const AccountTypeStep = () => {
         onClick={handleSelectBusiness}
       >
         <CardHeader>
-          <CardTitle className="text-base">Business / team</CardTitle>
+          <CardTitle>Business / team</CardTitle>
           <CardDescription>
             Configure SAGE as an operations layer for your company or team.
           </CardDescription>

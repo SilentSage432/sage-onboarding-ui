@@ -16,8 +16,11 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
           "backdrop-blur-2xl",
           // Layout
           "px-6 py-6 sm:px-8 sm:py-7",
-          "transition-all duration-300 ease-out",
-          "hover:border-white/10 hover:shadow-[0_0_100px_rgba(15,23,42,0.95)]",
+          // Premium hover: lift, ripple shadow, micro-tint
+          "transition-all duration-300 ease-[0.23,1,0.32,1]",
+          "hover:-translate-y-1 hover:border-white/15",
+          "hover:shadow-[0_8_40px_rgba(20,80,255,0.15),0_0_120px_rgba(15,23,42,0.95)]",
+          "hover:bg-slate-950/90",
           className
         )}
         {...props}
@@ -35,7 +38,7 @@ const CardHeader = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex flex-col gap-1 mb-4",
+      "flex flex-col gap-1 mb-6 pb-6",
       className
     )}
     {...props}
@@ -51,7 +54,7 @@ const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-lg sm:text-xl font-semibold tracking-tight text-slate-50",
+      "text-xl font-medium tracking-tight text-white mb-6 text-center",
       className
     )}
     {...props}
@@ -67,7 +70,7 @@ const CardDescription = React.forwardRef<
   <p
     ref={ref}
     className={cn(
-      "text-sm text-slate-400",
+      "text-sm text-[#BDC3D2] leading-[1.5] tracking-[-0.01em]",
       className
     )}
     {...props}
@@ -82,7 +85,7 @@ const CardContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("mt-4 space-y-4", className)}
+    className={cn("mt-0 space-y-6", className)}
     {...props}
   />
 ));
@@ -96,7 +99,7 @@ const CardFooter = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "mt-6 flex items-center justify-between gap-3",
+      "flex justify-between w-full items-center",
       className
     )}
     {...props}
