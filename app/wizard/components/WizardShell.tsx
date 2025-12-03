@@ -137,93 +137,97 @@ export default function WizardShell() {
         />
       </motion.div>
 
-      <Card className="w-full max-w-4xl relative flex flex-col">
-        <AnimatePresence mode="wait">
-          <motion.div key={stepKey}>
-            {/* Enterprise Step Tracker */}
-            <div className="px-6 pt-6">
-              <StepTracker />
-            </div>
-            <CardHeader className="space-y-3 pb-6">
-              <motion.p
-                initial={{ opacity: 0, y: -4 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.32, ease: [0.23, 1, 0.32, 1], delay: 0.05 }}
-                className="text-xs uppercase tracking-[0.2em] text-slate-400"
-              >
-                SAGE Onboarding
-              </motion.p>
-              <motion.div
-                initial={{ opacity: 0, y: -4 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.32, ease: [0.23, 1, 0.32, 1], delay: 0.1 }}
-              >
-                <CardTitle className="sage-h1 text-white">
-                  {step?.label ?? "Initializing wizard"}
-                </CardTitle>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: -4 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.32, ease: [0.23, 1, 0.32, 1], delay: 0.15 }}
-              >
-                <CardDescription className="sage-body text-slate-300">
-                  {step?.description ??
-                    "Setting up the onboarding shell for your environment."}
-                </CardDescription>
-              </motion.div>
-              {isCounted && countedStepsTotal > 0 && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.32, ease: [0.23, 1, 0.32, 1], delay: 0.2 }}
-                  className="flex items-center gap-3 pt-2"
-                >
-                  <Progress value={progressValue} className="h-1.5 flex-1" />
-                  <span className="text-xs text-slate-400">
-                    Step {stepPosition + 1} of {countedStepsTotal}
-                  </span>
-                </motion.div>
-              )}
-            </CardHeader>
-            <CardContent className="px-8 py-10 sage-stack-xl">
-              <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-10">
-                <div className="flex flex-row items-stretch justify-center gap-10 w-full relative min-h-[400px]">
-                  {step && step.Component ? (
-                    <TransitionWrapper step={currentStepId}>
-                      <step.Component />
-                    </TransitionWrapper>
-                  ) : null}
+      <div className="relative w-full h-full flex justify-center">
+        <div className="w-full max-w-4xl px-6 md:px-12 lg:px-20">
+          <Card className="w-full relative flex flex-col">
+            <AnimatePresence mode="wait">
+              <motion.div key={stepKey}>
+                {/* Enterprise Step Tracker */}
+                <div className="px-6 pt-6">
+                  <StepTracker />
                 </div>
-              </div>
-            </CardContent>
-            <CardFooter className="pt-6 px-0">
-              <WizardNav
-                canBack={!isFirst && prevStepId !== null}
-                onBack={handleBack}
-                onNext={
-                  step?.showNext === false
-                    ? undefined
-                    : isLastCounted
-                    ? handleFinish
-                    : nextStepId
-                    ? handleNext
-                    : undefined
-                }
-                showRestart={!isFirst && stepPosition > 0}
-                onRestart={handleRestart}
-                nextLabel={
-                  step?.showNext === false
-                    ? undefined
-                    : isLastCounted
-                    ? "Finalize & Initialize"
-                    : "Continue"
-                }
-              />
-            </CardFooter>
-          </motion.div>
-        </AnimatePresence>
-      </Card>
+                <CardHeader className="space-y-3 pb-6">
+                  <motion.p
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.32, ease: [0.23, 1, 0.32, 1], delay: 0.05 }}
+                    className="text-xs uppercase tracking-[0.2em] text-slate-400"
+                  >
+                    SAGE Onboarding
+                  </motion.p>
+                  <motion.div
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.32, ease: [0.23, 1, 0.32, 1], delay: 0.1 }}
+                  >
+                    <CardTitle className="sage-h1 text-white">
+                      {step?.label ?? "Initializing wizard"}
+                    </CardTitle>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.32, ease: [0.23, 1, 0.32, 1], delay: 0.15 }}
+                  >
+                    <CardDescription className="sage-body text-slate-300">
+                      {step?.description ??
+                        "Setting up the onboarding shell for your environment."}
+                    </CardDescription>
+                  </motion.div>
+                  {isCounted && countedStepsTotal > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.32, ease: [0.23, 1, 0.32, 1], delay: 0.2 }}
+                      className="flex items-center gap-3 pt-2"
+                    >
+                      <Progress value={progressValue} className="h-1.5 flex-1" />
+                      <span className="text-xs text-slate-400">
+                        Step {stepPosition + 1} of {countedStepsTotal}
+                      </span>
+                    </motion.div>
+                  )}
+                </CardHeader>
+                <CardContent className="px-8 py-10 max-h-[60vh] overflow-y-auto sage-scroll">
+                  <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-10">
+                    <div className="flex flex-row items-stretch justify-center gap-10 w-full relative min-h-[400px]">
+                      {step && step.Component ? (
+                        <TransitionWrapper step={currentStepId}>
+                          <step.Component />
+                        </TransitionWrapper>
+                      ) : null}
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter className="pt-6 px-0">
+                  <WizardNav
+                    canBack={!isFirst && prevStepId !== null}
+                    onBack={handleBack}
+                    onNext={
+                      step?.showNext === false
+                        ? undefined
+                        : isLastCounted
+                        ? handleFinish
+                        : nextStepId
+                        ? handleNext
+                        : undefined
+                    }
+                    showRestart={!isFirst && stepPosition > 0}
+                    onRestart={handleRestart}
+                    nextLabel={
+                      step?.showNext === false
+                        ? undefined
+                        : isLastCounted
+                        ? "Finalize & Initialize"
+                        : "Continue"
+                    }
+                  />
+                </CardFooter>
+              </motion.div>
+            </AnimatePresence>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

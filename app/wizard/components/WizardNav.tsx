@@ -18,7 +18,7 @@ export function WizardNav({
   nextLabel?: string;
 }) {
   return (
-    <div className="flex justify-between items-center mt-12 pt-6 border-t border-white/5">
+    <div className="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0 px-6 md:px-10 py-6 border-t border-white/5">
       {/* Left side: Previous or Restart */}
       <div className="flex gap-3">
         {canBack && onBack && (

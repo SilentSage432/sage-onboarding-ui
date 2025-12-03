@@ -18,16 +18,14 @@ export function TextField({
   const error = errors[name];
 
   return (
-    <div className={cn("flex flex-col gap-2", className)}>
-      <label className="text-sm font-medium text-white/70">{label}</label>
+    <div className={cn("sage-stack", className)}>
+      <label className="sage-label text-white/80 tracking-wide">{label}</label>
       <input
         {...register(name)}
         placeholder={placeholder}
         className={cn(
-          "rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-white",
-          "focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400/50",
-          "placeholder:text-white/40",
-          error && "border-red-400/50 focus:ring-red-400"
+          "sage-input",
+          error && "border-red-400/50 focus:ring-red-400/40"
         )}
       />
       {error && (
@@ -52,15 +50,13 @@ export function SelectField({
   const error = errors[name];
 
   return (
-    <div className={cn("flex flex-col gap-2", className)}>
-      <label className="text-sm font-medium text-white/70">{label}</label>
+    <div className={cn("sage-stack", className)}>
+      <label className="sage-label text-white/80 tracking-wide">{label}</label>
       <select
         {...register(name)}
         className={cn(
-          "rounded-lg bg-white/10 border border-white/20 px-3 py-2 text-white",
-          "focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400/50",
-          "placeholder:text-white/40",
-          error && "border-red-400/50 focus:ring-red-400"
+          "sage-input",
+          error && "border-red-400/50 focus:ring-red-400/40"
         )}
       >
         <option value="">Select…</option>

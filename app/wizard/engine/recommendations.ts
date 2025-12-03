@@ -185,3 +185,87 @@ export function prettyCategory(cat: string) {
   return cat.charAt(0).toUpperCase() + cat.slice(1);
 }
 
+import { AGENT_CATEGORIES } from "../config/agents";
+import { AGENT_DEPENDENCIES } from "../config/agentDependencies";
+
+// Get all agents as a flat list
+function getAllAgents() {
+  const allAgents: Array<{ id: string; label: string; category: string }> = [];
+  AGENT_CATEGORIES.forEach((cat) => {
+    cat.agents.forEach((agent) => {
+      allAgents.push({
+        id: agent.id,
+        label: agent.label,
+        category: cat.label
+      });
+    });
+  });
+  return allAgents;
+}
+
+// Smart recommendation engine based on selected agents
+export function getRecommendations(selectedAgents: string[]): RecommendedAgent[] {
+  // No selections, no recommendations
+  if (selectedAgents.length === 0) return [];
+
+  const allAgents = getAllAgents();
+  const scores: Record<string, number> = {};
+
+  allAgents.forEach((agent) => {
+    // Skip already selected
+    if (selectedAgents.includes(agent.id)) return;
+
+    let score = 0;
+
+    // 1. Score based on recommended associations (dependencies)
+    selectedAgents.forEach((selectedId) => {
+      const dependencies = AGENT_DEPENDENCIES[selectedId];
+      if (dependencies?.recommended?.includes(agent.id)) {
+        score += 3;
+      }
+    });
+
+    // 2. Score based on category overlap
+    selectedAgents.forEach((selectedId) => {
+      const selectedAgent = allAgents.find((a) => a.id === selectedId);
+      if (selectedAgent && selectedAgent.category === agent.category) {
+        score += 1;
+      }
+    });
+
+    // 3. Score based on reverse dependencies (if this agent recommends selected agents)
+    const agentDeps = AGENT_DEPENDENCIES[agent.id];
+    if (agentDeps?.recommended) {
+      agentDeps.recommended.forEach((recId: string) => {
+        if (selectedAgents.includes(recId)) {
+          score += 2;
+        }
+      });
+    }
+
+    // 4. Placeholder for future AI expansion
+    // e.g., usage patterns, org profile, posture score
+
+    if (score > 0) {
+      scores[agent.id] = score;
+    }
+  });
+
+  // Sort by score descending and return as RecommendedAgent[]
+  return Object.entries(scores)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 6) // Limit to top 6 recommendations
+    .map(([id]) => {
+      const agent = allAgents.find((a) => a.id === id);
+      if (!agent) return null;
+      return {
+        id: agent.id,
+        label: agent.label,
+        category: agent.category,
+        reason: `Recommended based on your current agent selection.`,
+        priority: "optional" as const
+      };
+    })
+    .filter((a): a is RecommendedAgent => a !== null);
+}
+

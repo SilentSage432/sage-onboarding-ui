@@ -33,8 +33,8 @@ export default function OrganizationProfile() {
       />
 
       {/* Industry Selection */}
-      <div className="flex flex-col gap-2">
-        <label className="sage-label text-white/70">
+      <div className="sage-stack">
+        <label className="sage-label text-white/80 tracking-wide">
           What type of organization are you?
         </label>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

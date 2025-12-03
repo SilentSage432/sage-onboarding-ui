@@ -18,10 +18,13 @@ interface OnboardingState {
   personal: PersonalData;
   business: BusinessData;
   agents: string[];
+  selectedAgent: any | null;
   setPersonal: (data: Partial<PersonalData>) => void;
   setBusiness: (data: Partial<BusinessData>) => void;
   addAgent: (name: string) => void;
   removeAgent: (name: string) => void;
+  setSelectedAgent: (agent: any | null) => void;
+  clearSelectedAgent: () => void;
 }
 
 export const useOnboardingDataStore = create<OnboardingState>((set) => ({
@@ -36,6 +39,7 @@ export const useOnboardingDataStore = create<OnboardingState>((set) => ({
     companySize: "",
   },
   agents: [],
+  selectedAgent: null,
   setPersonal: (data) =>
     set((state) => ({ personal: { ...state.personal, ...data } })),
   setBusiness: (data) =>
@@ -46,5 +50,7 @@ export const useOnboardingDataStore = create<OnboardingState>((set) => ({
     set((s) => ({
       agents: s.agents.filter((a) => a !== name),
     })),
+  setSelectedAgent: (agent) => set({ selectedAgent: agent }),
+  clearSelectedAgent: () => set({ selectedAgent: null }),
 }));
 

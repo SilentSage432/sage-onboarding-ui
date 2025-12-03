@@ -320,16 +320,17 @@ p {
   --sage-leading-normal: 1.5;
 }
 
+/* UX-E37 — SAGE Header System */
 .sage-h1 {
-  font-size: var(--sage-h1);
-  font-weight: var(--sage-heading-weight);
-  line-height: var(--sage-leading-tight);
+  @apply text-3xl font-semibold tracking-tight text-white;
 }
 
 .sage-h2 {
-  font-size: var(--sage-h2);
-  font-weight: var(--sage-heading-weight);
-  line-height: var(--sage-leading-tight);
+  @apply text-xl font-semibold text-white/90 tracking-tight;
+}
+
+.sage-sub {
+  @apply text-base text-white/60 leading-relaxed;
 }
 
 .sage-h3 {
@@ -384,9 +385,21 @@ p {
   background: radial-gradient(circle at 50% 0%, rgba(120,100,255,0.08), transparent 60%),
               linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
               linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
-  background-size: auto, 64px 64px, 64px 64px;
+  background-size: auto, 40px 40px, 40px 40px;
   backdrop-filter: blur(40px);
   z-index: 0;
+}
+
+@media (min-width: 768px) {
+  .sage-mesh-bg {
+    background-size: auto, 56px 56px, 56px 56px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .sage-mesh-bg {
+    background-size: auto, 72px 72px, 72px 72px;
+  }
 }
 
 /* Soft drifting glow layer */
@@ -438,4 +451,169 @@ p {
 .sage-card:hover {
   transform: translateY(-2px);
   transition: transform 0.35s ease;
+}
+
+/* UX-E36 — SAGE Input Primitive */
+.sage-input {
+  @apply w-full bg-white/[0.04] text-white placeholder-white/30
+         px-4 py-2.5 rounded-lg border border-white/10
+         focus:outline-none focus:ring-2 focus:ring-purple-400/40
+         focus:border-white/20
+         transition-all duration-200 backdrop-blur-sm;
+}
+
+.sage-input:hover {
+  @apply border-white/20 bg-white/[0.06];
+}
+
+.sage-input:disabled {
+  @apply opacity-40 cursor-not-allowed;
+}
+
+.sage-textarea {
+  @apply w-full bg-white/[0.04] text-white placeholder-white/30
+         px-4 py-2.5 rounded-lg border border-white/10
+         focus:outline-none focus:ring-2 focus:ring-purple-400/40
+         focus:border-white/20
+         transition-all duration-200 backdrop-blur-sm
+         min-h-[120px] resize-none;
+}
+
+.sage-textarea:hover {
+  @apply border-white/20 bg-white/[0.06];
+}
+
+.sage-textarea:disabled {
+  @apply opacity-40 cursor-not-allowed;
+}
+
+/* UX-E38 — SAGE Control Primitives */
+/* Checkbox */
+.sage-checkbox {
+  @apply w-5 h-5 rounded-md bg-white/[0.04] border border-white/15
+         flex items-center justify-center transition-all duration-200
+         hover:border-white/25 cursor-pointer;
+}
+
+.sage-checkbox-checked {
+  @apply bg-purple-500 border-purple-400 shadow-[0_0_12px_rgba(180,120,255,0.5)];
+}
+
+/* Toggle Switch */
+.sage-toggle {
+  @apply relative inline-flex h-6 w-11 rounded-full bg-white/10
+         transition-all duration-300 cursor-pointer border border-white/10;
+}
+
+.sage-toggle-enabled {
+  @apply bg-purple-500/60 border-purple-400;
+}
+
+.sage-toggle-knob {
+  @apply absolute top-[2px] left-[2px] h-5 w-5 rounded-full
+         bg-white shadow-md transition-all duration-300;
+}
+
+.sage-toggle-knob-enabled {
+  @apply translate-x-5;
+}
+
+/* Select / Dropdown */
+.sage-select-trigger {
+  @apply w-full bg-white/[0.04] text-white placeholder-white/30
+         px-4 py-2.5 rounded-lg border border-white/10
+         focus:outline-none focus:ring-2 focus:ring-purple-400/40
+         focus:border-white/20
+         transition-all duration-200 backdrop-blur-sm
+         flex justify-between items-center cursor-pointer;
+}
+
+.sage-select-trigger:hover {
+  @apply border-white/20 bg-white/[0.06];
+}
+
+.sage-select-content {
+  @apply rounded-lg bg-[#0b0f17] border border-white/10 backdrop-blur-xl
+         shadow-xl p-1 text-white;
+}
+
+.sage-select-item {
+  @apply px-3 py-2 rounded-md text-white/80 hover:bg-white/10 cursor-pointer;
+}
+
+.sage-select-item-active {
+  @apply bg-purple-500/40 text-white;
+}
+
+/* UX-E39 — SAGE Interactive Cards */
+/* Base card */
+.sage-card-base {
+  @apply relative rounded-xl border border-white/10
+         bg-white/[0.03] backdrop-blur-xl
+         cursor-pointer transition-all duration-300;
+}
+
+/* Hover state */
+.sage-card-hover:hover {
+  @apply border-white/20 bg-white/[0.06]
+         shadow-[0_4px_24px_rgba(0,0,0,0.4)]
+         scale-[1.015];
+}
+
+/* Selected card */
+.sage-card-selected {
+  @apply border-purple-400/70 bg-purple-500/10
+         shadow-[0_0_18px_rgba(170,120,255,0.45)]
+         scale-[1.02];
+}
+
+/* Icon bubble */
+.sage-card-icon {
+  @apply w-10 h-10 rounded-lg bg-white/[0.05]
+         flex items-center justify-center
+         border border-white/10 mb-3;
+}
+
+/* Title */
+.sage-card-title {
+  @apply text-white font-medium text-lg mb-1 tracking-tight;
+}
+
+/* Description */
+.sage-card-desc {
+  @apply text-white/60 text-sm leading-relaxed;
+}
+
+/* Subtle micro-bounce on card press */
+.sage-card-base:active {
+  transform: scale(0.98);
+  transition-duration: 120ms;
+}
+
+/* UX-E39.1 — Smooth Minimal Scrollbars */
+.sage-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sage-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+  border-radius: 8px;
+}
+
+.sage-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* UX-B41 — Agent Panel Scrollbar */
+.agent-panel-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.agent-panel-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+  border-radius: 8px;
+}
+
+.agent-panel-scroll::-webkit-scrollbar-track {
+  background: transparent;
 }

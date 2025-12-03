@@ -12,11 +12,13 @@ export const BusinessIndustryStep = () => (
     title="Business Industry"
     description="We adapt workflows and integrations to match industry needs."
   >
-    <Input placeholder="Industry type" className="h-12" />
-    <p className="sage-body text-white/50 mt-2">
-      Used to configure the business operating system. Example: Retail, e-commerce,
-      appliances, healthcare, service, etc.
-    </p>
+    <div className="sage-stack">
+      <Input placeholder="Industry type" className="h-12" />
+      <p className="sage-body text-white/50">
+        Used to configure the business operating system. Example: Retail, e-commerce,
+        appliances, healthcare, service, etc.
+      </p>
+    </div>
   </WizardCard>
 );
 
@@ -25,10 +27,12 @@ export const BusinessSecurityProfileStep = () => (
     title="Security & Profile"
     description="We configure automation and protection based on operational risk."
   >
-    <Input placeholder="Security level" className="h-12" />
-    <p className="sage-body text-white/50 mt-2">
-      Frameworks, compliance, risk score, etc.
-    </p>
+    <div className="sage-stack">
+      <Input placeholder="Security level" className="h-12" />
+      <p className="sage-body text-white/50">
+        Frameworks, compliance, risk score, etc.
+      </p>
+    </div>
   </WizardCard>
 );
 
@@ -55,7 +59,7 @@ export const BusinessSummaryStep = () => {
     >
       {/* Title */}
       <div className="sage-stack-lg text-center">
-        <h2 className="sage-h1 text-white">
+        <h2 className="sage-h1">
           Deployment Blueprint Summary
         </h2>
         <p className="sage-body text-gray-400">

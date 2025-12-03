@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
+import StepHeader from "./StepHeader";
 
 interface WizardCardProps {
   title?: string;
@@ -12,7 +13,7 @@ interface WizardCardProps {
 export default function WizardCard({ title, description, children }: WizardCardProps) {
   return (
     <motion.div
-      className="sage-card relative rounded-2xl px-10 py-12 sage-stack
+      className="sage-card relative rounded-2xl overflow-hidden
                  bg-white/[0.04] border border-white/10
                  backdrop-blur-xl shadow-[0_0_40px_rgb(0,0,0,0.35)]
                  before:absolute before:inset-0
@@ -27,26 +28,16 @@ export default function WizardCard({ title, description, children }: WizardCardP
       <div className="absolute inset-0 rounded-2xl opacity-[0.09]
                       bg-gradient-to-b from-purple-300/10 to-transparent blur-3xl pointer-events-none" />
       
-      <div className="relative z-10">
+      {/* SCROLLABLE CONTENT */}
+      <div className="relative z-10 max-h-[70vh] md:max-h-[72vh] lg:max-h-[75vh] overflow-y-auto px-6 md:px-10 py-8 md:py-12 sage-stack-lg sage-scroll">
         {title && (
-          <motion.h2
-            className="sage-h2 text-white"
+          <motion.div
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, ease: "easeOut", delay: 0 }}
           >
-            {title}
-          </motion.h2>
-        )}
-        {description && (
-          <motion.p
-            className="sage-body text-white/50"
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, ease: "easeOut", delay: 0.05 }}
-          >
-            {description}
-          </motion.p>
+            <StepHeader title={title} subtitle={description} />
+          </motion.div>
         )}
         <motion.div
           className="sage-stack"

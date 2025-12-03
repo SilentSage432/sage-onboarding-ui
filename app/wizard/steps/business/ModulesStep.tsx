@@ -21,11 +21,11 @@ export default function ModulesStep() {
   };
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col sage-stack-xl">
       {MODULE_CATEGORIES.map((cat) => (
-        <div key={cat.id} className="flex flex-col gap-4">
-          <h2 className="text-white/80 text-lg font-semibold">{cat.label}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div key={cat.id} className="sage-stack-lg">
+          <h2 className="sage-h2">{cat.label}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sage-stack-lg">
             {cat.modules.map((mod) => (
               <ModuleCard
                 key={mod.id}

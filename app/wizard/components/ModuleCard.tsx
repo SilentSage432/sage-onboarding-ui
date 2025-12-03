@@ -6,22 +6,32 @@ export default function ModuleCard({
   selected,
   label,
   onClick,
+  icon,
+  description,
 }: {
   selected: boolean;
   label: string;
   onClick: () => void;
+  icon?: React.ReactNode;
+  description?: string;
 }) {
   return (
     <div
       onClick={onClick}
       className={cn(
-        "p-4 rounded-xl border cursor-pointer transition-all backdrop-blur-md",
-        selected
-          ? "border-blue-400 bg-blue-400/20 shadow-lg shadow-blue-500/20"
-          : "border-white/10 hover:border-white/30 bg-white/5"
+        "sage-card-base sage-card-hover",
+        selected && "sage-card-selected"
       )}
     >
-      <p className="text-white font-medium">{label}</p>
+      {icon && (
+        <div className="sage-card-icon">
+          {icon}
+        </div>
+      )}
+      <div className="sage-card-title">{label}</div>
+      {description && (
+        <div className="sage-card-desc">{description}</div>
+      )}
     </div>
   );
 }

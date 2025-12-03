@@ -14,7 +14,7 @@ export default function AgentFilters({
   setSearch: (x: string) => void;
 }) {
   return (
-    <div className="flex flex-col gap-6 w-64 pr-6 border-r border-white/10">
+    <div className="flex flex-col gap-6">
       <input
         type="text"
         placeholder="Search agents..."
