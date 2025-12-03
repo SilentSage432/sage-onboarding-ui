@@ -10,5 +10,6 @@ export default function ConsoleRedirect() {
     router.push("/console/dashboard");
   }, [router]);
 
+  // HADRA Orb is injected globally via console layout
   return null;
 }

@@ -5,7 +5,7 @@ import { Shield, Lock, EyeOff } from "lucide-react";
 export default function SecurityPanel() {
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-2xl text-white font-bold">Security Posture</h1>
+      <h1 className="text-2xl text-white font-bold">Security</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white/5 border border-white/10 rounded-xl p-4">

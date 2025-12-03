@@ -6,9 +6,9 @@ export default function SecurityPosture() {
   const { register } = useFormContext();
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col sage-stack-xl">
       <div>
-        <label className="text-sm font-medium text-white/70 mb-2 block">
+        <label className="sage-label text-white/70 mb-2 block">
           Security Posture
         </label>
         <select
@@ -26,7 +26,7 @@ export default function SecurityPosture() {
           {...register("security.allowAutomation")} 
           className="w-4 h-4 rounded border-white/20 bg-white/10"
         />
-        <label className="text-white/80">Allow SAGE Autonomous Automation</label>
+        <label className="sage-label text-white/80">Allow SAGE Autonomous Automation</label>
       </div>
       <div className="flex items-center gap-2">
         <input 
@@ -34,7 +34,7 @@ export default function SecurityPosture() {
           {...register("security.allowExternal")} 
           className="w-4 h-4 rounded border-white/20 bg-white/10"
         />
-        <label className="text-white/80">Allow External Integrations (Optional)</label>
+        <label className="sage-label text-white/80">Allow External Integrations (Optional)</label>
       </div>
     </div>
   );

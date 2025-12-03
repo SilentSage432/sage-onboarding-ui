@@ -24,6 +24,7 @@ import {
 } from "../steps";
 import { WizardNav } from "./WizardNav";
 import StepTracker from "./StepTracker";
+import TransitionWrapper from "./TransitionWrapper";
 
 export default function WizardShell() {
   const router = useRouter();
@@ -115,7 +116,7 @@ export default function WizardShell() {
   }
 
   return (
-    <div className="relative">
+    <div className="relative z-10">
       {/* Ambient neural glow - adapts to mode */}
       <motion.div
         className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center"
@@ -157,7 +158,7 @@ export default function WizardShell() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.32, ease: [0.23, 1, 0.32, 1], delay: 0.1 }}
               >
-                <CardTitle className="text-2xl">
+                <CardTitle className="sage-h1 text-white">
                   {step?.label ?? "Initializing wizard"}
                 </CardTitle>
               </motion.div>
@@ -166,7 +167,7 @@ export default function WizardShell() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.32, ease: [0.23, 1, 0.32, 1], delay: 0.15 }}
               >
-                <CardDescription className="text-slate-300">
+                <CardDescription className="sage-body text-slate-300">
                   {step?.description ??
                     "Setting up the onboarding shell for your environment."}
                 </CardDescription>
@@ -185,10 +186,14 @@ export default function WizardShell() {
                 </motion.div>
               )}
             </CardHeader>
-            <CardContent className="pt-2 pb-8">
+            <CardContent className="px-8 py-10 sage-stack-xl">
               <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-10">
-                <div className="flex flex-row items-stretch justify-center gap-10 w-full">
-                  {step && step.Component ? <step.Component /> : null}
+                <div className="flex flex-row items-stretch justify-center gap-10 w-full relative min-h-[400px]">
+                  {step && step.Component ? (
+                    <TransitionWrapper step={currentStepId}>
+                      <step.Component />
+                    </TransitionWrapper>
+                  ) : null}
                 </div>
               </div>
             </CardContent>

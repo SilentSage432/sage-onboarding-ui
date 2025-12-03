@@ -60,7 +60,7 @@ export const moduleRegistry: ModuleDefinition[] = [
   },
   {
     slug: "security",
-    name: "Security Posture",
+    name: "Security",
     description: "System-wide security overview.",
     icon: Shield,
     component: SecurityPanel,

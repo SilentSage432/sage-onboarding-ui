@@ -24,7 +24,7 @@ export default function OrganizationProfile() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col sage-stack-xl">
       {/* Organization Name */}
       <TextField
         name="organization.name"
@@ -34,7 +34,7 @@ export default function OrganizationProfile() {
 
       {/* Industry Selection */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-white/70">
+        <label className="sage-label text-white/70">
           What type of organization are you?
         </label>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -96,9 +96,9 @@ function RetailPanel() {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.3 }}
-      className="mt-2 p-4 rounded-lg bg-white/5 border border-white/10 space-y-4"
+      className="mt-2 p-4 rounded-lg bg-white/5 border border-white/10 sage-stack"
     >
-      <p className="text-sm font-medium text-white/80">Retail Details</p>
+      <p className="sage-label text-white/80">Retail Details</p>
       <TextField
         name="organization.retail.skus"
         label="Approximate number of SKUs"
@@ -125,9 +125,9 @@ function ContractorPanel() {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.3 }}
-      className="mt-2 p-4 rounded-lg bg-white/5 border border-white/10 space-y-4"
+      className="mt-2 p-4 rounded-lg bg-white/5 border border-white/10 sage-stack"
     >
-      <p className="text-sm font-medium text-white/80">Contractor Details</p>
+      <p className="sage-label text-white/80">Contractor Details</p>
       <TextField
         name="organization.contractor.fieldTechs"
         label="Number of field technicians"
@@ -154,9 +154,9 @@ function ProfessionalPanel() {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.3 }}
-      className="mt-2 p-4 rounded-lg bg-white/5 border border-white/10 space-y-4"
+      className="mt-2 p-4 rounded-lg bg-white/5 border border-white/10 sage-stack"
     >
-      <p className="text-sm font-medium text-white/80">Professional Services Details</p>
+      <p className="sage-label text-white/80">Professional Services Details</p>
       <TextField
         name="organization.professional.billingModel"
         label="Do you bill hourly or per project?"
@@ -183,9 +183,9 @@ function HealthcarePanel() {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.3 }}
-      className="mt-2 p-4 rounded-lg bg-white/5 border border-white/10 space-y-4"
+      className="mt-2 p-4 rounded-lg bg-white/5 border border-white/10 sage-stack"
     >
-      <p className="text-sm font-medium text-white/80">Healthcare Details</p>
+      <p className="sage-label text-white/80">Healthcare Details</p>
       <TextField
         name="organization.healthcare.hipaaCompliance"
         label="HIPAA compliance required?"

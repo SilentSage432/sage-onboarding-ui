@@ -11,7 +11,7 @@ export default function DashboardPage() {
         access your modules, inspect agents, view mesh activity, manage
         security posture, or configure advanced settings for your organization.
       </p>
-      {/* HADRA-01 is launched globally via the dock orb in the root layout. */}
+      {/* HADRA-01 is launched globally via the floating orb in the console layout. */}
     </div>
   );
 }

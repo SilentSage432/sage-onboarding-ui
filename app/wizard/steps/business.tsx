@@ -13,7 +13,7 @@ export const BusinessIndustryStep = () => (
     description="We adapt workflows and integrations to match industry needs."
   >
     <Input placeholder="Industry type" className="h-12" />
-    <p className="text-sm text-white/50 mt-2">
+    <p className="sage-body text-white/50 mt-2">
       Used to configure the business operating system. Example: Retail, e-commerce,
       appliances, healthcare, service, etc.
     </p>
@@ -26,7 +26,7 @@ export const BusinessSecurityProfileStep = () => (
     description="We configure automation and protection based on operational risk."
   >
     <Input placeholder="Security level" className="h-12" />
-    <p className="text-sm text-white/50 mt-2">
+    <p className="sage-body text-white/50 mt-2">
       Frameworks, compliance, risk score, etc.
     </p>
   </WizardCard>
@@ -54,24 +54,24 @@ export const BusinessSummaryStep = () => {
       className="w-full max-w-5xl mx-auto px-2 py-6 text-gray-200"
     >
       {/* Title */}
-      <div className="text-center mb-8">
-        <h2 className="text-2xl sm:text-3xl font-semibold tracking-wide">
+      <div className="sage-stack-lg text-center">
+        <h2 className="sage-h1 text-white">
           Deployment Blueprint Summary
         </h2>
-        <p className="text-gray-400 mt-2 text-sm">
-          Final verification before SAGE initializes your organization’s sovereign
+        <p className="sage-body text-gray-400">
+          Final verification before SAGE initializes your organization's sovereign
           environment.
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Column 1 — Org + Security + Modules + Agents */}
-        <div className="bg-[#0E0F15] rounded-2xl p-5 border border-white/10 shadow-lg space-y-6">
+        <div className="bg-[#0E0F15] rounded-2xl p-5 border border-white/10 shadow-lg sage-stack-xl">
           <div>
-            <h3 className="text-lg font-medium mb-3 text-white">
+            <h3 className="sage-h3 text-white mt-2 mb-3">
               Organization Overview
             </h3>
-            <div className="space-y-2 text-gray-300 text-sm">
+            <div className="sage-stack text-gray-300 text-sm">
               <p>
                 <span className="text-gray-500">Name:</span>{" "}
                 {orgName || "—"}
@@ -88,7 +88,7 @@ export const BusinessSummaryStep = () => {
           </div>
 
           <div className="border-t border-white/10 pt-4">
-            <h3 className="text-lg font-medium mb-2 text-white">
+            <h3 className="sage-h3 text-white mt-2 mb-3">
               Security Posture
             </h3>
             <p className="text-gray-300 text-sm">
@@ -100,10 +100,10 @@ export const BusinessSummaryStep = () => {
           </div>
 
           <div className="border-t border-white/10 pt-4">
-            <h3 className="text-lg font-medium mb-2 text-white">
+            <h3 className="sage-h3 text-white mt-2 mb-3">
               Modules Selected
             </h3>
-            <ul className="space-y-1 text-gray-300 text-sm">
+            <ul className="sage-stack text-gray-300 text-sm">
               {modules.length > 0 ? (
                 modules.map((m) => <li key={m}>• {m}</li>)
               ) : (
@@ -113,10 +113,10 @@ export const BusinessSummaryStep = () => {
           </div>
 
           <div className="border-t border-white/10 pt-4">
-            <h3 className="text-lg font-medium mb-2 text-white">
+            <h3 className="sage-h3 text-white mt-2 mb-3">
               Agents Selected
             </h3>
-            <ul className="space-y-1 text-gray-300 text-sm">
+            <ul className="sage-stack text-gray-300 text-sm">
               {agents.length > 0 ? (
                 agents.map((a) => <li key={a}>• {a}</li>)
               ) : (
@@ -128,10 +128,10 @@ export const BusinessSummaryStep = () => {
 
         {/* Column 2 — Infrastructure Preview */}
         <div className="bg-[#0E0F15] rounded-2xl p-5 border border-white/10 shadow-lg">
-          <h3 className="text-lg font-medium mb-4 text-white">
+          <h3 className="sage-h3 text-white mt-2 mb-3">
             Infrastructure Readiness
           </h3>
-          <ul className="space-y-3 text-gray-300 text-sm leading-relaxed">
+          <ul className="sage-stack-lg text-gray-300 text-sm leading-relaxed">
             <li>• Federation identity keypair generation</li>
             <li>• Rho² shard vault registration</li>
             <li>• Agent sandbox initialization</li>
@@ -148,10 +148,10 @@ export const BusinessSummaryStep = () => {
 
         {/* Column 3 — Completion Status */}
         <div className="bg-[#0E0F15] rounded-2xl p-5 border border-white/10 shadow-lg">
-          <h3 className="text-lg font-medium mb-4 text-white">
+          <h3 className="sage-h3 text-white mt-2 mb-3">
             Deployment Status
           </h3>
-          <div className="space-y-3 text-sm">
+          <div className="sage-stack-lg text-sm">
             <p className="text-emerald-400">✓ Org Profile Complete</p>
             <p className="text-emerald-400">✓ Security Posture Set</p>
             <p className="text-emerald-400">✓ Rho² Activated</p>

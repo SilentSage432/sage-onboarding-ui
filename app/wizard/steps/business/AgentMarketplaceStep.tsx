@@ -78,11 +78,11 @@ export default function AgentMarketplaceStep() {
   };
 
   return (
-    <div className="flex flex-col gap-8 w-full">
+    <div className="flex flex-col sage-stack-xl w-full">
       {/* Recommended Agents Section */}
       {recommended.length > 0 && (
         <div className="mb-10 w-full">
-          <h3 className="text-2xl font-semibold mb-4">
+          <h3 className="sage-h2 text-white mt-2 mb-3">
             Recommended for Your Organization
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -102,14 +102,14 @@ export default function AgentMarketplaceStep() {
                 >
                   <div className="flex justify-between items-start gap-4">
                     <div>
-                      <h4 className="text-xl font-bold mb-1 flex items-center gap-2">
+                      <h4 className="sage-h3 text-white mb-1 flex items-center gap-2">
                         <span>⚡</span>
                         {agent.label}
                       </h4>
-                      <p className="text-sm text-white/70 mb-2">
+                      <p className="sage-body text-white/70 mb-2">
                         {prettyCategory(agent.category)}
                       </p>
-                      <p className="text-sm text-white/60 italic">
+                      <p className="sage-body text-white/60 italic">
                         {agent.reason}
                       </p>
                     </div>
@@ -133,7 +133,7 @@ export default function AgentMarketplaceStep() {
 
       {/* All Available Agents Section */}
       <div className="w-full border-t border-white/10 pt-8">
-        <h3 className="text-xl font-semibold text-white mb-6">
+        <h3 className="sage-h2 text-white mt-2 mb-3">
           All Available Agents
         </h3>
         <div className="flex gap-10 w-full">

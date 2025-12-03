@@ -250,20 +250,192 @@ p {
 /* Premium button styling for wizard navigation */
 .btn-primary {
   @apply !px-6 !py-2 !rounded-full 
-         !bg-white !text-gray-900 !font-semibold
+         !bg-white !text-gray-900
          !shadow-[0_0_20px_rgba(255,255,255,0.12)]
          hover:!bg-white/90 hover:!shadow-[0_0_28px_rgba(255,255,255,0.25)]
          !transition-all !duration-200;
+  font-size: var(--sage-label);
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
 .btn-secondary {
   @apply !px-5 !py-2 !rounded-full
-         !bg-white/10 !text-white !font-medium
+         !bg-white/10 !text-white
          !border !border-white/20
          hover:!bg-white/20 hover:!shadow-[0_0_20px_rgba(255,255,255,0.1)]
          !transition-all !duration-200;
+  font-size: var(--sage-label);
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
 .btn-disabled {
   @apply opacity-30 cursor-not-allowed;
+}
+
+/* UX-E25 — HADRA Orb Animations */
+@keyframes sage-orb-pulse {
+  0% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.06); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.85; }
+}
+
+@keyframes sage-orb-surge {
+  0% { transform: scale(1); box-shadow: 0 0 0px rgba(160, 80, 255, 0.0); }
+  70% { transform: scale(1.15); box-shadow: 0 0 28px rgba(160, 80, 255, 0.5); }
+  100% { transform: scale(1); box-shadow: 0 0 0px rgba(160, 80, 255, 0.0); }
+}
+
+@keyframes sage-orb-tilt {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(1.2deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* UX-E25.3: Sidebar Hover Glow */
+@keyframes sage-sidebar-hover {
+  0% { filter: brightness(1); }
+  100% { filter: brightness(1.25); }
+}
+
+/* UX-E25.4 — Neural Micro Pulse */
+@keyframes sage-verified-pulse {
+  0% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.9; }
+}
+
+/* UX-E30 — Enterprise Typography Scale */
+:root {
+  --sage-h1: 1.75rem;  /* 28px */
+  --sage-h2: 1.375rem; /* 22px */
+  --sage-h3: 1.125rem; /* 18px */
+  --sage-body: 0.95rem; /* 15.2px */
+  --sage-label: 0.8rem; /* 12.8px */
+  --sage-caption: 0.72rem; /* 11.5px */
+  --sage-heading-weight: 600;
+  --sage-body-weight: 400;
+  --sage-leading-tight: 1.2;
+  --sage-leading-normal: 1.5;
+}
+
+.sage-h1 {
+  font-size: var(--sage-h1);
+  font-weight: var(--sage-heading-weight);
+  line-height: var(--sage-leading-tight);
+}
+
+.sage-h2 {
+  font-size: var(--sage-h2);
+  font-weight: var(--sage-heading-weight);
+  line-height: var(--sage-leading-tight);
+}
+
+.sage-h3 {
+  font-size: var(--sage-h3);
+  font-weight: var(--sage-heading-weight);
+  line-height: var(--sage-leading-tight);
+}
+
+.sage-body {
+  font-size: var(--sage-body);
+  font-weight: var(--sage-body-weight);
+  line-height: var(--sage-leading-normal);
+}
+
+.sage-label {
+  font-size: var(--sage-label);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.sage-caption {
+  font-size: var(--sage-caption);
+  opacity: 0.75;
+}
+
+/* UX-E31 — Soft-Grid Spacing System */
+:root {
+  --sage-space-xs: 0.5rem;  /* 8px  */
+  --sage-space-sm: 0.75rem; /* 12px */
+  --sage-space-md: 1rem;    /* 16px */
+  --sage-space-lg: 1.5rem;  /* 24px */
+  --sage-space-xl: 2rem;    /* 32px */
+  --sage-space-2xl: 3rem;   /* 48px */
+}
+
+.sage-stack > * + * {
+  margin-top: var(--sage-space-md);
+}
+
+.sage-stack-lg > * + * {
+  margin-top: var(--sage-space-lg);
+}
+
+.sage-stack-xl > * + * {
+  margin-top: var(--sage-space-xl);
+}
+
+/* UX-E32 — Neural Mesh Background */
+.sage-mesh-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(120,100,255,0.08), transparent 60%),
+              linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+              linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: auto, 64px 64px, 64px 64px;
+  backdrop-filter: blur(40px);
+  z-index: 0;
+}
+
+/* Soft drifting glow layer */
+.sage-mesh-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 60% 40%, rgba(180,120,255,0.08), transparent 60%);
+  animation: sage-mesh-drift 28s ease-in-out infinite alternate;
+  z-index: 0;
+}
+
+@keyframes sage-mesh-drift {
+  0% {
+    transform: translate3d(0px, 0px, 0);
+  }
+  100% {
+    transform: translate3d(-40px, 30px, 0);
+  }
+}
+
+/* UX-E34 — SAGE Button Primitives */
+.sage-btn {
+  @apply px-5 py-2.5 rounded-lg font-medium tracking-wide transition-all duration-200;
+}
+
+.sage-btn-primary {
+  @apply bg-white text-black hover:bg-slate-100 active:bg-slate-300;
+  box-shadow: 0 0 12px rgba(255,255,255,0.15);
+}
+
+.sage-btn-primary:hover {
+  box-shadow: 0 0 18px rgba(255,255,255,0.25), 0 0 20px rgba(180,120,255,0.4);
+}
+
+.sage-btn-ghost {
+  @apply text-slate-300 hover:text-white;
+}
+
+.sage-btn-disabled {
+  @apply opacity-40 cursor-not-allowed;
+}
+
+.sage-btn:active {
+  transform: translateY(1px) scale(0.98);
+  transition-duration: 50ms;
+}
+
+/* UX-E35 — Card Hover Elevation */
+.sage-card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.35s ease;
 }

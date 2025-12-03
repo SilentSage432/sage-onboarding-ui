@@ -1,7 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export function WizardNav({
   canBack = true,
@@ -19,58 +18,37 @@ export function WizardNav({
   nextLabel?: string;
 }) {
   return (
-    <div className="flex items-center justify-between w-full">
-      {/* LEFT BUTTONS: Back + Restart */}
+    <div className="flex justify-between items-center mt-12 pt-6 border-t border-white/5">
+      {/* Left side: Previous or Restart */}
       <div className="flex gap-3">
-        {canBack && (
-          <motion.div
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+        {canBack && onBack && (
+          <button
+            onClick={onBack}
+            className="sage-btn sage-btn-ghost"
           >
-            <Button 
-              variant="secondary" 
-              onClick={onBack}
-              className="btn-secondary"
-            >
-              Back
-            </Button>
-          </motion.div>
+            ← Previous
+          </button>
         )}
-        {showRestart && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.2 }}
+        {showRestart && onRestart && (
+          <button
+            onClick={onRestart}
+            className="sage-btn sage-btn-ghost"
           >
-            <Button 
-              variant="secondary" 
-              onClick={onRestart}
-              className="btn-secondary"
-            >
-              Restart
-            </Button>
-          </motion.div>
+            Restart
+          </button>
         )}
+        {!canBack && !showRestart && <div />}
       </div>
-      
-      {/* RIGHT BUTTON: Continue/Finish */}
-      <div className="flex">
-        {onNext && nextLabel && (
-          <motion.div
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, ease: "easeOut", delay: 0.1 }}
-          >
-            <Button 
-              onClick={onNext}
-              className="btn-primary"
-            >
-              {nextLabel}
-            </Button>
-          </motion.div>
-        )}
-      </div>
+
+      {/* Right side: Next */}
+      {onNext && nextLabel && (
+        <button
+          onClick={onNext}
+          className="sage-btn sage-btn-primary"
+        >
+          {nextLabel} →
+        </button>
+      )}
     </div>
   );
 }

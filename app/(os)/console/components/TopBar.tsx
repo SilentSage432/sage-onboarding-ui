@@ -1,20 +1,18 @@
 "use client";
 
-import { Signal, Lock } from "lucide-react";
-
 export default function TopBar() {
   return (
-    <div className="w-full h-12 border-b border-neutral-800 bg-neutral-900/40 backdrop-blur-md flex items-center justify-between px-6">
-      <div className="flex items-center space-x-2 text-gray-300">
-        <Signal className="h-4 w-4 text-blue-400" />
-        <span className="text-sm">
-          Rho² Secure Channel:{" "}
-          <span className="text-blue-300">Active</span>
-        </span>
+    <div className="w-full h-12 flex justify-between items-center px-6 border-b border-white/5 bg-[#080b11]/60 backdrop-blur-md select-none">
+      <div className="flex items-center gap-2 text-slate-300">
+        <div className="flex items-center gap-1">
+          <span className="text-[10px] tracking-wider uppercase text-slate-500">Rho² Secure Channel</span>
+          <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+        </div>
+        <span className="text-xs text-green-400/90 font-medium">Active</span>
       </div>
-      <div className="flex items-center space-x-3 text-gray-400 text-sm">
-        <Lock className="h-4 w-4" />
-        <span>Federation Verified</span>
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-slate-400">Federation Verified</span>
+        <div className="w-2.5 h-2.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(80,130,255,0.6)] animate-[sage-verified-pulse_2.5s_ease-in-out_infinite]" />
       </div>
     </div>
   );
