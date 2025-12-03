@@ -2,24 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Home,
-  Cpu,
-  Activity,
-  Network,
-  KeyRound,
-  Shield,
-  Settings,
-} from "lucide-react";
+import { Home } from "lucide-react";
+import { moduleRegistry } from "@/lib/console/moduleRegistry";
 
 const nav = [
   { name: "Overview", icon: Home, href: "/console/dashboard" },
-  { name: "Modules", icon: Cpu, href: "/console/modules" },
-  { name: "Agents", icon: Activity, href: "/console/agents" },
-  { name: "Mesh Graph", icon: Network, href: "/console/mesh" },
-  { name: "Rho² Keyring", icon: KeyRound, href: "/console/rho2" },
-  { name: "Security", icon: Shield, href: "/console/security" },
-  { name: "Settings", icon: Settings, href: "/console/settings" },
+  ...moduleRegistry.map((mod) => ({
+    name: mod.name,
+    icon: mod.icon,
+    href: `/console/${mod.slug}`,
+  })),
 ];
 
 export default function Sidebar() {
