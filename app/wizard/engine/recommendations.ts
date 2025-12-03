@@ -4,6 +4,7 @@ export type RecommendationContext = {
   goals?: string[];
   securityLevel?: string;
   modules?: string[];
+  priorities?: string[];
   rho2Enabled?: boolean;
 };
 
@@ -166,6 +167,88 @@ export function recommendAgents(ctx: RecommendationContext): RecommendedAgent[] 
       category: "Analytics",
       priority: "optional",
       reason: "Large organization — behavioral pattern analysis helps optimize operations at scale.",
+    });
+  }
+
+  // --- Operational priorities heuristics ---
+  if (ctx.priorities?.includes("efficiency")) {
+    recs.push({
+      id: "auto_workflows",
+      label: "Workflow Automation Agent",
+      category: "Automation",
+      priority: "critical",
+      reason: "Operational efficiency priority selected — workflow automation recommended.",
+    });
+  }
+
+  if (ctx.priorities?.includes("visibility")) {
+    recs.push({
+      id: "system_monitor",
+      label: "System Health Monitor Agent",
+      category: "Monitoring",
+      priority: "operational",
+      reason: "System visibility priority selected — real-time monitoring recommended.",
+    });
+    recs.push({
+      id: "event_watcher",
+      label: "Event Stream Watcher",
+      category: "Monitoring",
+      priority: "operational",
+      reason: "System visibility priority selected — event tracking recommended.",
+    });
+  }
+
+  if (ctx.priorities?.includes("security")) {
+    recs.push({
+      id: "threat_detect",
+      label: "Threat Detection Agent",
+      category: "Security",
+      priority: "critical",
+      reason: "Security hardening priority selected — advanced threat detection recommended.",
+    });
+    recs.push({
+      id: "audit_guard",
+      label: "Audit & Compliance Agent",
+      category: "Security",
+      priority: "critical",
+      reason: "Security hardening priority selected — comprehensive audit logging recommended.",
+    });
+  }
+
+  if (ctx.priorities?.includes("predictive")) {
+    recs.push({
+      id: "predictive_ai",
+      label: "Predictive Analytics Agent",
+      category: "Analytics",
+      priority: "operational",
+      reason: "Predictive intelligence priority selected — predictive analytics recommended.",
+    });
+    recs.push({
+      id: "forecast_ai",
+      label: "Forecasting Intelligence Agent",
+      category: "Analytics",
+      priority: "operational",
+      reason: "Predictive intelligence priority selected — forecasting intelligence recommended.",
+    });
+  }
+
+  if (ctx.priorities?.includes("collaboration")) {
+    recs.push({
+      id: "auto_workflows",
+      label: "Workflow Automation Agent",
+      category: "Automation",
+      priority: "operational",
+      reason: "Team collaboration priority selected — workflow orchestration recommended.",
+    });
+  }
+
+  if (ctx.priorities?.includes("inventory")) {
+    recs.push({
+      id: "auto_inventory",
+      label: "Inventory Automation Agent",
+      category: "Automation",
+      priority: "critical",
+      reason: "Inventory optimization priority selected — inventory automation recommended.",
     });
   }
 

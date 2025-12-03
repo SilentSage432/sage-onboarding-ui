@@ -1,76 +1,117 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { CheckCircle, Loader2 } from "lucide-react";
-
-const steps = [
-  "Validating deployment blueprint…",
-  "Establishing secure Rho² channel…",
-  "Requesting shard negotiation from Federation…",
-  "Provisioning core subsystems…",
-  "Deploying selected agents…",
-  "Configuring organization mesh graph…",
-  "Initializing operator console…",
-];
+import TerminalFrame from "@/app/(init)/init-screen/components/TerminalFrame";
+import LogStream from "@/app/(init)/init-screen/components/LogStream";
+import ProgressBar from "@/app/(init)/init-screen/components/ProgressBar";
+import Rho2Pulse from "@/app/(init)/init-screen/components/Rho2Pulse";
+import WireframeOverlay from "@/app/(init)/init-screen/components/WireframeOverlay";
+import { baseBootSequence } from "@/app/(init)/init-screen/boot-sequences/baseBoot";
+import { generateAgentBootSequence } from "@/app/(init)/init-screen/boot-sequences/agentBoot";
+import { rho2Handshake } from "@/app/(init)/init-screen/boot-sequences/rho2Handshake";
+import { environmentAssembly } from "@/app/(init)/init-screen/boot-sequences/environmentAssembly";
 
 export default function InitializingPage() {
   const router = useRouter();
-  const [current, setCurrent] = useState(0);
+  const [logs, setLogs] = useState<string[]>([]);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    if (current < steps.length - 1) {
-      const t = setTimeout(() => setCurrent(current + 1), 1500);
-      return () => clearTimeout(t);
-    } else {
-      const t2 = setTimeout(() => {
-        router.push("/console");
-      }, 1800);
-      return () => clearTimeout(t2);
+    // Get selected agents from localStorage
+    let selectedAgents: string[] = [];
+    
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("sage_selected_agents");
+      if (stored) {
+        try {
+          selectedAgents = JSON.parse(stored);
+        } catch (e) {
+          selectedAgents = [];
+        }
+      }
     }
-  }, [current, router]);
+
+    // Generate agent boot sequence
+    const agentBoot = generateAgentBootSequence(selectedAgents);
+    
+    // Merge base, agent, Rho² handshake, and environment assembly sequences
+    const fullSeq = [
+      ...baseBootSequence,
+      ...agentBoot,
+      ...rho2Handshake,
+      ...environmentAssembly,
+    ];
+
+    let index = 0;
+    let total = fullSeq.length;
+    let timeoutIds: NodeJS.Timeout[] = [];
+    let handshakeCompleteAdded = false;
+    let environmentReadyAdded = false;
+
+    const runStep = () => {
+      if (index >= total) {
+        // Boot sequence complete, navigate to console after a brief delay
+        const finalTimeout = setTimeout(() => {
+          router.push("/console");
+        }, 2000);
+        timeoutIds.push(finalTimeout);
+        return;
+      }
+
+      const step = fullSeq[index];
+      const timeout = setTimeout(() => {
+        setLogs((prev) => [...prev, step.msg]);
+        
+        // Add final handshake moment after handshake complete
+        if (step.msg.includes("handshake complete") && !handshakeCompleteAdded) {
+          handshakeCompleteAdded = true;
+          setTimeout(() => {
+            setLogs((prev) => [
+              ...prev,
+              "Sovereign identity established — workspace cryptographically bound.",
+            ]);
+          }, 800);
+        }
+
+        // Add launch handoff message after environment ready
+        if (step.msg.includes("environment ready") && !environmentReadyAdded) {
+          environmentReadyAdded = true;
+          setTimeout(() => {
+            setLogs((prev) => [...prev, "Launching SAGE OS Console…"]);
+          }, 800);
+        }
+        
+        setProgress(Math.round(((index + 1) / total) * 100));
+        index++;
+        runStep(); // next step
+      }, step.delay);
+
+      timeoutIds.push(timeout);
+    };
+
+    runStep();
+
+    return () => {
+      timeoutIds.forEach((id) => clearTimeout(id));
+    };
+  }, [router]);
+
+  // Track handshake activity (roughly 60-80% progress based on sequence position)
+  const isHandshakeActive = progress > 60 && progress < 80;
+  // Track environment build activity (roughly 80-100% progress)
+  const isEnvBuildActive = progress > 80 && progress < 100;
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center justify-center bg-black text-white px-6">
-      <motion.h1
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-3xl font-semibold mb-10 tracking-wide"
-      >
-        Initializing SAGE Environment
-      </motion.h1>
-
-      <div className="w-full max-w-lg space-y-4">
-        {steps.map((step, index) => (
-          <motion.div
-            key={step}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: index <= current ? 1 : 0.2 }}
-            className="flex items-center space-x-3"
-          >
-            {index < current ? (
-              <CheckCircle className="text-green-400 h-5 w-5" />
-            ) : index === current ? (
-              <Loader2 className="animate-spin text-blue-400 h-5 w-5" />
-            ) : (
-              <div className="h-5 w-5 border border-gray-600 rounded-full" />
-            )}
-            <span className={index === current ? "text-blue-300" : "text-gray-400"}>
-              {step}
-            </span>
-          </motion.div>
-        ))}
+    <div className="w-full h-screen bg-[#05070d] text-white p-8 flex items-center justify-center relative">
+      <div className="relative w-full max-w-4xl">
+        <Rho2Pulse active={isHandshakeActive} />
+        <TerminalFrame>
+          <WireframeOverlay active={isEnvBuildActive} />
+          <ProgressBar value={progress} />
+          <LogStream logs={logs} />
+        </TerminalFrame>
       </div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.8 }}
-        transition={{ delay: 1 }}
-        className="mt-12 text-xs text-gray-500 tracking-wide text-center"
-      >
-        SAGE Federation • Rho² Protected Channel • Autonomous Operator Bridge
-      </motion.div>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 import OrganizationProfile from "./business/OrganizationProfile";
 import SecurityPosture from "./business/SecurityPosture";
 import { Rho2VerificationCard } from "./security/Rho2VerificationCard";
-import ModulesStep from "./business/ModulesStep";
+import OperationalPriorities from "./business/OperationalPriorities";
 import AgentMarketplaceStep from "./business/AgentMarketplaceStep";
 import { BusinessSummaryStep } from "./business";
 import FinalSetup from "./FinalSetup";
@@ -23,7 +23,7 @@ export const ENTERPRISE_COUNTED_STEPS = [
   "business-industry", // Step 1: ORG_PROFILE
   "business-security", // Step 2: SECURITY_POSTURE
   "rho2-verification", // Step 3: RHO2_VERIFICATION
-  "business-module-select", // Step 4: MODULE_SELECTION
+  "operational-priorities", // Step 4: OPERATIONAL_PRIORITIES
   "business-agent-marketplace", // Step 5: AGENT_MARKETPLACE
   "business-summary", // Step 6: FINAL_REVIEW
 ];
@@ -98,12 +98,12 @@ export function getEnterpriseSteps(): WizardStepConfig[] {
       showNext: false, // Navigation handled inside the card
     },
     {
-      id: "business-module-select",
-      label: "Select your deployment modules & agents",
+      id: "operational-priorities",
+      label: "Operational Priorities",
       description:
-        "Choose the core modules that will power your SAGE environment.",
+        "Select the outcomes your organization wants SAGE to focus on. These choices help shape recommendations in the Agent Marketplace.",
       mode: "business",
-      Component: ModulesStep,
+      Component: OperationalPriorities,
     },
     {
       id: "business-agent-marketplace",

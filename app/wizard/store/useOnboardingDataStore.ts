@@ -19,12 +19,14 @@ interface OnboardingState {
   business: BusinessData;
   agents: string[];
   selectedAgent: any | null;
+  operationalPriorities: string[];
   setPersonal: (data: Partial<PersonalData>) => void;
   setBusiness: (data: Partial<BusinessData>) => void;
   addAgent: (name: string) => void;
   removeAgent: (name: string) => void;
   setSelectedAgent: (agent: any | null) => void;
   clearSelectedAgent: () => void;
+  setOperationalPriorities: (vals: string[]) => void;
 }
 
 export const useOnboardingDataStore = create<OnboardingState>((set) => ({
@@ -40,6 +42,7 @@ export const useOnboardingDataStore = create<OnboardingState>((set) => ({
   },
   agents: [],
   selectedAgent: null,
+  operationalPriorities: [],
   setPersonal: (data) =>
     set((state) => ({ personal: { ...state.personal, ...data } })),
   setBusiness: (data) =>
@@ -52,5 +55,7 @@ export const useOnboardingDataStore = create<OnboardingState>((set) => ({
     })),
   setSelectedAgent: (agent) => set({ selectedAgent: agent }),
   clearSelectedAgent: () => set({ selectedAgent: null }),
+  setOperationalPriorities: (vals: string[]) =>
+    set({ operationalPriorities: vals }),
 }));
 

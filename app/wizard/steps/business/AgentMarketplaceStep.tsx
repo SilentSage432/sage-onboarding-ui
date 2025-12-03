@@ -96,16 +96,20 @@ export default function AgentMarketplaceStep() {
   const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({ message: "", isVisible: false });
   const [hoverAgent, setHoverAgent] = useState<{ id: string; label: string; reason?: string } | null>(null);
 
-  // Get recommendations based on form data
+  // Get operational priorities from store
+  const { operationalPriorities } = useOnboardingDataStore();
+
+  // Get recommendations based on form data and operational priorities
   const recommended = useMemo(() => {
     return recommendAgents({
       industry: organization.industry,
       companySize: organization.size,
       securityLevel: security.posture,
       modules: modules,
+      priorities: operationalPriorities,
       rho2Enabled: true, // Rho² is always enabled in enterprise flow
     });
-  }, [organization.industry, organization.size, security.posture, modules]);
+  }, [organization.industry, organization.size, security.posture, modules, operationalPriorities]);
 
   // Auto-select critical recommendations on mount
   useEffect(() => {

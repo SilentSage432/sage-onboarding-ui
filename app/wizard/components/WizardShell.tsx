@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { useFormContext } from "react-hook-form";
 import {
   Card,
   CardHeader,
@@ -29,6 +30,7 @@ import TransitionWrapper from "./TransitionWrapper";
 export default function WizardShell() {
   const router = useRouter();
   const { stepIndex, setStepIndex, reset } = useWizardStore();
+  const formMethods = useFormContext();
   // Enterprise only - no mode selection
   const steps = getEnterpriseSteps();
   const safeIndex = Math.min(stepIndex, Math.max(steps.length - 1, 0));
@@ -69,6 +71,20 @@ export default function WizardShell() {
   };
 
   const handleFinish = () => {
+    // Get selected agents and modules from form context
+    if (typeof window !== "undefined" && formMethods) {
+      try {
+        const formData = formMethods.getValues();
+        const selectedAgents = formData.agents || [];
+        const selectedModules = formData.modules || [];
+        
+        // Store in localStorage for the init screen to access
+        localStorage.setItem("sage_selected_agents", JSON.stringify(selectedAgents));
+        localStorage.setItem("sage_selected_modules", JSON.stringify(selectedModules));
+      } catch (e) {
+        // Silently fail if form context not available
+      }
+    }
     router.push("/wizard/initializing");
   };
 
