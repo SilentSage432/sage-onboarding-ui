@@ -1,4 +1,8 @@
 import { Cpu, Network, Shield, Activity, KeyRound, Settings } from "lucide-react";
+import AgentsPanel from "@/components/console/panels/AgentsPanel";
+import MeshPanel from "@/components/console/panels/MeshPanel";
+import SecurityPanel from "@/components/console/panels/SecurityPanel";
+import Rho2Panel from "@/components/console/panels/Rho2Panel";
 
 export type ModuleDefinition = {
   slug: string;
@@ -6,6 +10,14 @@ export type ModuleDefinition = {
   description: string;
   icon: any;
   component: () => JSX.Element;
+};
+
+export type AgentModule = {
+  id: string;
+  name: string;
+  description: string;
+  status: string;
+  icon: any;
 };
 
 // Placeholder components until real panels are built
@@ -28,30 +40,30 @@ export const moduleRegistry: ModuleDefinition[] = [
   {
     slug: "agents",
     name: "Agents",
-    description: "Manage all deployed and available agents.",
+    description: "Manage deployed and available agents.",
     icon: Activity,
-    component: Placeholder("Agents Panel"),
+    component: AgentsPanel,
   },
   {
     slug: "mesh",
     name: "Mesh Graph",
-    description: "Visualize the neural mesh connections and agent activity.",
+    description: "Visualize the neural mesh.",
     icon: Network,
-    component: Placeholder("Mesh Graph Panel"),
+    component: MeshPanel,
   },
   {
     slug: "rho2",
     name: "Rho² Keyring",
-    description: "Manage cryptographic identities and federation binding.",
+    description: "Cryptographic keyring inspector.",
     icon: KeyRound,
-    component: Placeholder("Rho² Keyring Panel"),
+    component: Rho2Panel,
   },
   {
     slug: "security",
     name: "Security Posture",
-    description: "System-wide security configuration and hardening.",
+    description: "System-wide security overview.",
     icon: Shield,
-    component: Placeholder("Security Panel"),
+    component: SecurityPanel,
   },
   {
     slug: "settings",
