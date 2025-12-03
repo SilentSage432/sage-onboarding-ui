@@ -1,30 +1,44 @@
 import { create } from "zustand";
 
-export type WizardMode = "personal" | "business" | null;
-
 interface WizardState {
-  mode: WizardMode;
+  flow: "business";
   stepIndex: number;
-  setMode: (mode: Exclude<WizardMode, null>) => void;
+  agents: string[];
+  recommendedAgents: string[];
+  beginEnterpriseFlow: () => void;
   setStepIndex: (index: number) => void;
+  addAgent: (agent: string) => void;
+  setRecommendedAgents: (ids: string[]) => void;
   reset: () => void;
 }
 
 export const useWizardStore = create<WizardState>((set) => ({
-  mode: null,
+  flow: "business",
   stepIndex: 0,
-  setMode: (mode) =>
+  agents: [],
+  recommendedAgents: [],
+  beginEnterpriseFlow: () =>
     set({
-      mode,
-      stepIndex: 0, // always start at the beginning for a new mode
+      flow: "business",
+      stepIndex: 0,
     }),
   setStepIndex: (index) =>
     set({
       stepIndex: index,
     }),
+  addAgent: (agent: string) =>
+    set((state) => ({
+      agents: [...state.agents, agent],
+    })),
+  setRecommendedAgents: (ids: string[]) =>
+    set({
+      recommendedAgents: ids,
+    }),
   reset: () =>
     set({
-      mode: null,
+      flow: "business",
       stepIndex: 0,
+      agents: [],
+      recommendedAgents: [],
     }),
 }));

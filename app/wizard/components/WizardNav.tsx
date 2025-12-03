@@ -19,9 +19,24 @@ export function WizardNav({
   nextLabel?: string;
 }) {
   return (
-    <div className="flex w-full justify-between items-center pt-10 px-2">
-      {/* Restart button - always on left */}
-      <div>
+    <div className="flex items-center justify-between w-full">
+      {/* LEFT BUTTONS: Back + Restart */}
+      <div className="flex gap-3">
+        {canBack && (
+          <motion.div
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+          >
+            <Button 
+              variant="secondary" 
+              onClick={onBack}
+              className="btn-secondary"
+            >
+              Back
+            </Button>
+          </motion.div>
+        )}
         {showRestart && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -29,10 +44,9 @@ export function WizardNav({
             transition={{ duration: 0.2 }}
           >
             <Button 
-              variant="outline" 
-              size="sm" 
+              variant="secondary" 
               onClick={onRestart}
-              className="text-white opacity-90 hover:opacity-100"
+              className="btn-secondary"
             >
               Restart
             </Button>
@@ -40,28 +54,20 @@ export function WizardNav({
         )}
       </div>
       
-      {/* Back button - center, only when canBack is true */}
-      {canBack && (
-        <motion.div
-          initial={{ opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, ease: "easeOut" }}
-        >
-          <Button variant="ghost" onClick={onBack}>
-            Back
-          </Button>
-        </motion.div>
-      )}
-      
-      {/* Next/Continue/Finish button - always on right */}
-      <div>
+      {/* RIGHT BUTTON: Continue/Finish */}
+      <div className="flex">
         {onNext && nextLabel && (
           <motion.div
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, ease: "easeOut", delay: 0.1 }}
           >
-            <Button onClick={onNext}>{nextLabel}</Button>
+            <Button 
+              onClick={onNext}
+              className="btn-primary"
+            >
+              {nextLabel}
+            </Button>
           </motion.div>
         )}
       </div>

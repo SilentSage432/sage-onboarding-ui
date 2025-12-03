@@ -231,3 +231,39 @@ h2 {
 p {
   font-weight: 300;
 }
+
+/* Agent card styling */
+.agent-card {
+  backdrop-filter: blur(12px);
+}
+
+/* Pulse animation for boot screen */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.12;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}
+
+/* Premium button styling for wizard navigation */
+.btn-primary {
+  @apply !px-6 !py-2 !rounded-full 
+         !bg-white !text-gray-900 !font-semibold
+         !shadow-[0_0_20px_rgba(255,255,255,0.12)]
+         hover:!bg-white/90 hover:!shadow-[0_0_28px_rgba(255,255,255,0.25)]
+         !transition-all !duration-200;
+}
+
+.btn-secondary {
+  @apply !px-5 !py-2 !rounded-full
+         !bg-white/10 !text-white !font-medium
+         !border !border-white/20
+         hover:!bg-white/20 hover:!shadow-[0_0_20px_rgba(255,255,255,0.1)]
+         !transition-all !duration-200;
+}
+
+.btn-disabled {
+  @apply opacity-30 cursor-not-allowed;
+}

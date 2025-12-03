@@ -1,7 +1,11 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import WizardCard from "../components/WizardCard";
+import { motion } from "framer-motion";
+import { useFormContext } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 export const BusinessIndustryStep = () => (
   <WizardCard
@@ -10,7 +14,8 @@ export const BusinessIndustryStep = () => (
   >
     <Input placeholder="Industry type" className="h-12" />
     <p className="text-sm text-white/50 mt-2">
-      Used to configure the business operating system. Example: Retail, e-commerce, appliances, healthcare, service, etc.
+      Used to configure the business operating system. Example: Retail, e-commerce,
+      appliances, healthcare, service, etc.
     </p>
   </WizardCard>
 );
@@ -27,15 +32,166 @@ export const BusinessSecurityProfileStep = () => (
   </WizardCard>
 );
 
-export const BusinessSummaryStep = () => (
-  <WizardCard
-    title="Review & Initialize"
-    description="Final review before we generate your organization's baseline configuration."
-  >
-    <div className="space-y-2 text-sm text-slate-200">
-      <p>• Org profile seeded for future agents</p>
-      <p>• Initial security posture documented</p>
-      <p>• Starting point for live federation onboarding</p>
-    </div>
-  </WizardCard>
-);
+export const BusinessSummaryStep = () => {
+  const { watch } = useFormContext();
+  const router = useRouter();
+
+  const organization = watch("organization") || {};
+  const security = watch("security") || {};
+  const modules: string[] = watch("modules") || [];
+  const agents: string[] = watch("agents") || [];
+
+  const orgName = organization.name as string | undefined;
+  const industry = organization.industry as string | undefined;
+  const region = organization.region as string | undefined;
+  const securityPosture = security.posture as string | undefined;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="w-full max-w-5xl mx-auto px-2 py-6 text-gray-200"
+    >
+      {/* Title */}
+      <div className="text-center mb-8">
+        <h2 className="text-2xl sm:text-3xl font-semibold tracking-wide">
+          Deployment Blueprint Summary
+        </h2>
+        <p className="text-gray-400 mt-2 text-sm">
+          Final verification before SAGE initializes your organization’s sovereign
+          environment.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Column 1 — Org + Security + Modules + Agents */}
+        <div className="bg-[#0E0F15] rounded-2xl p-5 border border-white/10 shadow-lg space-y-6">
+          <div>
+            <h3 className="text-lg font-medium mb-3 text-white">
+              Organization Overview
+            </h3>
+            <div className="space-y-2 text-gray-300 text-sm">
+              <p>
+                <span className="text-gray-500">Name:</span>{" "}
+                {orgName || "—"}
+              </p>
+              <p>
+                <span className="text-gray-500">Industry:</span>{" "}
+                {industry || "—"}
+              </p>
+              <p>
+                <span className="text-gray-500">Region:</span>{" "}
+                {region || "—"}
+              </p>
+            </div>
+          </div>
+
+          <div className="border-t border-white/10 pt-4">
+            <h3 className="text-lg font-medium mb-2 text-white">
+              Security Posture
+            </h3>
+            <p className="text-gray-300 text-sm">
+              {securityPosture || "Balanced"}
+            </p>
+            <p className="mt-2 text-xs text-emerald-400 font-medium">
+              ✓ Rho² Encryption: Enabled
+            </p>
+          </div>
+
+          <div className="border-t border-white/10 pt-4">
+            <h3 className="text-lg font-medium mb-2 text-white">
+              Modules Selected
+            </h3>
+            <ul className="space-y-1 text-gray-300 text-sm">
+              {modules.length > 0 ? (
+                modules.map((m) => <li key={m}>• {m}</li>)
+              ) : (
+                <li className="text-gray-500">No modules selected</li>
+              )}
+            </ul>
+          </div>
+
+          <div className="border-t border-white/10 pt-4">
+            <h3 className="text-lg font-medium mb-2 text-white">
+              Agents Selected
+            </h3>
+            <ul className="space-y-1 text-gray-300 text-sm">
+              {agents.length > 0 ? (
+                agents.map((a) => <li key={a}>• {a}</li>)
+              ) : (
+                <li className="text-gray-500">No agents selected</li>
+              )}
+            </ul>
+          </div>
+        </div>
+
+        {/* Column 2 — Infrastructure Preview */}
+        <div className="bg-[#0E0F15] rounded-2xl p-5 border border-white/10 shadow-lg">
+          <h3 className="text-lg font-medium mb-4 text-white">
+            Infrastructure Readiness
+          </h3>
+          <ul className="space-y-3 text-gray-300 text-sm leading-relaxed">
+            <li>• Federation identity keypair generation</li>
+            <li>• Rho² shard vault registration</li>
+            <li>• Agent sandbox initialization</li>
+            <li>• Event stream channels provisioning</li>
+            <li>• SAGE Mesh namespace creation</li>
+            <li>• Observability stack (logs / metrics / traces)</li>
+            <li>• Private memory graph schema</li>
+            <li>• Role-based access matrix</li>
+          </ul>
+          <p className="text-xs text-gray-500 mt-6">
+            These systems will activate automatically during initialization.
+          </p>
+        </div>
+
+        {/* Column 3 — Completion Status */}
+        <div className="bg-[#0E0F15] rounded-2xl p-5 border border-white/10 shadow-lg">
+          <h3 className="text-lg font-medium mb-4 text-white">
+            Deployment Status
+          </h3>
+          <div className="space-y-3 text-sm">
+            <p className="text-emerald-400">✓ Org Profile Complete</p>
+            <p className="text-emerald-400">✓ Security Posture Set</p>
+            <p className="text-emerald-400">✓ Rho² Activated</p>
+            <p className="text-emerald-400">✓ Module Selection Complete</p>
+            <p className="text-emerald-400">✓ Agent Selection Complete</p>
+
+            <hr className="border-white/10 my-4" />
+
+            <p className="text-yellow-400">
+              • Federation onboarding pending (auto)
+            </p>
+            <p className="text-yellow-400">
+              • Namespace provisioning pending (auto)
+            </p>
+            <p className="text-yellow-400">
+              • Agent containers staging pending (auto)
+            </p>
+
+            <hr className="border-white/10 my-4" />
+
+            <p className="text-gray-500 text-xs">
+              After initialization, your SAGE Console will unlock the dashboards,
+              modules, and agents relevant to your configuration.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <p className="text-sm text-gray-500">
+          Review complete. Initialization will provision all selected modules and agents.
+        </p>
+        <Button
+          size="lg"
+          className="px-8 py-6 text-base bg-blue-500 hover:bg-blue-600 text-white shadow-xl rounded-full transition-all"
+          onClick={() => router.push("/wizard/initializing")}
+        >
+          Finalize Deployment Blueprint & Initialize SAGE
+        </Button>
+      </div>
+    </motion.div>
+  );
+};
