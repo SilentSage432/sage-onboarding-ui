@@ -2,40 +2,52 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  Home,
+  Cpu,
+  Activity,
+  Network,
+  KeyRound,
+  Shield,
+  Settings,
+} from "lucide-react";
 
 const nav = [
-  { name: "Dashboard", href: "/console/dashboard" },
-  { name: "Agents", href: "/console/agents" },
-  { name: "Automations", href: "/console/automations" },
-  { name: "Monitoring", href: "/console/monitoring" },
-  { name: "Security", href: "/console/security" },
-  { name: "Settings", href: "/console/settings" },
+  { name: "Overview", icon: Home, href: "/console/dashboard" },
+  { name: "Modules", icon: Cpu, href: "/console/modules" },
+  { name: "Agents", icon: Activity, href: "/console/agents" },
+  { name: "Mesh Graph", icon: Network, href: "/console/mesh" },
+  { name: "Rho² Keyring", icon: KeyRound, href: "/console/rho2" },
+  { name: "Security", icon: Shield, href: "/console/security" },
+  { name: "Settings", icon: Settings, href: "/console/settings" },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-56 border-r border-white/10 bg-black/30 backdrop-blur-xl h-full p-4 flex flex-col">
-      <nav className="flex flex-col gap-2">
-        {nav.map((item) => {
-          const active = pathname === item.href || (item.href === "/console/dashboard" && pathname === "/console");
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`px-3 py-2 rounded-md text-sm transition ${
-                active
-                  ? "bg-white/10 text-white"
-                  : "text-white/50 hover:text-white hover:bg-white/5"
-              }`}
-            >
-              {item.name}
-            </Link>
-          );
-        })}
-      </nav>
+    <aside className="w-20 h-screen border-r border-neutral-800 bg-neutral-900/40 backdrop-blur-md flex flex-col py-6 space-y-6">
+      {nav.map((item) => {
+        const Icon = item.icon;
+        const active =
+          pathname === item.href ||
+          (item.href === "/console/dashboard" && pathname === "/console");
+
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={`flex flex-col items-center py-3 transition-colors ${
+              active ? "text-blue-400" : "text-gray-500 hover:text-gray-300"
+            }`}
+          >
+            <Icon className="h-6 w-6" />
+            <span className="text-[10px] mt-1">{item.name}</span>
+          </Link>
+        );
+      })}
     </aside>
   );
 }
+
 
