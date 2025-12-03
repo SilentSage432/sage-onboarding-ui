@@ -19,6 +19,9 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useOnboardingDataStore } from "@/app/wizard/store/useOnboardingDataStore";
 import { AGENT_DEPENDENCIES, getAgentLabel } from "@/app/wizard/config/agentDependencies";
+import { bundles } from "@/app/wizard/config/bundles";
+import BundleCard from "@/app/wizard/components/BundleCard";
+import BundlePreviewModal from "@/app/wizard/components/modals/BundlePreviewModal";
 
 export default function AgentMarketplaceStep() {
   const { watch, setValue } = useFormContext();
@@ -31,6 +34,7 @@ export default function AgentMarketplaceStep() {
 
   const [category, setCategory] = useState(AGENT_CATEGORIES[0].id);
   const [search, setSearch] = useState("");
+  const [previewBundle, setPreviewBundle] = useState<typeof bundles[0] | null>(null);
 
   // Get recommendations based on form data
   const recommended = useMemo(() => {
@@ -119,6 +123,15 @@ export default function AgentMarketplaceStep() {
     return getRecommendations(selected);
   }, [selected]);
 
+  // Apply bundle function
+  const applyBundle = (bundle: typeof bundles[0]) => {
+    bundle.agents.forEach((agentId) => {
+      if (!selected.includes(agentId)) {
+        toggleAgent(agentId);
+      }
+    });
+  };
+
   return (
     <div className="flex flex-col sage-stack-xl w-full">
       {/* Baseline Agents Section */}
@@ -168,6 +181,25 @@ export default function AgentMarketplaceStep() {
               Autonomous diagnostic and monitoring system for federation health and operational intelligence.
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* Divider */}
+      <div className="h-px bg-white/10 my-6" />
+
+      {/* Starter Bundles Section */}
+      <section className="sage-stack-lg">
+        <h2 className="sage-h2">✨ Starter Bundles</h2>
+        <p className="sage-sub">Choose a curated configuration to accelerate your SAGE setup.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {bundles.map((bundle) => (
+            <BundleCard 
+              key={bundle.id} 
+              bundle={bundle} 
+              onApply={applyBundle}
+              onPreview={(b) => setPreviewBundle(b)}
+            />
+          ))}
         </div>
       </section>
 
@@ -319,6 +351,18 @@ export default function AgentMarketplaceStep() {
           />
         )}
       </AnimatePresence>
+
+      {/* Bundle Preview Modal */}
+      {previewBundle && (
+        <BundlePreviewModal
+          bundle={previewBundle}
+          onApply={(b) => {
+            applyBundle(b);
+            setPreviewBundle(null);
+          }}
+          onClose={() => setPreviewBundle(null)}
+        />
+      )}
     </div>
   );
 }
