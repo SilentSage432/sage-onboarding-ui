@@ -40,10 +40,10 @@ export default function BundlePreviewModal({ bundle, onApply, onClose }: BundleP
 
         {/* Modal panel */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          initial={{ opacity: 0, scale: 0.97, y: 14 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          transition={{ duration: 0.3, ease: [0.18, 0.9, 0.3, 1] }}
+          exit={{ opacity: 0, scale: 0.97, y: 14 }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
           className={cn(
             "relative z-50 w-full max-w-3xl p-8 rounded-2xl",
             "bg-[#0b0f17]/70 border border-white/10 backdrop-blur-2xl",

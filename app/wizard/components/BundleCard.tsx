@@ -60,7 +60,7 @@ export default function BundleCard({ bundle, onApply, onPreview }: BundleCardPro
       {/* Apply button */}
       <div className="mt-6">
         <button
-          className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium backdrop-blur-sm transition-all shadow-[0_0_12px_rgba(147,51,234,0.4)] hover:shadow-[0_0_16px_rgba(147,51,234,0.6)]"
+          className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium backdrop-blur-sm transition-all shadow-[0_0_12px_rgba(147,51,234,0.4)] hover:shadow-[0_0_16px_rgba(147,51,234,0.6)] active:scale-95"
           onClick={(e) => {
             e.stopPropagation();
             onPreview(bundle);

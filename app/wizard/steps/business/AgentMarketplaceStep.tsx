@@ -22,10 +22,68 @@ import { AGENT_DEPENDENCIES, getAgentLabel } from "@/app/wizard/config/agentDepe
 import { bundles } from "@/app/wizard/config/bundles";
 import BundleCard from "@/app/wizard/components/BundleCard";
 import BundlePreviewModal from "@/app/wizard/components/modals/BundlePreviewModal";
+import Toast from "@/components/system/Toast";
+import EmptyState from "@/app/wizard/components/EmptyState";
+import ReviewRibbon from "@/app/wizard/components/ReviewRibbon";
+import { useWizardStore } from "@/app/wizard/store/useWizardStore";
+import { getEnterpriseSteps } from "@/app/wizard/steps";
+import { useRef } from "react";
+
+// Agent descriptions for contextual banner
+const AGENT_DETAILS: Record<string, { description: string }> = {
+  auto_inventory: {
+    description: "Automates inventory tracking, stock level monitoring, and reorder point management. Provides real-time visibility into inventory status and helps prevent stockouts or overstock situations."
+  },
+  auto_workflows: {
+    description: "Orchestrates complex business workflows, automating repetitive tasks and ensuring consistent process execution across your organization."
+  },
+  auto_reports: {
+    description: "Generates automated reports on schedule, consolidating data from multiple sources and delivering insights to stakeholders."
+  },
+  system_monitor: {
+    description: "Continuously monitors system health, performance metrics, and resource utilization to ensure optimal operation."
+  },
+  agent_perf: {
+    description: "Analyzes agent performance, identifies bottlenecks, and provides recommendations for optimization."
+  },
+  event_watcher: {
+    description: "Monitors event streams in real-time, detecting patterns and anomalies across your system."
+  },
+  rho2_guard: {
+    description: "Enforces Rho² security protocols, managing identity rotation, trust boundaries, and secure federation synchronization."
+  },
+  threat_detect: {
+    description: "Advanced threat detection system that identifies and responds to security threats in real-time."
+  },
+  audit_guard: {
+    description: "Comprehensive audit logging and compliance tracking for regulatory requirements and security standards."
+  },
+  predictive_ai: {
+    description: "Leverages machine learning to predict trends, forecast outcomes, and provide actionable insights."
+  },
+  behavior_ai: {
+    description: "Analyzes behavioral patterns to identify trends, anomalies, and optimization opportunities."
+  },
+  risk_ai: {
+    description: "AI-powered risk scoring engine that evaluates and quantifies risks across your organization."
+  },
+  insight_gen: {
+    description: "Generates actionable insights from data analysis, helping you make informed business decisions."
+  },
+  forecast_ai: {
+    description: "Advanced forecasting intelligence that predicts future trends and outcomes with high accuracy."
+  },
+  signal_ai: {
+    description: "Interprets complex signals and patterns from multiple data sources to provide strategic insights."
+  }
+};
 
 export default function AgentMarketplaceStep() {
   const { watch, setValue } = useFormContext();
   const { selectedAgent, clearSelectedAgent, setSelectedAgent } = useOnboardingDataStore();
+  const { setStepIndex } = useWizardStore();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [lastScroll, setLastScroll] = useState(0);
 
   const selected = watch("agents") || [];
   const organization = watch("organization") || {};
@@ -35,6 +93,8 @@ export default function AgentMarketplaceStep() {
   const [category, setCategory] = useState(AGENT_CATEGORIES[0].id);
   const [search, setSearch] = useState("");
   const [previewBundle, setPreviewBundle] = useState<typeof bundles[0] | null>(null);
+  const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({ message: "", isVisible: false });
+  const [hoverAgent, setHoverAgent] = useState<{ id: string; label: string; reason?: string } | null>(null);
 
   // Get recommendations based on form data
   const recommended = useMemo(() => {
@@ -130,10 +190,141 @@ export default function AgentMarketplaceStep() {
         toggleAgent(agentId);
       }
     });
+    setToast({ message: `${bundle.name} applied successfully`, isVisible: true });
+  };
+
+  // Handle review button click - navigate to final review step
+  const handleReviewClick = () => {
+    const steps = getEnterpriseSteps();
+    const reviewStepIndex = steps.findIndex(s => s.id === "business-summary");
+    if (reviewStepIndex !== -1) {
+      setStepIndex(reviewStepIndex);
+    }
+  };
+
+  // Save scroll position before opening modal
+  const handleOpenBundle = (bundle: typeof bundles[0]) => {
+    if (scrollRef.current) {
+      setLastScroll(scrollRef.current.scrollTop);
+    }
+    setPreviewBundle(bundle);
+    // Clear hover agent when opening bundle preview
+    setHoverAgent(null);
+  };
+
+  // Restore scroll position after closing modal
+  const handleCloseBundle = () => {
+    setPreviewBundle(null);
+    setTimeout(() => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = lastScroll;
+      }
+    }, 10);
+  };
+
+  // Smart category auto-focus - switches category filter when hovering agents
+  const scrollToCategory = (agentCategory: string) => {
+    if (!agentCategory) return;
+    
+    // Find matching category by label (e.g., "Automation", "Security") or ID
+    const matchingCategory = AGENT_CATEGORIES.find((c) => {
+      // Try exact match first
+      if (c.label === agentCategory || c.id === agentCategory) return true;
+      // Try case-insensitive match
+      if (c.label.toLowerCase() === agentCategory.toLowerCase() || 
+          c.id.toLowerCase() === agentCategory.toLowerCase()) return true;
+      return false;
+    });
+    
+    if (matchingCategory && matchingCategory.id !== category) {
+      setCategory(matchingCategory.id);
+    }
+  };
+
+  // Configuration health check
+  const getConfigHealth = () => {
+    // Check for missing required dependencies
+    for (const agentId of selected) {
+      const dependencies = AGENT_DEPENDENCIES[agentId];
+      if (dependencies?.required) {
+        for (const dep of dependencies.required) {
+          if (!selected.includes(dep)) {
+            return "missing";
+          }
+        }
+      }
+    }
+    return "stable";
+  };
+
+  // Get contextual description
+  const getContextualDescription = () => {
+    if (hoverAgent) {
+      const details = AGENT_DETAILS[hoverAgent.id];
+      if (details) {
+        return details.description;
+      }
+      if (hoverAgent.reason) {
+        return hoverAgent.reason;
+      }
+      return `${hoverAgent.label} provides specialized capabilities for your organization.`;
+    }
+    if (previewBundle) {
+      return `This bundle includes ${previewBundle.agents.length} agents configured for ${previewBundle.name.toLowerCase()}.`;
+    }
+    if (selectedAgent) {
+      const details = AGENT_DETAILS[selectedAgent.id];
+      if (details) {
+        return details.description;
+      }
+      if (selectedAgent.reason) {
+        return selectedAgent.reason;
+      }
+      return `${selectedAgent.label} provides specialized capabilities for your organization.`;
+    }
+    return "Hover over any agent to learn what it provides.";
   };
 
   return (
-    <div className="flex flex-col sage-stack-xl w-full">
+    <div ref={scrollRef} className="flex flex-col sage-stack-xl w-full relative">
+      {/* Progress Bar */}
+      <div className="fixed top-[68px] left-0 right-0 z-30 px-8 pointer-events-none">
+        <div className="h-1.5 bg-white/10 rounded-full overflow-hidden max-w-4xl mx-auto">
+          <div
+            className="h-full bg-purple-500 transition-all duration-300"
+            style={{
+              width: `${Math.min(selected.length * 12.5, 100)}%`
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Selected Agents Counter */}
+      <div className="absolute top-0 right-0 text-white/60 text-sm flex items-center gap-2">
+        <span className={cn(
+          selected.length > 0 && "sage-count-pop"
+        )}>
+          {selected.length}
+        </span>
+        <span>selected</span>
+      </div>
+
+      {/* Configuration Health Indicator */}
+      <div className="flex items-center gap-2 text-sm text-white/60 mb-3">
+        {getConfigHealth() === "stable" && (
+          <>
+            <span className="w-2.5 h-2.5 rounded-full bg-green-400" />
+            <span>Configuration Stable</span>
+          </>
+        )}
+        {getConfigHealth() === "missing" && (
+          <>
+            <span className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
+            <span>Some required agents are missing</span>
+          </>
+        )}
+      </div>
+
       {/* Baseline Agents Section */}
       <section className="sage-stack-lg">
         <h2 className="sage-h2">Baseline Federation Agents</h2>
@@ -197,7 +388,7 @@ export default function AgentMarketplaceStep() {
               key={bundle.id} 
               bundle={bundle} 
               onApply={applyBundle}
-              onPreview={(b) => setPreviewBundle(b)}
+              onPreview={handleOpenBundle}
             />
           ))}
         </div>
@@ -207,7 +398,7 @@ export default function AgentMarketplaceStep() {
       <div className="h-px bg-white/10 my-6" />
 
       {/* Smart Recommendations Section */}
-      {smartRecommendations.length > 0 && selected.length > 0 && (
+      {smartRecommendations.length > 0 && selected.length > 0 ? (
         <section className="sage-stack-lg">
           <h2 className="sage-h2 flex items-center gap-2">
             <span>✨</span>
@@ -222,10 +413,27 @@ export default function AgentMarketplaceStep() {
                 onClick={() => toggleAgent(recAgent.id)}
                 agent={recAgent}
                 recommended={true}
+                onMouseEnter={() => {
+                  setHoverAgent({ id: recAgent.id, label: recAgent.label, reason: recAgent.reason });
+                  scrollToCategory(recAgent.category || category);
+                }}
+                onMouseLeave={() => setHoverAgent(null)}
               />
             ))}
           </div>
         </section>
+      ) : (
+        smartRecommendations.length === 0 && selected.length > 0 && (
+          <section className="sage-stack-lg">
+            <h2 className="sage-h2">
+              Recommended for Your Organization
+            </h2>
+            <EmptyState 
+              label="No recommendations available. Select more agents to improve suggestions." 
+              icon="💡"
+            />
+          </section>
+        )
       )}
 
       {/* Add a clear divider + margin so the next block never feels overlapped */}
@@ -252,6 +460,11 @@ export default function AgentMarketplaceStep() {
                     isSelected && "sage-card-selected"
                   )}
                   onClick={() => setSelectedAgent(agent)}
+                  onMouseEnter={() => {
+                    setHoverAgent({ id: agent.id, label: agent.label, reason: agent.reason });
+                    scrollToCategory(agent.category || category);
+                  }}
+                  onMouseLeave={() => setHoverAgent(null)}
                 >
                   {/* Status cluster in top-right - pill + check icon */}
                   <div className="absolute top-3 right-3 flex items-center gap-2">
@@ -315,6 +528,14 @@ export default function AgentMarketplaceStep() {
         <h2 className="sage-h2">
           All Available Agents
         </h2>
+        
+        {/* Contextual Description Banner */}
+        <div className="rounded-xl bg-white/5 border border-white/10 backdrop-blur-md p-4 mb-6 h-[72px] flex items-center">
+          <p className="text-white/70 text-sm transition-opacity duration-200">
+            {getContextualDescription()}
+          </p>
+        </div>
+
         {/* Filters + Card Rail */}
         <div className="grid grid-cols-1 md:grid-cols-[260px,1fr] gap-6 items-start">
           {/* Left: filters/categories */}
@@ -328,16 +549,27 @@ export default function AgentMarketplaceStep() {
           </div>
           {/* Right: scrollable card grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredAgents.map((agent) => (
-              <AgentCard
-                key={agent.id}
-                label={agent.label}
-                selected={selected.includes(agent.id)}
-                onClick={() => toggleAgent(agent.id)}
-                agent={agent}
-                recommended={smartRecommendations.some((r) => r.id === agent.id)}
-              />
-            ))}
+            {filteredAgents.length > 0 ? (
+              filteredAgents.map((agent) => (
+                <AgentCard
+                  key={agent.id}
+                  label={agent.label}
+                  selected={selected.includes(agent.id)}
+                  onClick={() => toggleAgent(agent.id)}
+                  agent={agent}
+                  recommended={smartRecommendations.some((r) => r.id === agent.id)}
+                  onMouseEnter={() => {
+                    setHoverAgent({ id: agent.id, label: agent.label });
+                    // Agent is already in the current category filter, no need to switch
+                  }}
+                  onMouseLeave={() => setHoverAgent(null)}
+                />
+              ))
+            ) : (
+              <div className="col-span-full">
+                <EmptyState label="No agents match your current criteria." />
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -358,11 +590,24 @@ export default function AgentMarketplaceStep() {
           bundle={previewBundle}
           onApply={(b) => {
             applyBundle(b);
-            setPreviewBundle(null);
+            handleCloseBundle();
           }}
-          onClose={() => setPreviewBundle(null)}
+          onClose={handleCloseBundle}
         />
       )}
+
+      {/* Review Ribbon */}
+      <ReviewRibbon
+        count={selected.length}
+        onClick={handleReviewClick}
+      />
+
+      {/* Toast Notification */}
+      <Toast
+        message={toast.message}
+        isVisible={toast.isVisible}
+        onClose={() => setToast({ message: "", isVisible: false })}
+      />
     </div>
   );
 }
