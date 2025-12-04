@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useFormContext } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import { AGENT_DEPENDENCIES, getAgentLabel } from "@/app/wizard/config/agentDependencies";
 import { getRecommendations } from "@/app/wizard/engine/recommendations";
 
@@ -353,15 +354,16 @@ export default function AgentDetailPanel({ agent, onClose }: AgentDetailPanelPro
           })()}
 
           {/* Select / Deselect */}
-          <button
+          <Button
+            variant="primary"
             onClick={() => {
               toggleAgent();
               onClose();
             }}
-            className="mt-8 sage-btn sage-btn-primary w-full"
+            className="mt-8 w-full"
           >
             {isSelected ? "Remove Agent" : "Add Agent"}
-          </button>
+          </Button>
         </motion.div>
       </motion.div>
     </AnimatePresence>

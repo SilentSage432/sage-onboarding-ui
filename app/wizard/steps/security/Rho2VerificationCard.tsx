@@ -26,7 +26,7 @@ export function Rho2VerificationCard() {
   return (
     <Card className="bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl">
       <CardHeader>
-        <CardTitle className="text-xl flex items-center gap-2 text-white">
+        <CardTitle className="text-lg font-medium tracking-wide flex items-center gap-2 text-white">
           <ShieldCheck className="h-6 w-6 text-green-400" />
           Rho² Sovereign Security
         </CardTitle>

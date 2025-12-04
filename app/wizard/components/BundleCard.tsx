@@ -13,20 +13,18 @@ interface BundleCardProps {
     agents: string[];
   };
   onApply?: (bundle: any) => void;
-  onPreview: (bundle: any) => void;
 }
 
-export default function BundleCard({ bundle, onApply, onPreview }: BundleCardProps) {
+export default function BundleCard({ bundle, onApply }: BundleCardProps) {
   return (
     <div
       className={cn(
         "relative rounded-2xl p-6 bg-white/5 border border-white/10",
-        "backdrop-blur-md hover:bg-white/10 transition-all cursor-pointer",
+        "backdrop-blur-md hover:bg-white/10 transition-all",
         "shadow-[0_0_22px_rgba(120,80,255,0.25)]",
         "hover:shadow-[0_0_28px_rgba(120,80,255,0.35)]",
         "hover:border-white/20"
       )}
-      onClick={() => onPreview(bundle)}
     >
       {/* Premium / Recommended labels */}
       <div className="absolute top-4 right-4 flex gap-2">
@@ -61,10 +59,7 @@ export default function BundleCard({ bundle, onApply, onPreview }: BundleCardPro
       <div className="mt-6">
         <button
           className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium backdrop-blur-sm transition-all shadow-[0_0_12px_rgba(147,51,234,0.4)] hover:shadow-[0_0_16px_rgba(147,51,234,0.6)] active:scale-95"
-          onClick={(e) => {
-            e.stopPropagation();
-            onPreview(bundle);
-          }}
+          onClick={() => onApply?.(bundle)}
         >
           Apply Bundle
         </button>

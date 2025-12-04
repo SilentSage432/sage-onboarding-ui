@@ -43,6 +43,16 @@
 }
 
 :root {
+  /* SAGE OS Layer Normalization - Official Z-Index Scale */
+  --z-bg: 0;
+  --z-content: 10;
+  --z-sidebar: 30;
+  --z-topbar: 40;
+  --z-panels: 50;
+  --z-modals: 60;
+  --z-overlay: 70;
+  --z-hadra: 80;
+
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
@@ -124,6 +134,8 @@
 html, body {
   background-color: #000;
   color: white;
+  overscroll-behavior: none;
+  scroll-behavior: auto;
 }
 
 /* smooth animation */
@@ -604,6 +616,24 @@ p {
   background: transparent;
 }
 
+/* UX-C65 — Custom Scrollbar for Wizard Content */
+.custom-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+  border-radius: 10px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 /* UX-B41 — Agent Panel Scrollbar */
 .agent-panel-scroll::-webkit-scrollbar {
   width: 6px;
@@ -708,4 +738,160 @@ p {
   background: linear-gradient(to left, rgba(11, 15, 23, 1), transparent);
   pointer-events: none;
   z-index: 10;
+}
+
+/* UX-C64 — Wizard Transition System */
+@keyframes wizardFadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(8px); 
+    filter: blur(4px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+    filter: blur(0px); 
+  }
+}
+
+/* H-11 — HADRA Orb Intelligence Animations */
+@keyframes hadraAnalyze {
+  0% { box-shadow: 0 0 4px rgba(221, 102, 255, 0.2); }
+  50% { box-shadow: 0 0 12px rgba(221, 102, 255, 0.6); }
+  100% { box-shadow: 0 0 4px rgba(221, 102, 255, 0.2); }
+}
+
+.animate-hadra-analyze {
+  animation: hadraAnalyze 1.4s infinite ease-in-out;
+}
+
+@keyframes hadraInsight {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+.animate-hadra-insight {
+  animation: hadraInsight 1.8s infinite ease-in-out;
+}
+
+@keyframes hadraWarning {
+  0% { box-shadow: 0 0 4px rgba(234, 179, 8, 0.2); }
+  50% { box-shadow: 0 0 16px rgba(234, 179, 8, 0.7); }
+  100% { box-shadow: 0 0 4px rgba(234, 179, 8, 0.2); }
+}
+
+.animate-hadra-warning {
+  animation: hadraWarning 1.2s infinite;
+}
+
+@keyframes hadraCritical {
+  0% { transform: scale(1); box-shadow: 0 0 6px rgba(244, 63, 94, 0.3); }
+  50% { transform: scale(1.1); box-shadow: 0 0 24px rgba(244, 63, 94, 0.8); }
+  100% { transform: scale(1); box-shadow: 0 0 6px rgba(244, 63, 94, 0.3); }
+}
+
+.animate-hadra-critical {
+  animation: hadraCritical 1s infinite;
+}
+
+@keyframes hadraSoft {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { opacity: 0.8; }
+}
+
+.animate-hadra-soft {
+  animation: hadraSoft 2s infinite ease-in-out;
+}
+
+@keyframes hadraFocus {
+  0% { box-shadow: 0 0 6px rgba(180, 100, 255, 0.3); }
+  50% { box-shadow: 0 0 18px rgba(180, 100, 255, 0.8); }
+  100% { box-shadow: 0 0 6px rgba(180, 100, 255, 0.3); }
+}
+
+.animate-hadra-focus {
+  animation: hadraFocus 1.3s infinite;
+}
+
+/* H-12 — HADRA Micro-Gesture Animation System */
+@keyframes hadraBreath {
+  0% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-1.5px) scale(1.015); }
+  100% { transform: translateY(0px) scale(1); }
+}
+
+.animate-hadra-breath {
+  animation: hadraBreath 3.5s ease-in-out infinite;
+}
+
+@keyframes hadraFlare {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(1.25); }
+  100% { filter: brightness(1); }
+}
+
+.animate-hadra-flare {
+  animation: hadraFlare 2.2s ease-in-out infinite;
+}
+
+@keyframes hadraTension {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(0.8deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.animate-hadra-tension {
+  animation: hadraTension 1.8s ease-in-out infinite;
+}
+
+@keyframes hadraStutter {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-1px); }
+  100% { transform: translateX(0); }
+}
+
+.animate-hadra-stutter {
+  animation: hadraStutter 0.8s ease-in-out infinite;
+}
+
+@keyframes hadraHoverLift {
+  0% { transform: translateY(0px) scale(1); }
+  100% { transform: translateY(-2px) scale(1.05); }
+}
+
+.animate-hadra-hoverlift:hover {
+  animation: hadraHoverLift 0.25s ease-out forwards;
+}
+
+/* UX-C64C — Sovereign OS Background System */
+@keyframes pulse-slow {
+  0% { opacity: 0.04; }
+  50% { opacity: 0.09; }
+  100% { opacity: 0.04; }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 5s ease-in-out infinite;
+}
+
+/* UX-C64f — OS Layout Safety Net */
+/* Prevent layout drift around the OS grid */
+.os-root,
+.os-container,
+.os-layout {
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box;
+}
+
+/* Ensure Canvas doesn't resize based on children */
+.os-background-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
 }

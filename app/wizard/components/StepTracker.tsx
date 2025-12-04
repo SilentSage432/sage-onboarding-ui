@@ -23,14 +23,14 @@ export default function StepTracker() {
   }
 
   return (
-    <div className="w-full flex items-center justify-center mb-8">
+    <div className="w-full flex items-center justify-center mt-8 mb-6">
       <div className="relative flex items-center gap-3">
         {/* Connecting line background */}
         <div className="absolute left-0 right-0 h-0.5 bg-white/10 -z-10" />
         {/* Progress line */}
         {totalSteps > 1 && (
           <motion.div
-            className="absolute left-0 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 -z-10"
+            className="absolute left-0 h-0.5 bg-gradient-to-r from-blue-400 to-blue-500 -z-10"
             initial={{ width: 0 }}
             animate={{
               width: `${Math.min(((currentStepPosition - 1) / (totalSteps - 1)) * 100, 100)}%`,
@@ -60,7 +60,7 @@ export default function StepTracker() {
               {/* Outer glow ring for active step */}
               {isActive && (
                 <motion.div
-                  className="absolute inset-0 rounded-full bg-cyan-400/30 blur-md -z-10"
+                  className="absolute inset-0 rounded-full bg-blue-400/30 blur-md -z-10"
                   animate={{
                     scale: [1, 1.3, 1],
                     opacity: [0.5, 0.8, 0.5],
@@ -80,10 +80,10 @@ export default function StepTracker() {
                   transition-all duration-300
                   ${
                     isActive
-                      ? "bg-cyan-400 shadow-[0_0_12px_#22d3ee]"
+                      ? "bg-blue-400 shadow-[0_0_10px_rgba(96,165,250,0.6)]"
                       : isCompleted
-                      ? "bg-cyan-600/60"
-                      : "bg-gray-600/40"
+                      ? "bg-blue-500/60"
+                      : "bg-gray-700/40"
                   }
                 `}
               />
@@ -91,7 +91,7 @@ export default function StepTracker() {
               {/* Pulse effect for active step */}
               {isActive && (
                 <motion.div
-                  className="absolute inset-0 rounded-full bg-cyan-400"
+                  className="absolute inset-0 rounded-full bg-blue-400"
                   animate={{
                     scale: [1, 1.5, 1],
                     opacity: [0.6, 0, 0.6],

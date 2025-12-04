@@ -1,0 +1,12 @@
+# HADRA Audio Files
+# Place audio files here:
+# - insight.mp3
+# - warning.mp3
+# - critical.mp3
+# - hover.wav
+# - open.wav
+# - close.wav
+# 
+# Audio is optional and disabled until files are added.
+# The system will silently fail if files don't exist.
+

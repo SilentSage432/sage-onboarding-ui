@@ -56,7 +56,7 @@ export default function OperationalPriorities() {
       title="Operational Priorities"
       description="Define what SAGE should optimize and focus on for your organization."
     >
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 gap-4 w-full">
         {priorities.map((p) => (
           <motion.button
             key={p.id}
@@ -66,12 +66,12 @@ export default function OperationalPriorities() {
               ${
                 operationalPriorities.includes(p.id)
                   ? "bg-purple-600/20 border-purple-500 text-white"
-                  : "bg-white/5 border-white/10 text-gray-300 hover:bg-white/10"
+                  : "bg-white/5 border-white/10 text-gray-200 hover:bg-white/10"
               }
             `}
             whileTap={{ scale: 0.97 }}
           >
-            <div className="text-lg font-semibold">{p.label}</div>
+            <div className="text-lg font-medium">{p.label}</div>
             <div className="text-sm text-gray-400 mt-1">{p.desc}</div>
           </motion.button>
         ))}

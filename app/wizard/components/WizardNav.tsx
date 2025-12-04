@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export function WizardNav({
@@ -18,36 +19,40 @@ export function WizardNav({
   nextLabel?: string;
 }) {
   return (
-    <div className="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0 px-6 md:px-10 py-6 border-t border-white/5">
+    <div className="flex justify-between items-center mt-10 gap-4">
       {/* Left side: Previous or Restart */}
       <div className="flex gap-3">
         {canBack && onBack && (
-          <button
+          <Button
+            variant="secondary"
             onClick={onBack}
-            className="sage-btn sage-btn-ghost"
           >
             ← Previous
-          </button>
+          </Button>
         )}
         {showRestart && onRestart && (
-          <button
+          <Button
+            variant="ghost"
             onClick={onRestart}
-            className="sage-btn sage-btn-ghost"
           >
             Restart
-          </button>
+          </Button>
         )}
         {!canBack && !showRestart && <div />}
       </div>
 
       {/* Right side: Next */}
       {onNext && nextLabel && (
-        <button
+        <Button
+          variant="primary"
           onClick={onNext}
-          className="sage-btn sage-btn-primary"
+          className="group"
         >
-          {nextLabel} →
-        </button>
+          {nextLabel}{" "}
+          <span className="transition-transform group-hover:translate-x-[3px] inline-block">
+            →
+          </span>
+        </Button>
       )}
     </div>
   );

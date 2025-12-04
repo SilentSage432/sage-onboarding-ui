@@ -72,10 +72,10 @@ export const BusinessSummaryStep = () => {
         {/* Column 1 — Org + Security + Modules + Agents */}
         <div className="bg-[#0E0F15] rounded-2xl p-5 border border-white/10 shadow-lg sage-stack-xl">
           <div>
-            <h3 className="sage-h3 text-white mt-2 mb-3">
+            <h3 className="text-white text-lg font-medium tracking-wide mb-2">
               Organization Overview
             </h3>
-            <div className="sage-stack text-gray-300 text-sm">
+            <div className="sage-stack text-gray-400 text-sm leading-relaxed">
               <p>
                 <span className="text-gray-500">Name:</span>{" "}
                 {orgName || "—"}
@@ -92,10 +92,10 @@ export const BusinessSummaryStep = () => {
           </div>
 
           <div className="border-t border-white/10 pt-4">
-            <h3 className="sage-h3 text-white mt-2 mb-3">
+            <h3 className="text-white text-lg font-medium tracking-wide mb-2">
               Security Posture
             </h3>
-            <p className="text-gray-300 text-sm">
+            <p className="text-gray-400 text-sm leading-relaxed">
               {securityPosture || "Balanced"}
             </p>
             <p className="mt-2 text-xs text-emerald-400 font-medium">
@@ -104,10 +104,10 @@ export const BusinessSummaryStep = () => {
           </div>
 
           <div className="border-t border-white/10 pt-4">
-            <h3 className="sage-h3 text-white mt-2 mb-3">
+            <h3 className="text-white text-lg font-medium tracking-wide mb-2">
               Modules Selected
             </h3>
-            <ul className="sage-stack text-gray-300 text-sm">
+            <ul className="sage-stack text-gray-400 text-sm leading-relaxed">
               {modules.length > 0 ? (
                 modules.map((m) => <li key={m}>• {m}</li>)
               ) : (
@@ -117,10 +117,10 @@ export const BusinessSummaryStep = () => {
           </div>
 
           <div className="border-t border-white/10 pt-4">
-            <h3 className="sage-h3 text-white mt-2 mb-3">
+            <h3 className="text-white text-lg font-medium tracking-wide mb-2">
               Agents Selected
             </h3>
-            <ul className="sage-stack text-gray-300 text-sm">
+            <ul className="sage-stack text-gray-400 text-sm leading-relaxed">
               {agents.length > 0 ? (
                 agents.map((a) => <li key={a}>• {a}</li>)
               ) : (
@@ -132,10 +132,10 @@ export const BusinessSummaryStep = () => {
 
         {/* Column 2 — Infrastructure Preview */}
         <div className="bg-[#0E0F15] rounded-2xl p-5 border border-white/10 shadow-lg">
-          <h3 className="sage-h3 text-white mt-2 mb-3">
+          <h3 className="text-white text-lg font-medium tracking-wide mb-2">
             Infrastructure Readiness
           </h3>
-          <ul className="sage-stack-lg text-gray-300 text-sm leading-relaxed">
+          <ul className="sage-stack-lg text-gray-400 text-sm leading-relaxed">
             <li>• Federation identity keypair generation</li>
             <li>• Rho² shard vault registration</li>
             <li>• Agent sandbox initialization</li>
@@ -145,14 +145,14 @@ export const BusinessSummaryStep = () => {
             <li>• Private memory graph schema</li>
             <li>• Role-based access matrix</li>
           </ul>
-          <p className="text-xs text-gray-500 mt-6">
+          <p className="text-xs text-gray-500 mt-8">
             These systems will activate automatically during initialization.
           </p>
         </div>
 
         {/* Column 3 — Completion Status */}
         <div className="bg-[#0E0F15] rounded-2xl p-5 border border-white/10 shadow-lg">
-          <h3 className="sage-h3 text-white mt-2 mb-3">
+          <h3 className="text-white text-lg font-medium tracking-wide mb-2">
             Deployment Status
           </h3>
           <div className="sage-stack-lg text-sm">
@@ -184,16 +184,19 @@ export const BusinessSummaryStep = () => {
         </div>
       </div>
 
-      <div className="mt-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <p className="text-sm text-gray-500">
           Review complete. Initialization will provision all selected modules and agents.
         </p>
         <Button
-          size="lg"
-          className="px-8 py-6 text-base bg-blue-500 hover:bg-blue-600 text-white shadow-xl rounded-full transition-all"
+          variant="primary"
+          className="px-8 py-6 text-base rounded-full group"
           onClick={() => router.push("/wizard/initializing")}
         >
-          Finalize Deployment Blueprint & Initialize SAGE
+          Finalize Deployment Blueprint & Initialize SAGE{" "}
+          <span className="transition-transform group-hover:translate-x-[3px] inline-block">
+            →
+          </span>
         </Button>
       </div>
     </motion.div>

@@ -9,11 +9,11 @@ export default function StepHeader({
 }) {
   return (
     <div className="sage-stack">
-      <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-white">
+      <h1 className="text-2xl font-semibold tracking-wide text-white">
         {title}
       </h1>
       {subtitle && (
-        <p className="text-sm md:text-base text-white/60 leading-relaxed">
+        <p className="text-sm text-gray-400 leading-relaxed max-w-3xl">
           {subtitle}
         </p>
       )}

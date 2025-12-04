@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { KeyRound, RefreshCw } from "lucide-react";
 
 const mockKeyset = {
@@ -12,7 +13,14 @@ const mockKeyset = {
 
 export default function Rho2Panel() {
   return (
-    <div className="p-6 space-y-6">
+    <motion.div
+      whileHover={{
+        boxShadow: "0px 0px 35px rgba(150, 100, 255, 0.25)",
+        scale: 1.01,
+      }}
+      transition={{ duration: 0.25 }}
+      className="relative z-10 backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-6 space-y-6"
+    >
       <h1 className="text-2xl text-white font-bold">Rho² Keyring</h1>
 
       <div className="bg-white/5 p-4 rounded-xl border border-white/10 space-y-3">
@@ -33,6 +41,6 @@ export default function Rho2Panel() {
           Rotate Keyset
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }

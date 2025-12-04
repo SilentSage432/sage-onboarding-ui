@@ -13,6 +13,7 @@ export default function AgentCard({
   description,
   agent,
   recommended,
+  recentlyApplied,
   onMouseEnter,
   onMouseLeave,
 }: {
@@ -23,6 +24,7 @@ export default function AgentCard({
   description?: string;
   agent?: any;
   recommended?: boolean;
+  recentlyApplied?: number | null;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
 }) {
@@ -54,6 +56,9 @@ export default function AgentCard({
     }
   };
 
+  // Check if this agent was recently applied (within 800ms)
+  const isRecentlyApplied = recentlyApplied && Date.now() - recentlyApplied < 800 && selected;
+
   return (
     <button
       type="button"
@@ -65,7 +70,8 @@ export default function AgentCard({
         // extra room for badge in top-right
         "pt-7 pr-10 pb-5 pl-5",
         "transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(150,120,255,0.35)] hover:bg-white/10",
-        selected && "sage-card-selected"
+        selected && "sage-card-selected",
+        isRecentlyApplied && "ring-2 ring-purple-400/60 shadow-[0_0_20px_rgba(168,85,247,0.4)]"
       )}
     >
       {/* Selection ripple animation */}

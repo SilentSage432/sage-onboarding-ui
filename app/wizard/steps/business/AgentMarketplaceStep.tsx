@@ -21,7 +21,6 @@ import { useOnboardingDataStore } from "@/app/wizard/store/useOnboardingDataStor
 import { AGENT_DEPENDENCIES, getAgentLabel } from "@/app/wizard/config/agentDependencies";
 import { bundles } from "@/app/wizard/config/bundles";
 import BundleCard from "@/app/wizard/components/BundleCard";
-import BundlePreviewModal from "@/app/wizard/components/modals/BundlePreviewModal";
 import Toast from "@/components/system/Toast";
 import EmptyState from "@/app/wizard/components/EmptyState";
 import ReviewRibbon from "@/app/wizard/components/ReviewRibbon";
@@ -83,7 +82,6 @@ export default function AgentMarketplaceStep() {
   const { selectedAgent, clearSelectedAgent, setSelectedAgent } = useOnboardingDataStore();
   const { setStepIndex } = useWizardStore();
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [lastScroll, setLastScroll] = useState(0);
 
   const selected = watch("agents") || [];
   const organization = watch("organization") || {};
@@ -92,9 +90,9 @@ export default function AgentMarketplaceStep() {
 
   const [category, setCategory] = useState(AGENT_CATEGORIES[0].id);
   const [search, setSearch] = useState("");
-  const [previewBundle, setPreviewBundle] = useState<typeof bundles[0] | null>(null);
   const [toast, setToast] = useState<{ message: string; isVisible: boolean }>({ message: "", isVisible: false });
   const [hoverAgent, setHoverAgent] = useState<{ id: string; label: string; reason?: string } | null>(null);
+  const [recentlyApplied, setRecentlyApplied] = useState<number | null>(null);
 
   // Get operational priorities from store
   const { operationalPriorities } = useOnboardingDataStore();
@@ -187,14 +185,23 @@ export default function AgentMarketplaceStep() {
     return getRecommendations(selected);
   }, [selected]);
 
-  // Apply bundle function
+  // Apply bundle function - instant action with toast
   const applyBundle = (bundle: typeof bundles[0]) => {
+    // Add recommended agents directly
     bundle.agents.forEach((agentId) => {
       if (!selected.includes(agentId)) {
         toggleAgent(agentId);
       }
     });
-    setToast({ message: `${bundle.name} applied successfully`, isVisible: true });
+    
+    // Show enterprise-grade confirmation
+    setToast({ 
+      message: `Bundle applied — ${bundle.agents.length} agent${bundle.agents.length !== 1 ? 's' : ''} added.`, 
+      isVisible: true 
+    });
+    
+    // Trigger highlight animation on selected agents
+    setRecentlyApplied(Date.now());
   };
 
   // Handle review button click - navigate to final review step
@@ -206,25 +213,6 @@ export default function AgentMarketplaceStep() {
     }
   };
 
-  // Save scroll position before opening modal
-  const handleOpenBundle = (bundle: typeof bundles[0]) => {
-    if (scrollRef.current) {
-      setLastScroll(scrollRef.current.scrollTop);
-    }
-    setPreviewBundle(bundle);
-    // Clear hover agent when opening bundle preview
-    setHoverAgent(null);
-  };
-
-  // Restore scroll position after closing modal
-  const handleCloseBundle = () => {
-    setPreviewBundle(null);
-    setTimeout(() => {
-      if (scrollRef.current) {
-        scrollRef.current.scrollTop = lastScroll;
-      }
-    }, 10);
-  };
 
   // Smart category auto-focus - switches category filter when hovering agents
   const scrollToCategory = (agentCategory: string) => {
@@ -273,9 +261,6 @@ export default function AgentMarketplaceStep() {
       }
       return `${hoverAgent.label} provides specialized capabilities for your organization.`;
     }
-    if (previewBundle) {
-      return `This bundle includes ${previewBundle.agents.length} agents configured for ${previewBundle.name.toLowerCase()}.`;
-    }
     if (selectedAgent) {
       const details = AGENT_DETAILS[selectedAgent.id];
       if (details) {
@@ -290,7 +275,7 @@ export default function AgentMarketplaceStep() {
   };
 
   return (
-    <div ref={scrollRef} className="flex flex-col sage-stack-xl w-full relative">
+    <div ref={scrollRef} className="flex flex-col w-full mt-8 space-y-8 relative">
       {/* Progress Bar */}
       <div className="fixed top-[68px] left-0 right-0 z-30 px-8 pointer-events-none">
         <div className="h-1.5 bg-white/10 rounded-full overflow-hidden max-w-4xl mx-auto">
@@ -331,11 +316,15 @@ export default function AgentMarketplaceStep() {
 
       {/* Baseline Agents Section */}
       <section className="sage-stack-lg">
-        <h2 className="sage-h2">Baseline Federation Agents</h2>
-        <p className="sage-sub">
-          These core agents are automatically provisioned for every SAGE Federation member to
-          enforce security, diagnostics, and federation integrity.
-        </p>
+        <div className="relative pt-6">
+          <div className="mt-10 mb-4">
+            <h2 className="text-xl font-semibold tracking-wide text-white/90">Baseline Federation Agents</h2>
+          </div>
+          <p className="text-gray-400 text-sm leading-relaxed max-w-3xl">
+            These core agents are automatically provisioned for every SAGE Federation member to
+            enforce security, diagnostics, and federation integrity.
+          </p>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Rho² Card */}
           <div className="relative rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-xl pt-7 pr-10 pb-5 pl-5">
@@ -384,15 +373,14 @@ export default function AgentMarketplaceStep() {
 
       {/* Starter Bundles Section */}
       <section className="sage-stack-lg">
-        <h2 className="sage-h2">✨ Starter Bundles</h2>
-        <p className="sage-sub">Choose a curated configuration to accelerate your SAGE setup.</p>
+        <h2 className="text-white text-lg font-medium tracking-wide mb-2">✨ Starter Bundles</h2>
+        <p className="text-gray-400 text-sm leading-relaxed max-w-3xl">Choose a curated configuration to accelerate your SAGE setup.</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {bundles.map((bundle) => (
             <BundleCard 
               key={bundle.id} 
               bundle={bundle} 
               onApply={applyBundle}
-              onPreview={handleOpenBundle}
             />
           ))}
         </div>
@@ -404,32 +392,33 @@ export default function AgentMarketplaceStep() {
       {/* Smart Recommendations Section */}
       {smartRecommendations.length > 0 && selected.length > 0 ? (
         <section className="sage-stack-lg">
-          <h2 className="sage-h2 flex items-center gap-2">
+            <h2 className="text-white text-lg font-medium tracking-wide mb-2 flex items-center gap-2">
             <span>✨</span>
             <span>Recommended for You</span>
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {smartRecommendations.map((recAgent) => (
-              <AgentCard
-                key={recAgent.id}
-                label={recAgent.label}
-                selected={selected.includes(recAgent.id)}
-                onClick={() => toggleAgent(recAgent.id)}
-                agent={recAgent}
-                recommended={true}
-                onMouseEnter={() => {
-                  setHoverAgent({ id: recAgent.id, label: recAgent.label, reason: recAgent.reason });
-                  scrollToCategory(recAgent.category || category);
-                }}
-                onMouseLeave={() => setHoverAgent(null)}
-              />
+                <AgentCard
+                  key={recAgent.id}
+                  label={recAgent.label}
+                  selected={selected.includes(recAgent.id)}
+                  onClick={() => toggleAgent(recAgent.id)}
+                  agent={recAgent}
+                  recommended={true}
+                  recentlyApplied={recentlyApplied}
+                  onMouseEnter={() => {
+                    setHoverAgent({ id: recAgent.id, label: recAgent.label, reason: recAgent.reason });
+                    scrollToCategory(recAgent.category || category);
+                  }}
+                  onMouseLeave={() => setHoverAgent(null)}
+                />
             ))}
           </div>
         </section>
       ) : (
         smartRecommendations.length === 0 && selected.length > 0 && (
           <section className="sage-stack-lg">
-            <h2 className="sage-h2">
+            <h2 className="text-white text-lg font-medium tracking-wide mb-2">
               Recommended for Your Organization
             </h2>
             <EmptyState 
@@ -448,7 +437,7 @@ export default function AgentMarketplaceStep() {
       {/* Recommended Agents Section (Context-based) */}
       {recommended.length > 0 && (
         <section className="sage-stack-lg">
-          <h2 className="sage-h2">
+          <h2 className="text-white text-lg font-medium tracking-wide mb-2">
             Recommended for Your Organization
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -496,7 +485,7 @@ export default function AgentMarketplaceStep() {
 
                   <div className="flex flex-col gap-3">
                     <div>
-                      <h4 className="sage-h3 text-white mb-1 flex items-center gap-2">
+                      <h4 className="text-white text-lg font-medium tracking-wide mb-1 flex items-center gap-2">
                         <span>⚡</span>
                         {agent.label}
                       </h4>
@@ -529,7 +518,7 @@ export default function AgentMarketplaceStep() {
 
       {/* All Available Agents Section */}
       <section className="sage-stack-lg">
-        <h2 className="sage-h2">
+        <h2 className="text-white text-lg font-medium tracking-wide mb-2">
           All Available Agents
         </h2>
         
@@ -562,6 +551,7 @@ export default function AgentMarketplaceStep() {
                   onClick={() => toggleAgent(agent.id)}
                   agent={agent}
                   recommended={smartRecommendations.some((r) => r.id === agent.id)}
+                  recentlyApplied={recentlyApplied}
                   onMouseEnter={() => {
                     setHoverAgent({ id: agent.id, label: agent.label });
                     // Agent is already in the current category filter, no need to switch
@@ -587,18 +577,6 @@ export default function AgentMarketplaceStep() {
           />
         )}
       </AnimatePresence>
-
-      {/* Bundle Preview Modal */}
-      {previewBundle && (
-        <BundlePreviewModal
-          bundle={previewBundle}
-          onApply={(b) => {
-            applyBundle(b);
-            handleCloseBundle();
-          }}
-          onClose={handleCloseBundle}
-        />
-      )}
 
       {/* Review Ribbon */}
       <ReviewRibbon

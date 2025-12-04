@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Brain, Shield, Wrench, Search } from "lucide-react";
 import AgentDetailPanel from "@/components/console/panels/AgentDetailPanel";
 
@@ -59,10 +60,15 @@ export default function AgentsPanel() {
         {filtered.map((agent) => {
           const Icon = agent.icon;
           return (
-            <div
+            <motion.div
               key={agent.id}
               onClick={() => setSelectedAgent(agent)}
-              className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition cursor-pointer"
+              whileHover={{
+                boxShadow: "0px 0px 35px rgba(150, 100, 255, 0.25)",
+                scale: 1.01,
+              }}
+              transition={{ duration: 0.25 }}
+              className="relative z-10 backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition cursor-pointer"
             >
               <div className="flex items-center gap-3">
                 <Icon className="h-6 w-6 text-blue-400" />
@@ -82,7 +88,7 @@ export default function AgentsPanel() {
               >
                 {agent.status}
               </span>
-            </div>
+            </motion.div>
           );
         })}
       </div>

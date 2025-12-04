@@ -14,8 +14,8 @@ export default function WizardCard({ title, description, children }: WizardCardP
   return (
     <motion.div
       className="sage-card relative rounded-2xl overflow-hidden
-                 bg-white/[0.04] border border-white/10
-                 backdrop-blur-xl shadow-[0_0_40px_rgb(0,0,0,0.35)]
+                 bg-white/[0.02] border border-white/5
+                 backdrop-blur-xl shadow-lg
                  before:absolute before:inset-0
                  before:rounded-2xl 
                  before:bg-gradient-to-br before:from-white/[0.06] before:to-transparent
@@ -29,7 +29,7 @@ export default function WizardCard({ title, description, children }: WizardCardP
                       bg-gradient-to-b from-purple-300/10 to-transparent blur-3xl pointer-events-none" />
       
       {/* SCROLLABLE CONTENT */}
-      <div className="relative z-10 max-h-[70vh] md:max-h-[72vh] lg:max-h-[75vh] overflow-y-auto px-6 md:px-10 py-8 md:py-12 sage-stack-lg sage-scroll">
+      <div className="relative z-10 max-h-[70vh] md:max-h-[72vh] lg:max-h-[75vh] overflow-y-auto px-8 md:px-10 py-8 md:py-12 sage-stack-lg sage-scroll">
         {title && (
           <motion.div
             initial={{ opacity: 0, y: -4 }}

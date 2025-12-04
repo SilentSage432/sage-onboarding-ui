@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useFormContext } from "react-hook-form";
+import { useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -109,6 +110,11 @@ export default function WizardShell() {
   const stepKey = `step-${safeIndex}-enterprise`;
   const isBusiness = true; // Enterprise mode is always business
 
+  // Reset scroll position on step change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [currentStepId]);
+
   // Render FinalSetup with full-screen layout
   if (isFinalStep && step?.Component) {
     const FinalSetupComponent = step.Component;
@@ -204,9 +210,9 @@ export default function WizardShell() {
                     </motion.div>
                   )}
                 </CardHeader>
-                <CardContent className="px-8 py-10 max-h-[60vh] overflow-y-auto sage-scroll">
+                <CardContent className="px-8 py-10">
                   <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-10">
-                    <div className="flex flex-row items-stretch justify-center gap-10 w-full relative min-h-[400px]">
+                    <div className="flex flex-row items-stretch justify-center gap-10 w-full relative">
                       {step && step.Component ? (
                         <TransitionWrapper step={currentStepId}>
                           <step.Component />

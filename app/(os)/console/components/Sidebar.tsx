@@ -1,25 +1,43 @@
 "use client";
 
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home } from "lucide-react";
 import { moduleRegistry } from "@/lib/console/moduleRegistry";
 import { cn } from "@/lib/utils";
 
-const nav = [
-  { name: "Overview", icon: Home, href: "/console/dashboard" },
-  ...moduleRegistry.map((mod) => ({
-    name: mod.name,
-    icon: mod.icon,
-    href: `/console/${mod.slug}`,
-  })),
-];
-
 export default function Sidebar() {
   const pathname = usePathname();
 
+  // Build nav array inside component to ensure fresh references
+  const nav = [
+    { name: "Overview", icon: Home, href: "/console/dashboard", id: "overview" },
+    ...moduleRegistry.map((mod) => ({
+      name: mod.name,
+      icon: mod.icon,
+      href: `/console/${mod.slug}`,
+      id: mod.slug,
+    })),
+  ];
+
   return (
-    <aside className="w-20 h-screen bg-[#080b11] border-r border-white/5 flex flex-col py-6 gap-6">
+    <motion.aside
+      layout
+      transition={{ duration: 0.35, ease: "easeOut" }}
+      className="
+        fixed left-0 top-0
+        h-screen w-20
+        flex flex-col items-center
+        gap-6
+        bg-[#080b11]/90 backdrop-blur-xl
+        border-r border-white/5
+        z-[var(--z-sidebar)]
+        py-6
+        m-0
+      "
+      style={{ paddingTop: "56px" }}
+    >
       {nav.map((item) => {
         const Icon = item.icon;
         const active =
@@ -28,7 +46,7 @@ export default function Sidebar() {
 
         return (
           <Link
-            key={item.href}
+            key={item.id || item.href}
             href={item.href}
             className={cn(
               "group relative flex flex-col items-center gap-1 py-3 transition-all duration-200",
@@ -56,7 +74,7 @@ export default function Sidebar() {
           </Link>
         );
       })}
-    </aside>
+    </motion.aside>
   );
 }
 

@@ -3,6 +3,12 @@
 import { useRef, useEffect, useState } from "react";
 
 function getPrefix(text: string) {
+  if (text.includes("HADRA")) return "🜁";
+  if (text.includes("AIDR")) return "◇";
+  if (text.includes("Warning")) return "⚠️";
+  if (text.includes("Notice")) return "ℹ️";
+  if (text.includes("Resolved") || text.includes("normalized") || text.includes("successful")) return "✔️";
+  if (text.includes("variance") || text.includes("recalibrating")) return "🌀";
   if (text.includes("Rho²") || text.includes("sovereign")) return "🜁";
   if (text.includes("workspace") || text.includes("Console")) return "🖥️";
   if (text.includes("mapping")) return "🗺️";
@@ -32,6 +38,11 @@ function AnimatedLine({ text }: { text: string }) {
   }, [text]);
 
   const getTextColor = () => {
+    if (text.includes("HADRA") || text.includes("AIDR")) return "text-purple-200";
+    if (text.includes("Warning")) return "text-yellow-400";
+    if (text.includes("Notice")) return "text-blue-300";
+    if (text.includes("Resolved") || text.includes("normalized")) return "text-green-400";
+    if (text.includes("variance")) return "text-purple-300";
     if (text.includes("Rho²")) return "text-purple-300";
     if (text.includes("rotation")) return "text-blue-300";
     if (text.includes("sovereign") || text.includes("cryptographic")) return "text-purple-200";
@@ -39,10 +50,7 @@ function AnimatedLine({ text }: { text: string }) {
   };
 
   return (
-    <div className="mb-1 flex gap-2">
-      <span className="text-purple-300">{getPrefix(text)}</span>
-      <span className={getTextColor()}>{display}</span>
-    </div>
+    <span className={getTextColor()}>{display}</span>
   );
 }
 
@@ -54,9 +62,12 @@ export default function LogStream({ logs }: { logs: string[] }) {
   }, [logs]);
 
   return (
-    <div className="p-4 overflow-y-auto h-[calc(80vh-60px)] font-mono text-sm text-white/80 space-y-1">
+    <div className="h-[420px] overflow-y-auto pr-2 space-y-2 font-mono text-[14px] leading-relaxed text-white/80">
       {logs.map((line, i) => (
-        <AnimatedLine key={i} text={line} />
+        <div key={i} className="flex items-start gap-2">
+          <span className="text-purple-400">➤</span>
+          <AnimatedLine text={line} />
+        </div>
       ))}
       <div ref={logEndRef} />
     </div>

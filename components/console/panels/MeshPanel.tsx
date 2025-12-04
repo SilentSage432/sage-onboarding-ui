@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 
 export default function MeshPanel() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -18,7 +19,14 @@ export default function MeshPanel() {
   }, []);
 
   return (
-    <div className="p-6">
+    <motion.div
+      whileHover={{
+        boxShadow: "0px 0px 35px rgba(150, 100, 255, 0.25)",
+        scale: 1.01,
+      }}
+      transition={{ duration: 0.25 }}
+      className="relative z-10 backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-6"
+    >
       <h1 className="text-2xl font-bold text-white mb-4">Neural Mesh Graph</h1>
       <p className="text-gray-400 mb-4">
         Visualizing agent clusters and communication pathways.
@@ -27,6 +35,6 @@ export default function MeshPanel() {
         ref={canvasRef}
         className="w-full h-[500px] bg-black/40 rounded-xl border border-white/10"
       />
-    </div>
+    </motion.div>
   );
 }
