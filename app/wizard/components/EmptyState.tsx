@@ -14,3 +14,4 @@ export default function EmptyState({ label, icon }: EmptyStateProps) {
   );
 }
 
+

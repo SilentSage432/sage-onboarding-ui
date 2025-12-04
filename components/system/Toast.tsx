@@ -38,3 +38,4 @@ export default function Toast({ message, isVisible, onClose }: ToastProps) {
   );
 }
 
+
