@@ -22,6 +22,7 @@ import { useHadraMemory } from "@/components/hadra/useHadraMemory";
 import { usePatternInsights } from "@/components/hadra/usePatternInsights";
 import { useContextualInsight } from "@/components/hadra/useContextualInsight";
 import { OrbStatus } from "@/lib/hadra/orbPulse";
+import { useObservationBridge } from "@/lib/console/useObservationBridge";
 // Auto-start HADRA mock engine
 import "@/components/hadra/hadraMockEngine";
 
@@ -33,6 +34,10 @@ export default function ConsoleLayout({ children }: { children: React.ReactNode 
   const events = useMockEvents();
   const operatorContext = useOperatorContext();
   const systemContext = useSystemContext();
+
+  // Passive observation bridge - records HADRA events into readiness store
+  // This is pure data flow: observation → memory, no interpretation or control
+  useObservationBridge();
 
   // Compute full HADRA intelligence for orb status
   const memory = useHadraMemory(events, insights);
