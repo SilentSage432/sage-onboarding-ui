@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import OrientationBar from "@/components/console/OrientationBar";
 
 export default function TopBar() {
   return (
@@ -19,15 +20,19 @@ export default function TopBar() {
         z-[var(--z-topbar)]
       "
     >
-      <div className="flex items-center gap-2 text-slate-300">
-        <div className="flex items-center gap-1">
-          <span className="text-[10px] tracking-wider uppercase text-slate-500">Rho² Secure Channel</span>
-          <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+      <div className="flex items-center gap-4 text-slate-300">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
+            <span className="text-[10px] tracking-wider uppercase text-slate-500">Rho² Secure Channel</span>
+            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+          </div>
+          <span className="text-xs text-green-400/90 font-medium">Active</span>
+          <div className="text-xs text-gray-400 ml-4 tracking-wide">
+            OPERATOR • ACTIVE
+          </div>
         </div>
-        <span className="text-xs text-green-400/90 font-medium">Active</span>
-        <div className="text-xs text-gray-400 ml-4 tracking-wide">
-          OPERATOR • ACTIVE
-        </div>
+        {/* Orientation Layer - Always visible when activated */}
+        <OrientationBar />
       </div>
       <div className="flex items-center gap-2">
         <span className="text-xs text-slate-400">Federation Verified</span>

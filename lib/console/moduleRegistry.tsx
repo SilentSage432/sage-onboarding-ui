@@ -4,7 +4,56 @@ import MeshPanel from "@/components/console/panels/MeshPanel";
 import SecurityPanel from "@/components/console/panels/SecurityPanel";
 import Rho2Panel from "@/components/console/panels/Rho2Panel";
 
+/**
+ * Readiness gate definition for capability unlocking.
+ * This is metadata only - no logic is enforced here.
+ */
+export type ReadinessGate = {
+  type: 'time' | 'behavior' | 'consent' | 'observation';
+  condition: string; // e.g., "7 days", "10 automation events", "rho2-verified"
+  description: string; // Why this gate exists
+};
+
+/**
+ * Extended module definition supporting progressive revelation architecture.
+ * Layer classification determines visibility rules.
+ * Readiness gates are descriptive metadata only.
+ */
 export type ModuleDefinition = {
+  slug: string;
+  name: string;
+  description: string;
+  icon: any;
+  component: () => JSX.Element;
+  /**
+   * Layer classification determines visibility and access rules:
+   * - orientation: Always visible, informational only
+   * - capability: Gated by readiness (may be locked)
+   * - governance: Always accessible, non-prominent
+   */
+  layer: 'orientation' | 'capability' | 'governance';
+  /**
+   * Optional readiness gates that describe unlock conditions.
+   * This is metadata only - no evaluation logic here.
+   */
+  readinessGates?: ReadinessGate[];
+  /**
+   * Optional preview component to show when capability is locked.
+   * If not provided, a default locked view will be used.
+   */
+  lockedComponent?: () => JSX.Element;
+  /**
+   * Descriptive message explaining what unlocks this capability.
+   * Used in UI tooltips and preview panels.
+   */
+  unlockMessage?: string;
+};
+
+/**
+ * Legacy type for backward compatibility.
+ * @deprecated Use ModuleDefinition with layer classification instead.
+ */
+export type LegacyModuleDefinition = {
   slug: string;
   name: string;
   description: string;
@@ -36,6 +85,8 @@ export const moduleRegistry: ModuleDefinition[] = [
     description: "Manage active modules and system capabilities.",
     icon: Cpu,
     component: Placeholder("Modules Panel"),
+    layer: "capability",
+    // TODO: Add readiness gates when unlock logic is implemented
   },
   {
     slug: "agents",
@@ -43,6 +94,8 @@ export const moduleRegistry: ModuleDefinition[] = [
     description: "Manage deployed and available agents.",
     icon: Activity,
     component: AgentsPanel,
+    layer: "capability",
+    // TODO: Add readiness gates when unlock logic is implemented
   },
   {
     slug: "mesh",
@@ -50,6 +103,8 @@ export const moduleRegistry: ModuleDefinition[] = [
     description: "Visualize the neural mesh.",
     icon: Network,
     component: MeshPanel,
+    layer: "capability",
+    // TODO: Add readiness gates when unlock logic is implemented
   },
   {
     slug: "rho2",
@@ -57,6 +112,8 @@ export const moduleRegistry: ModuleDefinition[] = [
     description: "Cryptographic keyring inspector.",
     icon: KeyRound,
     component: Rho2Panel,
+    layer: "capability",
+    // TODO: Add readiness gates when unlock logic is implemented
   },
   {
     slug: "security",
@@ -64,6 +121,8 @@ export const moduleRegistry: ModuleDefinition[] = [
     description: "System-wide security overview.",
     icon: Shield,
     component: SecurityPanel,
+    layer: "capability",
+    // TODO: Add readiness gates when unlock logic is implemented
   },
   {
     slug: "settings",
@@ -71,6 +130,8 @@ export const moduleRegistry: ModuleDefinition[] = [
     description: "Customize system behavior, UI themes, and organization settings.",
     icon: Settings,
     component: Placeholder("Settings Panel"),
+    layer: "governance",
+    // Governance layer is always accessible
   },
 ];
 

@@ -1,8 +1,12 @@
 "use client";
 
 import { moduleRegistry } from "@/lib/console/moduleRegistry";
+import { useReadinessStore } from "@/app/(os)/console/store/useReadinessStore";
+import { isModuleUnlocked } from "@/lib/console/readinessUtils";
+import LockedCapability from "@/components/console/LockedCapability";
 
 export default function PanelLoader({ slug }: { slug: string }) {
+  const readinessState = useReadinessStore();
   const mod = moduleRegistry.find((m) => m.slug === slug);
 
   if (!mod) {
@@ -16,6 +20,15 @@ export default function PanelLoader({ slug }: { slug: string }) {
     );
   }
 
+  // Check if module is locked
+  const isUnlocked = isModuleUnlocked(mod, readinessState.unlockedCapabilities);
+  
+  // If locked and it's a capability (not orientation/governance), show locked view
+  if (!isUnlocked && mod.layer === 'capability') {
+    return <LockedCapability module={mod} />;
+  }
+
+  // Otherwise, render the actual component
   const Component = mod.component;
   return <Component />;
 }
