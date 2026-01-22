@@ -5,17 +5,22 @@ import { Button } from "@/components/ui/button";
 import { ShieldCheck, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useWizardStore } from "../../store/useWizardStore";
+import { useReadinessStore } from "@/app/(os)/console/store/useReadinessStore";
 
 export function Rho2VerificationCard() {
   const [verifying, setVerifying] = useState(false);
   const [verified, setVerified] = useState(false);
   const { setStepIndex, stepIndex } = useWizardStore();
+  const { setSystemPerspective } = useReadinessStore();
 
   const handleVerify = () => {
     setVerifying(true);
     setTimeout(() => {
       setVerifying(false);
       setVerified(true);
+      // Set architect perspective on successful Rho² verification
+      // This makes architect-only modules visible (existence, not unlocking)
+      setSystemPerspective('architect');
     }, 1500);
   };
 

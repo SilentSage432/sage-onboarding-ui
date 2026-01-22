@@ -3,6 +3,7 @@ import AgentsPanel from "@/components/console/panels/AgentsPanel";
 import MeshPanel from "@/components/console/panels/MeshPanel";
 import SecurityPanel from "@/components/console/panels/SecurityPanel";
 import Rho2Panel from "@/components/console/panels/Rho2Panel";
+import { SystemPerspective } from "@/app/(os)/console/store/useReadinessStore";
 
 /**
  * Readiness gate definition for capability unlocking.
@@ -47,6 +48,16 @@ export type ModuleDefinition = {
    * Used in UI tooltips and preview panels.
    */
   unlockMessage?: string;
+  /**
+   * System perspectives that can see this module.
+   * If not specified, module is visible to all perspectives.
+   * Architect-only modules should specify: visibleTo: ['architect']
+   * 
+   * This determines existence, not readiness. If a module is not visible
+   * to the current perspective, it does not appear in the UI at all
+   * (not locked, just nonexistent for that user's reality).
+   */
+  visibleTo?: SystemPerspective[];
 };
 
 /**
@@ -113,6 +124,7 @@ export const moduleRegistry: ModuleDefinition[] = [
     icon: KeyRound,
     component: Rho2Panel,
     layer: "capability",
+    visibleTo: ['architect'], // Architect-only module (requires YubiKey/Rho² verification)
     // TODO: Add readiness gates when unlock logic is implemented
   },
   {

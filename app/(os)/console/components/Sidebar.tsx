@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { Home, Lock } from "lucide-react";
 import { moduleRegistry } from "@/lib/console/moduleRegistry";
 import { useReadinessStore } from "@/app/(os)/console/store/useReadinessStore";
-import { isModuleUnlocked } from "@/lib/console/readinessUtils";
+import { isModuleUnlocked, isModuleVisibleToPerspective } from "@/lib/console/readinessUtils";
 import { cn } from "@/lib/utils";
 
 export default function Sidebar() {
@@ -14,6 +14,11 @@ export default function Sidebar() {
   const readinessState = useReadinessStore();
 
   // Build nav array with lock state information
+  // Filter by perspective first (architect-only modules don't exist for non-architects)
+  const visibleModules = moduleRegistry.filter((mod) =>
+    isModuleVisibleToPerspective(mod, readinessState.systemPerspective)
+  );
+  
   const nav = [
     { 
       name: "Overview", 
@@ -23,7 +28,7 @@ export default function Sidebar() {
       isLocked: false,
       module: null,
     },
-    ...moduleRegistry.map((mod) => {
+    ...visibleModules.map((mod) => {
       const isUnlocked = isModuleUnlocked(mod, readinessState.unlockedCapabilities);
       return {
         name: mod.name,

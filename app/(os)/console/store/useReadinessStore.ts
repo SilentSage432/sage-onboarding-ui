@@ -38,7 +38,26 @@ export type CapabilityLock = {
   }>;
 };
 
+/**
+ * System perspective determines what capabilities are visible to the user.
+ * This is separate from readiness/unlocking - it's about existence, not availability.
+ */
+export type SystemPerspective = 'architect' | 'operator' | 'participant' | 'observer';
+
 export type ReadinessState = {
+  // System perspective (determines visibility, not unlocking)
+  /**
+   * Current system perspective of the user.
+   * - architect: YubiKey/Rho² verified users (see architect-only modules)
+   * - operator: Default console users (matches current "OPERATOR • ACTIVE" UI)
+   * - participant: Invited/collaborative users
+   * - observer: Read-only users
+   * 
+   * This does NOT unlock capabilities - it only changes what modules exist in the user's reality.
+   * Default: 'operator' (matches current UI assumptions)
+   */
+  systemPerspective: SystemPerspective;
+  
   // Time-based state
   /**
    * Timestamp when onboarding was completed (activation time).
@@ -178,6 +197,13 @@ export type ReadinessState = {
   setObservationPhase: (phase: ReadinessState['observationPhase']) => void;
   
   /**
+   * Set system perspective.
+   * This changes visibility of modules, not their unlock status.
+   * Typically called on Rho² verification success to set 'architect'.
+   */
+  setSystemPerspective: (perspective: SystemPerspective) => void;
+  
+  /**
    * Reset readiness state (for testing/development).
    */
   reset: () => void;
@@ -193,8 +219,10 @@ const initialState: Omit<ReadinessState, keyof {
   setUnlockedCapabilities: never;
   setLockedCapabilities: never;
   setObservationPhase: never;
+  setSystemPerspective: never;
   reset: never;
 }> = {
+  systemPerspective: 'operator', // Default matches current UI assumptions
   activationTime: null,
   daysSinceActivation: 0,
   automationEventCount: 0,
@@ -270,6 +298,10 @@ export const useReadinessStore = create<ReadinessState>((set, get) => ({
   
   setObservationPhase: (phase: ReadinessState['observationPhase']) => {
     set({ observationPhase: phase });
+  },
+  
+  setSystemPerspective: (perspective: SystemPerspective) => {
+    set({ systemPerspective: perspective });
   },
   
   reset: () => {
