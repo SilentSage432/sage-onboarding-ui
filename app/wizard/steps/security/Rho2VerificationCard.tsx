@@ -7,6 +7,17 @@ import { useState } from "react";
 import { useWizardStore } from "../../store/useWizardStore";
 import { useReadinessStore } from "@/app/(os)/console/store/useReadinessStore";
 
+/**
+ * Rho² Verification Card (Development Scaffolding)
+ * 
+ * TODO: Replace simulated Rho² attestation with real WebAuthn + server-side verification.
+ * This currently establishes architect perspective for development/testing only.
+ * 
+ * In production, this should:
+ * - Use @simplewebauthn/browser for WebAuthn credential creation/assertion
+ * - Verify attestation/assertion on server-side
+ * - Only set architect perspective after cryptographic proof
+ */
 export function Rho2VerificationCard() {
   const [verifying, setVerifying] = useState(false);
   const [verified, setVerified] = useState(false);
@@ -15,11 +26,13 @@ export function Rho2VerificationCard() {
 
   const handleVerify = () => {
     setVerifying(true);
+    // Simulated attestation - no actual cryptographic operation
     setTimeout(() => {
       setVerifying(false);
       setVerified(true);
-      // Set architect perspective on successful Rho² verification
+      // Set architect perspective on simulated attestation success
       // This makes architect-only modules visible (existence, not unlocking)
+      // TODO: Replace with real WebAuthn verification before setting architect perspective
       setSystemPerspective('architect');
     }, 1500);
   };
@@ -42,6 +55,9 @@ export function Rho2VerificationCard() {
           Rho² is SAGE's mandatory cryptographic identity layer.  
           It ensures integrity, authenticity, and agent identity across your entire ecosystem.  
           This step must be completed before activation can proceed.
+        </p>
+        <p className="text-xs text-slate-500 italic">
+          Note: Currently using simulated attestation for development. Real WebAuthn verification will be implemented in production.
         </p>
 
         {!verified && (
