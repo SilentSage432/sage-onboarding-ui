@@ -95,7 +95,15 @@ export default function GovernancePanel() {
 
       if (!verifyResponse.ok) {
         const errorData = await verifyResponse.json();
-        throw new Error(errorData.error || "Registration verification failed");
+        // Provide helpful error message with AAGUID if available
+        let errorMessage = errorData.error || "Registration verification failed";
+        if (errorData.aaguid && errorData.aaguid !== 'missing') {
+          errorMessage += `\n\nYour YubiKey's AAGUID: ${errorData.aaguid}\nAdd this to WEBAUTHN_AAGUID_ALLOWLIST in .env.local`;
+        }
+        if (errorData.message) {
+          errorMessage += `\n\n${errorData.message}`;
+        }
+        throw new Error(errorMessage);
       }
 
       setSuccess("YubiKey registered successfully!");

@@ -116,12 +116,19 @@ export async function POST(request: NextRequest) {
     // Check AAGUID allowlist (YubiKey attestation policy)
     const aaguid = verification.registrationInfo?.aaguid;
     if (!isAAGUIDAllowed(aaguid)) {
+      const actualAaguid = aaguid || 'missing';
       await logAuditEvent('REG_VERIFY_ATTESTATION_DENIED', ARCHITECT_USER_ID, {
-        aaguid: aaguid || 'missing',
+        aaguid: actualAaguid,
         error: 'AAGUID not in allowlist',
       });
       return NextResponse.json(
-        { error: 'Authenticator not allowed (AAGUID not in allowlist)' },
+        { 
+          error: 'Authenticator not allowed (AAGUID not in allowlist)',
+          aaguid: actualAaguid,
+          message: actualAaguid !== 'missing' 
+            ? `Your YubiKey's AAGUID (${actualAaguid}) is not in the allowlist. Add it to WEBAUTHN_AAGUID_ALLOWLIST in .env.local`
+            : 'AAGUID was not provided by the authenticator'
+        },
         { status: 403 }
       );
     }
