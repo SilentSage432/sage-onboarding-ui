@@ -31,7 +31,7 @@ export default function ConsoleLayout({ children }: { children: React.ReactNode 
   const [hadraOpen, setHadraOpen] = useState(false);
   const [hadraSync, setHadraSync] = useState(false);
   const [orbStatus, setOrbStatus] = useState<OrbStatus>("idle");
-  const { setCurrentSessionStartTime } = useReadinessStore();
+  const { setCurrentSessionStartTime, setSystemPerspective } = useReadinessStore();
   const insights = useMockInsights();
   const events = useMockEvents();
   const operatorContext = useOperatorContext();
@@ -41,6 +41,25 @@ export default function ConsoleLayout({ children }: { children: React.ReactNode 
   useEffect(() => {
     setCurrentSessionStartTime(Date.now());
   }, [setCurrentSessionStartTime]);
+
+  // Check architect session on boot and set systemPerspective
+  useEffect(() => {
+    const checkArchitectSession = async () => {
+      try {
+        const response = await fetch("/api/architect/bootstrap");
+        const data = await response.json();
+        if (data.isArchitect) {
+          setSystemPerspective("architect");
+        } else {
+          setSystemPerspective("operator");
+        }
+      } catch (error) {
+        console.error("Failed to check architect session:", error);
+        setSystemPerspective("operator"); // Default to operator on error
+      }
+    };
+    checkArchitectSession();
+  }, [setSystemPerspective]);
 
   // Passive observation bridge - records HADRA events into readiness store
   // This is pure data flow: observation → memory, no interpretation or control

@@ -1,8 +1,9 @@
-import { Cpu, Network, Shield, Activity, KeyRound, Settings } from "lucide-react";
+import { Cpu, Network, Shield, Activity, KeyRound, Settings, Gavel } from "lucide-react";
 import AgentsPanel from "@/components/console/panels/AgentsPanel";
 import MeshPanel from "@/components/console/panels/MeshPanel";
 import SecurityPanel from "@/components/console/panels/SecurityPanel";
 import Rho2Panel from "@/components/console/panels/Rho2Panel";
+import GovernancePanel from "@/components/console/panels/GovernancePanel";
 import { SystemPerspective } from "@/app/(os)/console/store/useReadinessStore";
 
 /**
@@ -135,6 +136,15 @@ export const moduleRegistry: ModuleDefinition[] = [
     component: SecurityPanel,
     layer: "capability",
     // TODO: Add readiness gates when unlock logic is implemented
+  },
+  {
+    slug: "governance",
+    name: "Governance",
+    description: "Architect authentication, YubiKey management, and session control.",
+    icon: Gavel,
+    component: GovernancePanel,
+    layer: "governance",
+    // Governance layer is always accessible
   },
   {
     slug: "settings",
