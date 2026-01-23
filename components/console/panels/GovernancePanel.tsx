@@ -250,7 +250,7 @@ export default function GovernancePanel() {
                 <>
                   <CheckCircle2 className="h-5 w-5 text-green-500" />
                   <div>
-                    <Badge variant="default" className="bg-green-500">
+                    <Badge className="bg-green-500">
                       Active Architect Session
                     </Badge>
                     {sessionStatus.userId && (
@@ -263,7 +263,7 @@ export default function GovernancePanel() {
               ) : (
                 <>
                   <XCircle className="h-5 w-5 text-muted-foreground" />
-                  <Badge variant="secondary">No Active Session</Badge>
+                  <Badge className="bg-slate-600 text-slate-300">No Active Session</Badge>
                 </>
               )}
             </div>
@@ -446,7 +446,7 @@ export default function GovernancePanel() {
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Status:</span>
-                  <Badge variant={sessionStatus?.authenticated ? "default" : "secondary"}>
+                  <Badge className={sessionStatus?.authenticated ? "" : "bg-slate-600 text-slate-300"}>
                     {sessionStatus?.authenticated ? "Active" : "Inactive"}
                   </Badge>
                 </div>
@@ -471,13 +471,13 @@ export default function GovernancePanel() {
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Registration:</span>
-                  <Badge variant={registrationStatus === 'registered' ? "default" : "secondary"}>
+                  <Badge className={registrationStatus === 'registered' ? "" : "bg-slate-600 text-slate-300"}>
                     {registrationStatus === 'registered' ? "Registered" : "Not Registered"}
                   </Badge>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Authentication:</span>
-                  <Badge variant={sessionStatus?.authenticated ? "default" : "secondary"}>
+                  <Badge className={sessionStatus?.authenticated ? "" : "bg-slate-600 text-slate-300"}>
                     {sessionStatus?.authenticated ? "Authenticated" : "Not Authenticated"}
                   </Badge>
                 </div>
@@ -496,7 +496,7 @@ export default function GovernancePanel() {
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Mode:</span>
-                  <Badge variant={process.env.NODE_ENV === 'production' ? "default" : "secondary"}>
+                  <Badge className={process.env.NODE_ENV === 'production' ? "" : "bg-slate-600 text-slate-300"}>
                     {process.env.NODE_ENV === 'production' ? "Production" : "Development"}
                   </Badge>
                 </div>
@@ -508,7 +508,7 @@ export default function GovernancePanel() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Localhost:</span>
-                  <Badge variant={typeof window !== 'undefined' && window.location.hostname === 'localhost' ? "default" : "secondary"}>
+                  <Badge className={typeof window !== 'undefined' && window.location.hostname === 'localhost' ? "" : "bg-slate-600 text-slate-300"}>
                     {typeof window !== 'undefined' && window.location.hostname === 'localhost' ? "Yes" : "No"}
                   </Badge>
                 </div>
@@ -521,7 +521,7 @@ export default function GovernancePanel() {
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Console:</span>
-                  <Badge variant="default">Active</Badge>
+                  <Badge>Active</Badge>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">WebAuthn RP ID:</span>
