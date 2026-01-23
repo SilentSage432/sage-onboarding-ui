@@ -13,6 +13,21 @@ import { OrbStatus } from "@/lib/hadra/orbPulse";
 import { hadraSpeak } from "@/lib/hadra/conversation/conversationEngine";
 import HadraDiagnosticsCanvas from "./HadraDiagnosticsCanvas";
 
+// Type-safe mapping from panel name to HADRA context
+function mapPanelToContext(panel: string): "console" | "onboarding" | "wizard" | "mesh" | "agents" | "security" | undefined {
+  // Map "dashboard" to "console"
+  if (panel === "dashboard") {
+    return "console";
+  }
+  // Check if panel matches one of the allowed context values
+  const allowedContexts = ["console", "onboarding", "wizard", "mesh", "agents", "security"] as const;
+  if (allowedContexts.includes(panel as typeof allowedContexts[number])) {
+    return panel as typeof allowedContexts[number];
+  }
+  // Default fallback
+  return "console";
+}
+
 export default function HadraPanel({ 
   onClose,
   insights = [],
@@ -61,7 +76,7 @@ export default function HadraPanel({
       const hadraMessage = hadraSpeak({
         severity: insight.severity,
         message: insight.description || insight.title,
-        context: operatorContext.activePanel === "dashboard" ? "console" : operatorContext.activePanel,
+        context: mapPanelToContext(operatorContext.activePanel),
         subsystem: insight.subsystem,
         isRepeated: memory.recentInsights.includes(insight.title),
         operatorInteracting: operatorContext.lastInteraction !== "none",
