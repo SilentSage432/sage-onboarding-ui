@@ -26,16 +26,16 @@ export default function FederationStatePanel() {
       <div className="p-6 space-y-6">
         <h1 className="text-2xl text-white font-bold">Federation State</h1>
         <motion.div
-          className="backdrop-blur-md bg-white/5 border border-red-500/30 rounded-xl p-6"
+          className="backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          <div className="flex items-center gap-3 text-red-400">
-            <AlertCircle className="h-5 w-5" />
-            <span className="font-semibold">Not Connected</span>
+          <div className="flex items-center gap-3 text-gray-400">
+            <Network className="h-5 w-5" />
+            <span className="font-semibold">Status Unavailable</span>
           </div>
           <p className="text-gray-400 text-sm mt-2">
-            Federation state endpoint is unavailable. The backend service may not be running or the endpoint has not been implemented.
+            Federation state information is not currently available. This is an observational panel and will display data when the service is connected.
           </p>
         </motion.div>
       </div>
