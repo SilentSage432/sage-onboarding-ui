@@ -43,8 +43,8 @@ export const enterpriseSchema = z.object({
     allowExternal: z.boolean(),
     allowAutomation: z.boolean(),
   }),
-  modules: z.array(z.string()).default([]),
-  agents: z.array(z.string()).default([]),
+  modules: z.array(z.string()),
+  agents: z.array(z.string()),
 });
 
 export type EnterpriseOnboarding = z.infer<typeof enterpriseSchema>;
