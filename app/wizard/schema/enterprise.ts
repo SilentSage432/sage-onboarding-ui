@@ -40,8 +40,8 @@ export const enterpriseSchema = z.object({
   }).passthrough(), // Allow additional fields for adaptive panels
   security: z.object({
     posture: z.enum(["low", "moderate", "strict"]),
-    allowExternal: z.boolean().default(false),
-    allowAutomation: z.boolean().default(true),
+    allowExternal: z.boolean(),
+    allowAutomation: z.boolean(),
   }),
   modules: z.array(z.string()).default([]),
   agents: z.array(z.string()).default([]),
