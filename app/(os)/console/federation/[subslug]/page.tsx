@@ -1,12 +1,12 @@
 "use client";
 
-import { use, useEffect } from "react";
+import { use, useEffect, type ReactElement } from "react";
 import FederationHealthMatrixPanel from "@/components/console/panels/FederationHealthMatrixPanel";
 import FederationHealthCorePanel from "@/components/console/panels/FederationHealthCorePanel";
 import FederationStatePanel from "@/components/console/panels/FederationStatePanel";
 import { useReadinessStore } from "../../store/useReadinessStore";
 
-const federationPanels: Record<string, () => JSX.Element> = {
+const federationPanels: Record<string, () => ReactElement> = {
   "health-matrix": FederationHealthMatrixPanel,
   "health-core": FederationHealthCorePanel,
   "state": FederationStatePanel,
