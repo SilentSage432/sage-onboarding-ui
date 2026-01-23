@@ -110,13 +110,11 @@ export async function POST(request: NextRequest) {
         console.error('Registration verification failed:', {
           verified: verification.verified,
           hasRegistrationInfo: !!verification.registrationInfo,
-          error: verification.error?.message || 'Unknown error',
-          errorName: verification.error?.name,
         });
       }
       
       await logAuditEvent('REG_VERIFY_FAIL', ARCHITECT_USER_ID, {
-        error: verification.error?.message || 'Verification failed',
+        error: 'Verification failed',
         hasRegistrationInfo: !!verification.registrationInfo,
       });
       
