@@ -59,8 +59,14 @@ export async function POST(request: NextRequest) {
         }
       }
       
+      // credential_id is stored as BYTEA in database, convert to base64url for WebAuthn
+      // The library expects the id as a Buffer or base64url string
+      const credentialIdBuffer = Buffer.isBuffer(row.credential_id) 
+        ? row.credential_id 
+        : Buffer.from(row.credential_id);
+      
       return {
-        id: Buffer.from(row.credential_id),
+        id: credentialIdBuffer,
         transports,
       };
     });
