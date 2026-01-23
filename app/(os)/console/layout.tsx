@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import Sidebar from "./components/Sidebar";
 import TopBar from "./components/TopBar";
@@ -24,6 +24,7 @@ import { useContextualInsight } from "@/components/hadra/useContextualInsight";
 import { OrbStatus } from "@/lib/hadra/orbPulse";
 import { useObservationBridge } from "@/lib/console/useObservationBridge";
 import { useReadinessStore } from "@/app/(os)/console/store/useReadinessStore";
+import { observeRuntimeHealth } from "@/lib/infrastructure/useRuntimeHealth";
 // Auto-start HADRA mock engine
 import "@/components/hadra/hadraMockEngine";
 
@@ -64,6 +65,16 @@ export default function ConsoleLayout({ children }: { children: React.ReactNode 
   // Passive observation bridge - records HADRA events into readiness store
   // This is pure data flow: observation → memory, no interpretation or control
   useObservationBridge();
+
+  // Observe runtime health and readiness once per session (passive observation only)
+  const healthObservedRef = useRef(false);
+  useEffect(() => {
+    // Only observe once per session (tracked via ref to prevent re-observation on re-renders)
+    if (!healthObservedRef.current) {
+      healthObservedRef.current = true;
+      observeRuntimeHealth();
+    }
+  }, []);
 
   // Compute full HADRA intelligence for orb status
   const memory = useHadraMemory(events, insights);
