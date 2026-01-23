@@ -148,20 +148,24 @@ export async function POST(request: NextRequest) {
 
     // Validate required fields in registrationInfo before storing
     const regInfo = verification.registrationInfo;
-    if (!regInfo.credentialID || !regInfo.credentialPublicKey) {
+    // The credential data is nested in regInfo.credential
+    const credential = regInfo.credential;
+    
+    if (!credential?.id || !credential?.publicKey) {
       // Log dev-only details
       if (process.env.NODE_ENV === 'development') {
         console.error('Registration info missing required fields:', {
-          hasCredentialID: !!regInfo.credentialID,
-          hasCredentialPublicKey: !!regInfo.credentialPublicKey,
-          registrationInfo: regInfo,
+          hasCredentialID: !!credential?.id,
+          hasCredentialPublicKey: !!credential?.publicKey,
+          hasCredential: !!credential,
+          registrationInfoKeys: Object.keys(regInfo),
         });
       }
       
       await logAuditEvent('REG_VERIFY_FAIL', ARCHITECT_USER_ID, {
         error: 'Registration info missing required fields',
-        hasCredentialID: !!regInfo.credentialID,
-        hasCredentialPublicKey: !!regInfo.credentialPublicKey,
+        hasCredentialID: !!credential?.id,
+        hasCredentialPublicKey: !!credential?.publicKey,
       });
       
       return NextResponse.json(
@@ -181,11 +185,11 @@ export async function POST(request: NextRequest) {
       );
 
       // Store credential
-      // All fields validated above
-      const credentialId = Buffer.from(regInfo.credentialID);
-      const publicKey = Buffer.from(regInfo.credentialPublicKey);
+      // All fields validated above - credential.id and credential.publicKey exist
+      const credentialId = Buffer.from(credential.id, 'base64url');
+      const publicKey = Buffer.from(credential.publicKey);
       // Serialize transports - do not gate on counter
-      const transports = JSON.stringify(regInfo.transports ?? []);
+      const transports = JSON.stringify(credential.transports ?? []);
 
       await client.query(
         `INSERT INTO auth_webauthn_credentials
@@ -195,7 +199,7 @@ export async function POST(request: NextRequest) {
           ARCHITECT_USER_ID,
           credentialId,
           publicKey,
-          regInfo.counter || 0,
+          credential.counter || 0,
           transports,
           aaguid || null,
         ]
@@ -204,7 +208,7 @@ export async function POST(request: NextRequest) {
 
     await logAuditEvent('REG_VERIFY_OK', ARCHITECT_USER_ID, {
       aaguid: aaguid || null,
-      credentialId: regInfo.credentialID.toString('base64'),
+      credentialId: credential.id,
     });
 
     return NextResponse.json({ verified: true });
