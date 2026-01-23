@@ -44,10 +44,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const credentials = credentialsResult.rows.map((row) => ({
-      id: Buffer.from(row.credential_id),
-      transports: row.transports ? JSON.parse(row.transports) : undefined,
-    }));
+    const credentials = credentialsResult.rows.map((row) => {
+      let transports: string[] | undefined = undefined;
+      
+      if (row.transports) {
+        try {
+          // Try parsing as JSON array first
+          transports = JSON.parse(row.transports);
+        } catch (error) {
+          // Fallback: handle comma-separated string format (backwards compatibility)
+          if (typeof row.transports === 'string') {
+            transports = row.transports.split(',').map(t => t.trim()).filter(Boolean);
+          }
+        }
+      }
+      
+      return {
+        id: Buffer.from(row.credential_id),
+        transports,
+      };
+    });
 
     // Generate authentication options
     const options = await generateAuthOptions(credentials);
