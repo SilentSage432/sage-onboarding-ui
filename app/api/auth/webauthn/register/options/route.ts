@@ -12,6 +12,7 @@ import {
 } from '@/lib/auth/webauthn';
 import { logAuditEvent } from '@/lib/auth/audit';
 import { checkRateLimit, getRateLimitIdentifier } from '@/lib/auth/rate-limit';
+import type { AuthenticatorTransportFuture } from '@simplewebauthn/server';
 
 const ARCHITECT_USER_ID = 'architect'; // Single architect identity for now
 
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
     const existingCredentials = existingCredsResult.rows.map((row) => ({
       type: 'public-key' as const,
       id: Buffer.from(row.credential_id),
-      transports: row.transports ? JSON.parse(row.transports) : undefined,
+      transports: row.transports ? (JSON.parse(row.transports) as AuthenticatorTransportFuture[]) : undefined,
     }));
 
     // Generate registration options

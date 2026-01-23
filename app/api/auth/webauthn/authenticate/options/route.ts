@@ -9,6 +9,7 @@ import { query } from '@/lib/db/client';
 import { generateAuthOptions } from '@/lib/auth/webauthn';
 import { logAuditEvent } from '@/lib/auth/audit';
 import { checkRateLimit, getRateLimitIdentifier } from '@/lib/auth/rate-limit';
+import type { AuthenticatorTransportFuture } from '@simplewebauthn/server';
 
 const ARCHITECT_USER_ID = 'architect'; // Single architect identity for now
 
@@ -45,16 +46,17 @@ export async function POST(request: NextRequest) {
     }
 
     const credentials = credentialsResult.rows.map((row) => {
-      let transports: string[] | undefined = undefined;
+      let transports: AuthenticatorTransportFuture[] | undefined = undefined;
       
       if (row.transports) {
         try {
           // Try parsing as JSON array first
-          transports = JSON.parse(row.transports);
+          const parsed = JSON.parse(row.transports);
+          transports = Array.isArray(parsed) ? parsed as AuthenticatorTransportFuture[] : undefined;
         } catch (error) {
           // Fallback: handle comma-separated string format (backwards compatibility)
           if (typeof row.transports === 'string') {
-            transports = row.transports.split(',').map(t => t.trim()).filter(Boolean);
+            transports = row.transports.split(',').map(t => t.trim()).filter(Boolean) as AuthenticatorTransportFuture[];
           }
         }
       }
