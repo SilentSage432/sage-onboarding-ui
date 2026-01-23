@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import { Cpu, Network, Shield, Activity, KeyRound, Settings, Gavel, Circle, Hexagon, Octagon, Triangle, X, Grid3x3, Activity as ActivityIcon, Heart } from "lucide-react";
 import AgentsPanel from "@/components/console/panels/AgentsPanel";
 import MeshPanel from "@/components/console/panels/MeshPanel";
@@ -35,7 +36,7 @@ export type ModuleDefinition = {
   name: string;
   description: string;
   icon: any;
-  component: () => JSX.Element;
+  component: () => ReactElement;
   /**
    * Layer classification determines visibility and access rules:
    * - orientation: Always visible, informational only
@@ -52,7 +53,7 @@ export type ModuleDefinition = {
    * Optional preview component to show when capability is locked.
    * If not provided, a default locked view will be used.
    */
-  lockedComponent?: () => JSX.Element;
+  lockedComponent?: () => ReactElement;
   /**
    * Descriptive message explaining what unlocks this capability.
    * Used in UI tooltips and preview panels.
@@ -79,7 +80,7 @@ export type LegacyModuleDefinition = {
   name: string;
   description: string;
   icon: any;
-  component: () => JSX.Element;
+  component: () => ReactElement;
 };
 
 export type AgentModule = {
