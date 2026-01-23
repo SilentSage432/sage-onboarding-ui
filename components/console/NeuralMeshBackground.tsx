@@ -45,10 +45,11 @@ function NeuralMeshBackground() {
     let animationFrameId: number;
 
     function draw() {
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      // ctx is guaranteed to be non-null (checked above)
+      ctx!.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
       // Gradient background
-      const gradient = ctx.createRadialGradient(
+      const gradient = ctx!.createRadialGradient(
         window.innerWidth * 0.5,
         window.innerHeight * 0.5,
         200,
@@ -59,8 +60,8 @@ function NeuralMeshBackground() {
       gradient.addColorStop(0, "#0b0f17");
       gradient.addColorStop(1, "#080b11");
 
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+      ctx!.fillStyle = gradient;
+      ctx!.fillRect(0, 0, window.innerWidth, window.innerHeight);
 
       // Update and draw nodes + neural connections
       nodes.forEach((n) => {
@@ -73,21 +74,21 @@ function NeuralMeshBackground() {
         if (n.y < 0 || n.y > window.innerHeight) n.dy *= -1;
 
         // Draw node
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(180,110,255,0.10)";
-        ctx.fill();
+        ctx!.beginPath();
+        ctx!.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        ctx!.fillStyle = "rgba(180,110,255,0.10)";
+        ctx!.fill();
 
         // Draw neural connections to nearby nodes
         nodes.forEach((m) => {
           const dist = Math.hypot(n.x - m.x, n.y - m.y);
           if (dist < 160) {
-            ctx.strokeStyle = `rgba(155, 90, 255, ${(1 - dist / 160) * 0.08})`;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(n.x, n.y);
-            ctx.lineTo(m.x, m.y);
-            ctx.stroke();
+            ctx!.strokeStyle = `rgba(155, 90, 255, ${(1 - dist / 160) * 0.08})`;
+            ctx!.lineWidth = 1;
+            ctx!.beginPath();
+            ctx!.moveTo(n.x, n.y);
+            ctx!.lineTo(m.x, m.y);
+            ctx!.stroke();
           }
         });
       });
@@ -99,7 +100,8 @@ function NeuralMeshBackground() {
     const handleResize = () => {
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
-      ctx.scale(dpr, dpr);
+      // ctx is guaranteed to be non-null (checked above)
+      ctx!.scale(dpr, dpr);
     };
 
     window.addEventListener("resize", handleResize);
