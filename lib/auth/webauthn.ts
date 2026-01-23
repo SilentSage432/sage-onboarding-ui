@@ -125,7 +125,11 @@ export async function verifyRegResponse(
  * Generate authentication options
  */
 export async function generateAuthOptions(
-  credentials: PublicKeyCredentialDescriptorFuture[]
+  credentials: Array<{
+    type: 'public-key';
+    id: string;
+    transports?: AuthenticatorTransportFuture[];
+  }>
 ): Promise<ReturnType<typeof generateAuthenticationOptions>> {
   const opts: GenerateAuthenticationOptionsOpts = {
     rpID: getRPId(),
