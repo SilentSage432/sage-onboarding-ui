@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   startRegistration,
   startAuthentication,
@@ -21,6 +21,9 @@ export default function GovernancePanel() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  
+  // Hard execution lock for registration - prevents concurrent executions
+  const registrationLockRef = useRef(false);
 
   // Check session status on mount
   useEffect(() => {
@@ -50,12 +53,20 @@ export default function GovernancePanel() {
   };
 
   const handleRegister = async () => {
+    // Hard execution lock - prevent concurrent executions
+    if (registrationLockRef.current) {
+      console.warn("Registration already in progress, ignoring duplicate call");
+      return;
+    }
+
+    // Acquire lock
+    registrationLockRef.current = true;
     setIsRegistering(true);
     setError(null);
     setSuccess(null);
 
     try {
-      // Step 1: Get registration options
+      // Step 1: Get registration options (exactly once per click)
       const optionsResponse = await fetch("/api/auth/webauthn/register/options", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -67,11 +78,15 @@ export default function GovernancePanel() {
       }
 
       const options = await optionsResponse.json();
+      
+      // Preserve challenge through the full flow
+      // The challenge is embedded in the options object and will be included in the response
 
       // Step 2: Start registration with browser API
+      // This will use the challenge from options
       const attestationResponse = await startRegistration(options);
 
-      // Step 3: Verify registration
+      // Step 3: Verify registration with the preserved challenge
       const verifyResponse = await fetch("/api/auth/webauthn/register/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -89,6 +104,8 @@ export default function GovernancePanel() {
       console.error("Registration error:", error);
       setError(error instanceof Error ? error.message : "Registration failed");
     } finally {
+      // Release lock
+      registrationLockRef.current = false;
       setIsRegistering(false);
     }
   };
@@ -226,7 +243,7 @@ export default function GovernancePanel() {
         <CardContent>
           <Button
             onClick={handleRegister}
-            disabled={isRegistering}
+            disabled={isRegistering || registrationLockRef.current}
             className="w-full"
           >
             {isRegistering ? "Registering..." : "Register YubiKey"}
