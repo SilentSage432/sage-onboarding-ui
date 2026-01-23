@@ -76,7 +76,11 @@ export function isAAGUIDAllowed(aaguid: string | undefined): boolean {
 export async function generateRegOptions(
   userId: string,
   userName: string,
-  existingCredentials: PublicKeyCredentialDescriptorFuture[] = []
+  existingCredentials: Array<{
+    type: 'public-key';
+    id: string;
+    transports?: AuthenticatorTransportFuture[];
+  }> = []
 ): Promise<ReturnType<typeof generateRegistrationOptions>> {
   const opts: GenerateRegistrationOptionsOpts = {
     rpName: RP_NAME,

@@ -38,11 +38,21 @@ export async function POST(request: NextRequest) {
       [ARCHITECT_USER_ID]
     );
 
-    const existingCredentials = existingCredsResult.rows.map((row) => ({
-      type: 'public-key' as const,
-      id: Buffer.from(row.credential_id),
-      transports: row.transports ? (JSON.parse(row.transports) as AuthenticatorTransportFuture[]) : undefined,
-    }));
+    const existingCredentials = existingCredsResult.rows.map((row) => {
+      // credential_id is stored as BYTEA in database
+      // Postgres returns BYTEA as Buffer
+      // @simplewebauthn/server expects credential ID as base64url string for excludeCredentials
+      const credentialIdBuffer = Buffer.isBuffer(row.credential_id)
+        ? row.credential_id
+        : Buffer.from(row.credential_id);
+      const credentialIdString = credentialIdBuffer.toString('base64url');
+      
+      return {
+        type: 'public-key' as const,
+        id: credentialIdString,
+        transports: row.transports ? (JSON.parse(row.transports) as AuthenticatorTransportFuture[]) : undefined,
+      };
+    });
 
     // Generate registration options
     const options = await generateRegOptions(
