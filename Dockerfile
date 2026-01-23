@@ -47,8 +47,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/types ./types
 COPY --from=builder --chown=nextjs:nodejs /app/next.config.ts ./
 COPY --from=builder --chown=nextjs:nodejs /app/tsconfig.json ./
 
-# Switch to non-root user
-USER nextjs
+# Switch to non-root user (numeric UID for PodSecurity compatibility)
+USER 1001
 
 # Expose port
 EXPOSE 3000
