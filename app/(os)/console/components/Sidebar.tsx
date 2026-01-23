@@ -52,7 +52,7 @@ export default function Sidebar() {
     }
     acc[layer].push(navItem);
     return acc;
-  }, {} as Record<string, typeof visibleModules[0][]>);
+  }, {} as Record<string, Array<{ name: string; icon: any; href: string; id: string; isLocked: boolean; module: typeof visibleModules[number] | null }>>);
 
   // Define layer order
   const layerOrder: Array<'orientation' | 'capability' | 'governance'> = ['orientation', 'capability', 'governance'];
