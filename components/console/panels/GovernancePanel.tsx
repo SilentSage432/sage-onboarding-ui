@@ -8,7 +8,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Key, LogOut, CheckCircle2, XCircle, Clock, Copy } from "lucide-react";
+import { Shield, Key, LogOut, CheckCircle2, XCircle, Clock, Copy, Activity, Server, Globe } from "lucide-react";
+import ArchitectOnly from "@/components/console/ArchitectOnly";
 
 interface SessionStatus {
   authenticated: boolean;
@@ -425,6 +426,114 @@ export default function GovernancePanel() {
           </CardContent>
         </Card>
       )}
+
+      {/* Architect Diagnostics - Architect Only */}
+      <ArchitectOnly>
+        <Card className="border-blue-500/30 bg-blue-500/5">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="h-5 w-5 text-blue-400" />
+              Architect Diagnostics
+            </CardTitle>
+            <CardDescription>
+              Internal system state and session metadata (read-only)
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Session Metadata */}
+            <div className="space-y-2">
+              <h4 className="text-sm font-semibold text-muted-foreground">Session Metadata</h4>
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Status:</span>
+                  <Badge variant={sessionStatus?.authenticated ? "default" : "secondary"}>
+                    {sessionStatus?.authenticated ? "Active" : "Inactive"}
+                  </Badge>
+                </div>
+                {sessionStatus?.userId && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">User ID:</span>
+                    <code className="text-xs">{sessionStatus.userId}</code>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Session Check:</span>
+                  <span className="text-xs text-muted-foreground">
+                    {sessionStatus ? "Connected" : "Checking..."}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* WebAuthn / YubiKey Status */}
+            <div className="space-y-2">
+              <h4 className="text-sm font-semibold text-muted-foreground">WebAuthn Status</h4>
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Registration:</span>
+                  <Badge variant={registrationStatus === 'registered' ? "default" : "secondary"}>
+                    {registrationStatus === 'registered' ? "Registered" : "Not Registered"}
+                  </Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Authentication:</span>
+                  <Badge variant={sessionStatus?.authenticated ? "default" : "secondary"}>
+                    {sessionStatus?.authenticated ? "Authenticated" : "Not Authenticated"}
+                  </Badge>
+                </div>
+                {registrationStatus === 'rejected_not_trusted' && rejectedAaguid && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">AAGUID:</span>
+                    <code className="text-xs text-yellow-400">{rejectedAaguid}</code>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Environment Flags */}
+            <div className="space-y-2">
+              <h4 className="text-sm font-semibold text-muted-foreground">Environment</h4>
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Mode:</span>
+                  <Badge variant={process.env.NODE_ENV === 'production' ? "default" : "secondary"}>
+                    {process.env.NODE_ENV === 'production' ? "Production" : "Development"}
+                  </Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Origin:</span>
+                  <code className="text-xs text-muted-foreground">
+                    {typeof window !== 'undefined' ? window.location.origin : 'N/A'}
+                  </code>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Localhost:</span>
+                  <Badge variant={typeof window !== 'undefined' && window.location.hostname === 'localhost' ? "default" : "secondary"}>
+                    {typeof window !== 'undefined' && window.location.hostname === 'localhost' ? "Yes" : "No"}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+
+            {/* System Status Snapshot */}
+            <div className="space-y-2">
+              <h4 className="text-sm font-semibold text-muted-foreground">System Status</h4>
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Console:</span>
+                  <Badge variant="default">Active</Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">WebAuthn RP ID:</span>
+                  <code className="text-xs text-muted-foreground">
+                    {typeof window !== 'undefined' ? window.location.hostname : 'N/A'}
+                  </code>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </ArchitectOnly>
     </div>
   );
 }

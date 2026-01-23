@@ -7,9 +7,14 @@ export default function DesktopPanel({ children }: { children: React.ReactNode }
     <motion.div
       layout
       transition={{ duration: 0.35, ease: "easeOut" }}
-      className="flex-1 overflow-hidden"
+      className="flex-1 overflow-hidden flex flex-col"
     >
-      {children}
+      {/* Scrollable content area */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden">
+        <div className="h-full p-6">
+          {children}
+        </div>
+      </div>
     </motion.div>
   );
 }
