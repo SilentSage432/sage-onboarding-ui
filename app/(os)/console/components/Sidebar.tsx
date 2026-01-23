@@ -59,8 +59,15 @@ export default function Sidebar() {
         z-[var(--z-sidebar)]
         py-6
         m-0
+        overflow-y-auto
+        overflow-x-hidden
       "
-      style={{ paddingTop: "56px" }}
+      style={{
+        paddingTop: "56px",
+        paddingBottom: "80px",
+        scrollbarWidth: "thin",
+        scrollbarColor: "rgba(255, 255, 255, 0.1) transparent",
+      }}
     >
       {nav.map((item) => {
         const Icon = item.icon;
