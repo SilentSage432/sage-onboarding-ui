@@ -1,4 +1,4 @@
-import { Cpu, Network, Shield, Activity, KeyRound, Settings, Gavel, Circle, Hexagon, Octagon, Triangle, X } from "lucide-react";
+import { Cpu, Network, Shield, Activity, KeyRound, Settings, Gavel, Circle, Hexagon, Octagon, Triangle, X, Grid3x3, Activity as ActivityIcon, Heart } from "lucide-react";
 import AgentsPanel from "@/components/console/panels/AgentsPanel";
 import MeshPanel from "@/components/console/panels/MeshPanel";
 import SecurityPanel from "@/components/console/panels/SecurityPanel";
@@ -10,6 +10,9 @@ import ArcOmegaPanel from "@/components/console/panels/ArcOmegaPanel";
 import ArcLambdaPanel from "@/components/console/panels/ArcLambdaPanel";
 import ArcChiPanel from "@/components/console/panels/ArcChiPanel";
 import ArcRho2LodgePanel from "@/components/console/panels/ArcRho2LodgePanel";
+import FederationHealthMatrixPanel from "@/components/console/panels/FederationHealthMatrixPanel";
+import FederationHealthCorePanel from "@/components/console/panels/FederationHealthCorePanel";
+import FederationStatePanel from "@/components/console/panels/FederationStatePanel";
 import { SystemPerspective } from "@/app/(os)/console/store/useReadinessStore";
 
 /**
@@ -214,6 +217,36 @@ export const moduleRegistry: ModuleDefinition[] = [
     description: "Rho² security chamber operational status and health monitoring.",
     icon: KeyRound,
     component: ArcRho2LodgePanel,
+    layer: "orientation",
+    // Always visible, informational only - no unlock gating required
+  },
+  // Federation Health Panels - Read-only status displays, visible to Operator and Architect
+  // Using "orientation" layer to ensure always visible and unlocked (no readiness gates)
+  // Routes are nested under /console/federation/* via custom routing handler
+  {
+    slug: "federation/health-matrix",
+    name: "Health Matrix",
+    description: "Federation health dashboard with 6 key metrics.",
+    icon: Grid3x3,
+    component: FederationHealthMatrixPanel,
+    layer: "orientation",
+    // Always visible, informational only - no unlock gating required
+  },
+  {
+    slug: "federation/health-core",
+    name: "Health Core",
+    description: "Detailed federation health metrics and diagnostics.",
+    icon: ActivityIcon,
+    component: FederationHealthCorePanel,
+    layer: "orientation",
+    // Always visible, informational only - no unlock gating required
+  },
+  {
+    slug: "federation/state",
+    name: "Federation State",
+    description: "Federation operational state and node status.",
+    icon: Network,
+    component: FederationStatePanel,
     layer: "orientation",
     // Always visible, informational only - no unlock gating required
   },
