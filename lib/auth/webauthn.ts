@@ -13,11 +13,9 @@ import {
   type VerifyRegistrationResponseOpts,
   type GenerateAuthenticationOptionsOpts,
   type VerifyAuthenticationResponseOpts,
+  type AuthenticatorTransportFuture,
+  type PublicKeyCredentialDescriptorFuture,
 } from '@simplewebauthn/server';
-import type {
-  AuthenticatorTransportFuture,
-  PublicKeyCredentialDescriptorFuture,
-} from '@simplewebauthn/server/script/deps';
 
 // Environment configuration
 // Use runtime getters to allow for dynamic env var loading
