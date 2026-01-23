@@ -61,16 +61,11 @@ export async function POST(request: NextRequest) {
       
       // credential_id is stored as BYTEA in database
       // Postgres returns BYTEA as Buffer
-      // @simplewebauthn/server expects credential ID as Buffer
-      // Ensure it's a Buffer (row.credential_id should already be a Buffer from Postgres)
+      // @simplewebauthn/server expects credential ID as Buffer for allowCredentials
+      // Match the format used in register/options route
       const credentialId = Buffer.isBuffer(row.credential_id)
         ? row.credential_id
         : Buffer.from(row.credential_id);
-      
-      // Debug in development
-      if (process.env.NODE_ENV === 'development' && !Buffer.isBuffer(credentialId)) {
-        console.warn('Credential ID is not a Buffer:', typeof credentialId, credentialId);
-      }
       
       return {
         id: credentialId,
