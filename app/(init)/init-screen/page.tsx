@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import TerminalFrame from "./components/TerminalFrame";
 import LogStream from "./components/LogStream";
@@ -17,7 +17,7 @@ import { softErrors } from "./boot-sequences/softErrors";
 import { environmentAssembly } from "./boot-sequences/environmentAssembly";
 import { hadraEmergence } from "./boot-sequences/hadraEmergence";
 
-export default function InitScreen() {
+function InitScreenContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [logs, setLogs] = useState<string[]>([]);
@@ -184,6 +184,18 @@ export default function InitScreen() {
         </TerminalFrame>
       </div>
     </div>
+  );
+}
+
+export default function InitScreen() {
+  return (
+    <Suspense fallback={
+      <div className="w-full h-screen bg-[#05070d] text-white p-8 relative flex items-center justify-center">
+        <div className="text-gray-400">Loading...</div>
+      </div>
+    }>
+      <InitScreenContent />
+    </Suspense>
   );
 }
 
