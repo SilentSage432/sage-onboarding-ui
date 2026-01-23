@@ -103,18 +103,31 @@ export async function POST(request: NextRequest) {
       challenge.challenge
     );
 
-    if (!verification.verified) {
+    // Fail closed: if verification failed or registrationInfo is missing, return 400
+    if (!verification.verified || !verification.registrationInfo) {
+      // Log dev-only details server-side
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Registration verification failed:', {
+          verified: verification.verified,
+          hasRegistrationInfo: !!verification.registrationInfo,
+          error: verification.error?.message || 'Unknown error',
+          errorName: verification.error?.name,
+        });
+      }
+      
       await logAuditEvent('REG_VERIFY_FAIL', ARCHITECT_USER_ID, {
         error: verification.error?.message || 'Verification failed',
+        hasRegistrationInfo: !!verification.registrationInfo,
       });
+      
       return NextResponse.json(
-        { error: 'Verification failed', details: verification.error?.message },
+        { error: 'Registration verification failed' },
         { status: 400 }
       );
     }
 
     // Check AAGUID allowlist (YubiKey attestation policy)
-    const aaguid = verification.registrationInfo?.aaguid;
+    const aaguid = verification.registrationInfo.aaguid;
     if (!isAAGUIDAllowed(aaguid)) {
       const actualAaguid = aaguid || 'missing';
       await logAuditEvent('REG_VERIFY_ATTESTATION_DENIED', ARCHITECT_USER_ID, {
@@ -144,11 +157,11 @@ export async function POST(request: NextRequest) {
       );
 
       // Store credential
-      const credentialId = Buffer.from(verification.registrationInfo!.credentialID);
-      const publicKey = Buffer.from(verification.registrationInfo!.credentialPublicKey);
-      const transports = verification.registrationInfo!.counter
-        ? JSON.stringify(verification.registrationInfo!.transports || [])
-        : null;
+      // Note: registrationInfo is guaranteed to exist here due to guard above
+      const credentialId = Buffer.from(verification.registrationInfo.credentialID);
+      const publicKey = Buffer.from(verification.registrationInfo.credentialPublicKey);
+      // Serialize transports - do not gate on counter
+      const transports = JSON.stringify(verification.registrationInfo.transports ?? []);
 
       await client.query(
         `INSERT INTO auth_webauthn_credentials
@@ -158,7 +171,7 @@ export async function POST(request: NextRequest) {
           ARCHITECT_USER_ID,
           credentialId,
           publicKey,
-          verification.registrationInfo!.counter || 0,
+          verification.registrationInfo.counter || 0,
           transports,
           aaguid || null,
         ]
@@ -167,7 +180,7 @@ export async function POST(request: NextRequest) {
 
     await logAuditEvent('REG_VERIFY_OK', ARCHITECT_USER_ID, {
       aaguid: aaguid || null,
-      credentialId: verification.registrationInfo!.credentialID.toString('base64'),
+      credentialId: verification.registrationInfo.credentialID.toString('base64'),
     });
 
     return NextResponse.json({ verified: true });

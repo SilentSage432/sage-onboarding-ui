@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db/client';
-import { generateAuthOptions, ORIGIN, RP_ID } from '@/lib/auth/webauthn';
+import { generateAuthOptions } from '@/lib/auth/webauthn';
 import { logAuditEvent } from '@/lib/auth/audit';
 import { checkRateLimit, getRateLimitIdentifier } from '@/lib/auth/rate-limit';
 
