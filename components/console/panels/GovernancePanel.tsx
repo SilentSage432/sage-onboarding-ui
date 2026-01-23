@@ -8,12 +8,20 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Key, LogOut, CheckCircle2, XCircle, Clock } from "lucide-react";
+import { Shield, Key, LogOut, CheckCircle2, XCircle, Clock, Copy } from "lucide-react";
 
 interface SessionStatus {
   authenticated: boolean;
   userId?: string;
 }
+
+type RegistrationStatus = 
+  | 'idle'
+  | 'awaiting_security_key'
+  | 'awaiting_pin'
+  | 'verifying_credential'
+  | 'rejected_not_trusted'
+  | 'registered';
 
 export default function GovernancePanel() {
   const [sessionStatus, setSessionStatus] = useState<SessionStatus | null>(null);
@@ -21,9 +29,13 @@ export default function GovernancePanel() {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [registrationStatus, setRegistrationStatus] = useState<RegistrationStatus>('idle');
+  const [rejectedAaguid, setRejectedAaguid] = useState<string | null>(null);
   
   // Hard execution lock for registration - prevents concurrent executions
   const registrationLockRef = useRef(false);
+  // Track active challenge to prevent reuse
+  const activeChallengeRef = useRef<string | null>(null);
 
   // Check session status on mount
   useEffect(() => {
@@ -59,14 +71,20 @@ export default function GovernancePanel() {
       return;
     }
 
+    // Invalidate any previous challenge state
+    activeChallengeRef.current = null;
+    setRejectedAaguid(null);
+
     // Acquire lock
     registrationLockRef.current = true;
     setIsRegistering(true);
     setError(null);
     setSuccess(null);
+    setRegistrationStatus('idle');
 
     try {
       // Step 1: Get registration options (exactly once per click)
+      setRegistrationStatus('awaiting_security_key');
       const optionsResponse = await fetch("/api/auth/webauthn/register/options", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -79,14 +97,20 @@ export default function GovernancePanel() {
 
       const options = await optionsResponse.json();
       
+      // Store challenge to track active registration
+      activeChallengeRef.current = options.challenge;
+      
       // Preserve challenge through the full flow
       // The challenge is embedded in the options object and will be included in the response
 
       // Step 2: Start registration with browser API
       // This will use the challenge from options
+      // Browser may prompt for PIN - status will show "awaiting_pin" if needed
+      setRegistrationStatus('awaiting_pin');
       const attestationResponse = await startRegistration(options);
 
       // Step 3: Verify registration with the preserved challenge
+      setRegistrationStatus('verifying_credential');
       const verifyResponse = await fetch("/api/auth/webauthn/register/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -95,21 +119,36 @@ export default function GovernancePanel() {
 
       if (!verifyResponse.ok) {
         const errorData = await verifyResponse.json();
-        // Provide helpful error message with AAGUID if available
-        let errorMessage = errorData.error || "Registration verification failed";
-        if (errorData.aaguid && errorData.aaguid !== 'missing') {
-          errorMessage += `\n\nYour YubiKey's AAGUID: ${errorData.aaguid}\nAdd this to WEBAUTHN_AAGUID_ALLOWLIST in .env.local`;
+        
+        // Invalidate challenge on any error (400, 403, etc.)
+        activeChallengeRef.current = null;
+        
+        // Handle AAGUID allowlist rejection specially
+        if (verifyResponse.status === 403 && errorData.aaguid) {
+          setRejectedAaguid(errorData.aaguid);
+          setRegistrationStatus('rejected_not_trusted');
+          // Don't throw - let the UI show the rejection state
+          return;
         }
+        
+        // Other errors - invalidate and show error
+        let errorMessage = errorData.error || "Registration verification failed";
         if (errorData.message) {
           errorMessage += `\n\n${errorData.message}`;
         }
         throw new Error(errorMessage);
       }
 
+      // Success - clear challenge and update status
+      activeChallengeRef.current = null;
+      setRegistrationStatus('registered');
       setSuccess("YubiKey registered successfully!");
       await checkSessionStatus();
     } catch (error) {
       console.error("Registration error:", error);
+      // Invalidate challenge on any error
+      activeChallengeRef.current = null;
+      setRegistrationStatus('idle');
       setError(error instanceof Error ? error.message : "Registration failed");
     } finally {
       // Release lock
@@ -248,13 +287,67 @@ export default function GovernancePanel() {
             allowlist will be accepted.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
+          {/* Status Display */}
+          {registrationStatus !== 'idle' && (
+            <div className="text-sm text-muted-foreground">
+              Status: {
+                registrationStatus === 'awaiting_security_key' && 'Awaiting Security Key...'
+                || registrationStatus === 'awaiting_pin' && 'Awaiting PIN...'
+                || registrationStatus === 'verifying_credential' && 'Verifying Credential...'
+                || registrationStatus === 'rejected_not_trusted' && 'Rejected (Not Trusted)'
+                || registrationStatus === 'registered' && 'Registered'
+                || 'Processing...'
+              }
+            </div>
+          )}
+
+          {/* AAGUID Rejection Message */}
+          {registrationStatus === 'rejected_not_trusted' && rejectedAaguid && (
+            <Card className="border-yellow-500 bg-yellow-500/10">
+              <CardContent className="pt-6">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-yellow-500">
+                    <Shield className="h-5 w-5" />
+                    <p className="font-semibold">This security key is not yet trusted by the system.</p>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Detected AAGUID:</p>
+                    <div className="flex items-center gap-2">
+                      <code className="flex-1 px-3 py-2 bg-background border rounded text-sm font-mono break-all">
+                        {rejectedAaguid}
+                      </code>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          navigator.clipboard.writeText(rejectedAaguid);
+                        }}
+                      >
+                        Copy
+                      </Button>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Add this AAGUID to <code className="px-1 py-0.5 bg-background rounded text-xs">WEBAUTHN_AAGUID_ALLOWLIST</code> in <code className="px-1 py-0.5 bg-background rounded text-xs">.env.local</code> and restart the server.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           <Button
             onClick={handleRegister}
-            disabled={isRegistering}
+            disabled={isRegistering || activeChallengeRef.current !== null}
             className="w-full"
           >
-            {isRegistering ? "Registering..." : "Register YubiKey"}
+            {isRegistering 
+              ? registrationStatus === 'awaiting_security_key' && "Awaiting Security Key..."
+              || registrationStatus === 'awaiting_pin' && "Awaiting PIN..."
+              || registrationStatus === 'verifying_credential' && "Verifying Credential..."
+              || "Registering..."
+              : "Register YubiKey"
+            }
           </Button>
         </CardContent>
       </Card>
