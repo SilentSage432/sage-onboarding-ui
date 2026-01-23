@@ -59,14 +59,21 @@ export async function POST(request: NextRequest) {
         }
       }
       
-      // credential_id is stored as BYTEA in database, convert to base64url for WebAuthn
-      // The library expects the id as a Buffer or base64url string
-      const credentialIdBuffer = Buffer.isBuffer(row.credential_id) 
-        ? row.credential_id 
+      // credential_id is stored as BYTEA in database
+      // Postgres returns BYTEA as Buffer
+      // @simplewebauthn/server expects credential ID as Buffer
+      // Ensure it's a Buffer (row.credential_id should already be a Buffer from Postgres)
+      const credentialId = Buffer.isBuffer(row.credential_id)
+        ? row.credential_id
         : Buffer.from(row.credential_id);
       
+      // Debug in development
+      if (process.env.NODE_ENV === 'development' && !Buffer.isBuffer(credentialId)) {
+        console.warn('Credential ID is not a Buffer:', typeof credentialId, credentialId);
+      }
+      
       return {
-        id: credentialIdBuffer,
+        id: credentialId,
         transports,
       };
     });
