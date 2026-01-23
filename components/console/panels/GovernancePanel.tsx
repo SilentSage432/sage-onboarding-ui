@@ -243,7 +243,7 @@ export default function GovernancePanel() {
         <CardContent>
           <Button
             onClick={handleRegister}
-            disabled={isRegistering || registrationLockRef.current}
+            disabled={isRegistering}
             className="w-full"
           >
             {isRegistering ? "Registering..." : "Register YubiKey"}
