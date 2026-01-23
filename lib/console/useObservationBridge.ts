@@ -10,6 +10,7 @@ import type {
   ObservationSubsystem,
   ObservationSeverity,
 } from "@/lib/console/observationVocabulary";
+import type { ObservationSource } from "@/lib/console/observationProvenance";
 
 /**
  * Passive Observation Bridge
@@ -38,12 +39,13 @@ export function useObservationBridge() {
     const unbindInsight = hadraBus.on("insight", (insight: HadraInsight) => {
       // Record insight as observation - no interpretation, just persistence
       // Use vocabulary types for semantic structure
+      // Set provenance source explicitly
       const event: ObservationEvent = {
         id: crypto.randomUUID(),
         type: "hadra_insight" as ObservationEventType,
         timestamp: insight.ts || Date.now(),
+        source: "hadra" as ObservationSource, // Provenance: originated from HADRA
         data: {
-          source: "hadra",
           subsystem: insight.subsystem as ObservationSubsystem | undefined,
           severity: insight.severity as ObservationSeverity | undefined,
           content: insight.content,
@@ -56,12 +58,15 @@ export function useObservationBridge() {
     const unbindMessage = hadraBus.on("consoleMessage", (message: HadraConsoleMessage) => {
       // Record console message as observation - neutral recording only
       // Use vocabulary types for semantic structure
+      // Set provenance source explicitly based on message role
       const event: ObservationEvent = {
         id: crypto.randomUUID(),
         type: "console_message" as ObservationEventType,
         timestamp: message.ts || Date.now(),
+        source: message.role === "hadra" 
+          ? "hadra" as ObservationSource  // HADRA response
+          : "console" as ObservationSource, // Operator input or system message
         data: {
-          source: "hadra_console",
           role: message.role,
           content: message.content,
         },

@@ -16,6 +16,8 @@
  * Vocabulary precedes inference. This is naming, not judging.
  */
 
+import type { ObservationSource } from "./observationProvenance";
+
 /**
  * Observation Event Types
  * 
@@ -58,7 +60,6 @@ export type ObservationSeverity =
  * Uses vocabulary types instead of raw strings.
  */
 export type ObservationEventData = {
-  source: string;
   subsystem?: ObservationSubsystem;
   severity?: ObservationSeverity;
   content?: string;
@@ -70,11 +71,13 @@ export type ObservationEventData = {
  * Observation Event
  * 
  * A single observation event with vocabulary-typed fields.
+ * Includes provenance (source) as first-class metadata.
  */
 export type ObservationEvent = {
   id: string;
   type: ObservationEventType;
   timestamp: number;
+  source: ObservationSource; // Provenance - where the observation originated
   data?: ObservationEventData;
 };
 
@@ -201,6 +204,29 @@ export function getObservedSubsystems(
     }
   });
   return Array.from(subsystems);
+}
+
+/**
+ * Get events filtered by source (provenance)
+ */
+export function getEventsBySource(
+  events: ObservationEvent[],
+  source: ObservationSource
+): ObservationEvent[] {
+  return events.filter((event) => event.source === source);
+}
+
+/**
+ * Get unique sources that have been observed
+ */
+export function getObservedSources(
+  events: ObservationEvent[]
+): ObservationSource[] {
+  const sources = new Set<ObservationSource>();
+  events.forEach((event) => {
+    sources.add(event.source);
+  });
+  return Array.from(sources);
 }
 
 /**
