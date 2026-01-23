@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useTruthfulFetch } from "./useTruthfulFetch";
 
 export type FederationHealthMetric = {
   name: string;
@@ -35,282 +35,58 @@ export type FederationStateData = {
   message?: string;
 };
 
-type FederationHealthState = {
-  data: FederationHealthData | null;
-  loading: boolean;
-  error: string | null;
-  unavailable: boolean;
-};
-
-type FederationStateState = {
-  data: FederationStateData | null;
-  loading: boolean;
-  error: string | null;
-  unavailable: boolean;
-};
-
 /**
  * Truthful hook for fetching Federation health matrix data.
  * Returns explicit unavailable state if backend is not connected.
  * Never returns mock or fake data.
+ * Uses shared truthful fetch utility for standardized semantics.
  */
-export function useFederationHealthMatrix(): FederationHealthState {
-  const [state, setState] = useState<FederationHealthState>({
-    data: null,
-    loading: true,
-    error: null,
-    unavailable: false,
+export function useFederationHealthMatrix() {
+  return useTruthfulFetch<FederationHealthData>(`/api/federation/health/matrix`, {
+    transform: (data: any) => ({
+      overall: data.overall || "unknown",
+      metrics: data.metrics || [],
+      lastUpdated: data.lastUpdated,
+      nodeCount: data.nodeCount,
+      activeNodes: data.activeNodes,
+      message: data.message,
+    }),
   });
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchHealth() {
-      setState((prev) => ({ ...prev, loading: true, error: null }));
-
-      try {
-        const response = await fetch(`/api/federation/health/matrix`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (cancelled) return;
-
-        if (!response.ok) {
-          if (response.status === 404 || response.status >= 500) {
-            setState({
-              data: null,
-              loading: false,
-              error: null,
-              unavailable: true,
-            });
-            return;
-          }
-
-          const errorText = await response.text().catch(() => "Unknown error");
-          setState({
-            data: null,
-            loading: false,
-            error: errorText || `HTTP ${response.status}`,
-            unavailable: false,
-          });
-          return;
-        }
-
-        const data = await response.json();
-
-        if (cancelled) return;
-
-        setState({
-          data: {
-            overall: data.overall || "unknown",
-            metrics: data.metrics || [],
-            lastUpdated: data.lastUpdated,
-            nodeCount: data.nodeCount,
-            activeNodes: data.activeNodes,
-            message: data.message,
-          },
-          loading: false,
-          error: null,
-          unavailable: false,
-        });
-      } catch (err) {
-        if (cancelled) return;
-
-        setState({
-          data: null,
-          loading: false,
-          error: null,
-          unavailable: true,
-        });
-      }
-    }
-
-    fetchHealth();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return state;
 }
 
 /**
  * Truthful hook for fetching Federation health core (detailed) data.
  * Returns explicit unavailable state if backend is not connected.
  * Never returns mock or fake data.
+ * Uses shared truthful fetch utility for standardized semantics.
  */
-export function useFederationHealthCore(): FederationHealthState {
-  const [state, setState] = useState<FederationHealthState>({
-    data: null,
-    loading: true,
-    error: null,
-    unavailable: false,
+export function useFederationHealthCore() {
+  return useTruthfulFetch<FederationHealthData>(`/api/federation/health/core`, {
+    transform: (data: any) => ({
+      overall: data.overall || "unknown",
+      metrics: data.metrics || [],
+      lastUpdated: data.lastUpdated,
+      nodeCount: data.nodeCount,
+      activeNodes: data.activeNodes,
+      message: data.message,
+    }),
   });
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchHealth() {
-      setState((prev) => ({ ...prev, loading: true, error: null }));
-
-      try {
-        const response = await fetch(`/api/federation/health/core`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (cancelled) return;
-
-        if (!response.ok) {
-          if (response.status === 404 || response.status >= 500) {
-            setState({
-              data: null,
-              loading: false,
-              error: null,
-              unavailable: true,
-            });
-            return;
-          }
-
-          const errorText = await response.text().catch(() => "Unknown error");
-          setState({
-            data: null,
-            loading: false,
-            error: errorText || `HTTP ${response.status}`,
-            unavailable: false,
-          });
-          return;
-        }
-
-        const data = await response.json();
-
-        if (cancelled) return;
-
-        setState({
-          data: {
-            overall: data.overall || "unknown",
-            metrics: data.metrics || [],
-            lastUpdated: data.lastUpdated,
-            nodeCount: data.nodeCount,
-            activeNodes: data.activeNodes,
-            message: data.message,
-          },
-          loading: false,
-          error: null,
-          unavailable: false,
-        });
-      } catch (err) {
-        if (cancelled) return;
-
-        setState({
-          data: null,
-          loading: false,
-          error: null,
-          unavailable: true,
-        });
-      }
-    }
-
-    fetchHealth();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return state;
 }
 
 /**
  * Truthful hook for fetching Federation state data.
  * Returns explicit unavailable state if backend is not connected.
  * Never returns mock or fake data.
+ * Uses shared truthful fetch utility for standardized semantics.
  */
-export function useFederationState(): FederationStateState {
-  const [state, setState] = useState<FederationStateState>({
-    data: null,
-    loading: true,
-    error: null,
-    unavailable: false,
+export function useFederationState() {
+  return useTruthfulFetch<FederationStateData>(`/api/federation/state`, {
+    transform: (data: any) => ({
+      state: data.state || "unknown",
+      phase: data.phase,
+      nodes: data.nodes,
+      lastUpdated: data.lastUpdated,
+      message: data.message,
+    }),
   });
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchState() {
-      setState((prev) => ({ ...prev, loading: true, error: null }));
-
-      try {
-        const response = await fetch(`/api/federation/state`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (cancelled) return;
-
-        if (!response.ok) {
-          if (response.status === 404 || response.status >= 500) {
-            setState({
-              data: null,
-              loading: false,
-              error: null,
-              unavailable: true,
-            });
-            return;
-          }
-
-          const errorText = await response.text().catch(() => "Unknown error");
-          setState({
-            data: null,
-            loading: false,
-            error: errorText || `HTTP ${response.status}`,
-            unavailable: false,
-          });
-          return;
-        }
-
-        const data = await response.json();
-
-        if (cancelled) return;
-
-        setState({
-          data: {
-            state: data.state || "unknown",
-            phase: data.phase,
-            nodes: data.nodes,
-            lastUpdated: data.lastUpdated,
-            message: data.message,
-          },
-          loading: false,
-          error: null,
-          unavailable: false,
-        });
-      } catch (err) {
-        if (cancelled) return;
-
-        setState({
-          data: null,
-          loading: false,
-          error: null,
-          unavailable: true,
-        });
-      }
-    }
-
-    fetchState();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return state;
 }
