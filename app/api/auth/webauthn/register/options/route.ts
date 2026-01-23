@@ -38,6 +38,7 @@ export async function POST(request: NextRequest) {
     );
 
     const existingCredentials = existingCredsResult.rows.map((row) => ({
+      type: 'public-key' as const,
       id: Buffer.from(row.credential_id),
       transports: row.transports ? JSON.parse(row.transports) : undefined,
     }));

@@ -71,6 +71,7 @@ export async function POST(request: NextRequest) {
       const credentialIdString = credentialIdBuffer.toString('base64url');
       
       return {
+        type: 'public-key' as const,
         id: credentialIdString,
         transports,
       };
