@@ -32,6 +32,7 @@ export default function ConsoleLayout({ children }: { children: React.ReactNode 
   const [hadraOpen, setHadraOpen] = useState(false);
   const [hadraSync, setHadraSync] = useState(false);
   const [orbStatus, setOrbStatus] = useState<OrbStatus>("idle");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { setCurrentSessionStartTime, setSystemPerspective } = useReadinessStore();
   const insights = useMockInsights();
   const events = useMockEvents();
@@ -104,7 +105,7 @@ export default function ConsoleLayout({ children }: { children: React.ReactNode 
 
   return (
     <ConsoleArrival>
-      <div className="fixed inset-0 w-screen h-screen overflow-hidden">
+      <div className="fixed inset-0 w-screen h-screen h-[100dvh] overflow-hidden touch-pan-y">
         {/* Sovereign OS Background v3 - Static, minimal, enterprise-grade */}
         <SovereignBackground />
         
@@ -114,12 +115,12 @@ export default function ConsoleLayout({ children }: { children: React.ReactNode 
           <ConsoleAtmosphere />
           
           {/* Top Navigation Bar */}
-          <TopBar />
+          <TopBar isSidebarOpen={isSidebarOpen} onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
 
           {/* Console Frame Grid */}
           <ConsoleFrame>
             {/* Sidebar */}
-            <Sidebar />
+            <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
             {/* Main View */}
             <DesktopPanel>

@@ -90,11 +90,11 @@ export default function HadraConsoleFeed() {
   }, [messages]);
 
   return (
-    <div className="flex flex-col gap-4 p-6 text-[14px] text-gray-300 overflow-y-auto h-full">
+    <div className="flex flex-col gap-4 p-6 text-[14px] text-gray-300 overflow-y-auto h-full max-md:p-4 max-sm:p-3 max-sm:text-xs max-sm:gap-3">
       {messages.length === 0 && (
-        <div className="text-center text-gray-500 text-sm py-8">
+        <div className="text-center text-gray-500 text-sm py-8 max-sm:text-xs max-sm:py-4">
           <div className="mb-2">HADRA-01 ready.</div>
-          <div className="text-xs">Type a command to begin diagnostic analysis.</div>
+          <div className="text-xs max-sm:text-[10px]">Type a command to begin diagnostic analysis.</div>
         </div>
       )}
       {messages.map((msg) => (
@@ -102,6 +102,7 @@ export default function HadraConsoleFeed() {
           key={msg.id}
           className={cn(
             "max-w-[85%] rounded-xl px-4 py-3 text-sm leading-relaxed transition-all",
+            "max-sm:max-w-[90%] max-sm:px-3 max-sm:py-2 max-sm:text-xs",
             msg.role === "operator"
               ? "ml-auto bg-white/5 border border-white/10 text-gray-200"
               : msg.role === "hadra"
@@ -109,15 +110,15 @@ export default function HadraConsoleFeed() {
               : "bg-blue-500/10 border border-blue-500/20 text-blue-200"
           )}
         >
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-xs text-gray-400 font-mono">
+          <div className="flex items-center gap-2 mb-1.5 max-sm:gap-1.5 max-sm:mb-1">
+            <span className="text-xs text-gray-400 font-mono max-sm:text-[10px]">
               {new Date(msg.timestamp).toLocaleTimeString([], { 
                 hour: "2-digit", 
                 minute: "2-digit", 
                 second: "2-digit" 
               })}
             </span>
-            <span className="text-xs text-gray-500 uppercase tracking-wide">
+            <span className="text-xs text-gray-500 uppercase tracking-wide max-sm:text-[10px]">
               {msg.role}
             </span>
           </div>

@@ -21,8 +21,9 @@ export default function DiagnosticStream({ events }: { events: HadraEvent[] }) {
   return (
     <div
       ref={containerRef}
-      className="h-[65vh] overflow-y-auto px-3 py-2 text-xs font-mono text-gray-300 select-none
-                 backdrop-blur-md rounded-lg bg-black/20 border border-white/5"
+      className="h-[65dvh] overflow-y-auto px-3 py-2 text-xs font-mono text-gray-300 select-none
+                 backdrop-blur-md rounded-lg bg-black/20 border border-white/5
+                 max-sm:h-[40dvh] max-sm:text-[10px] max-sm:px-2 max-sm:py-1.5"
     >
       {events.map((e) => (
         <div key={e.id} className={cn("mb-1", eventStyles[e.level])}>

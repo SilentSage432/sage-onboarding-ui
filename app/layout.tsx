@@ -5,6 +5,12 @@ import "./globals.css";
 
 export const metadata = {
   title: "SAGE Onboarding",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
 };
 
 export default function RootLayout({
@@ -14,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen w-full bg-black text-white relative">
+      <body className="min-h-screen min-h-[100dvh] w-full bg-black text-white relative overflow-x-hidden">
         {children}
         {/* UX-E24: HADRA Orb is now injected globally via console layout */}
         {/* Legacy global dock removed */}

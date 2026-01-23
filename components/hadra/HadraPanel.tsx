@@ -99,12 +99,12 @@ export default function HadraPanel({
   }, [combinedInsights]);
 
   return (
-    <div className="fixed inset-0 z-[var(--z-hadra)] flex items-center justify-center">
+    <div className="fixed inset-0 z-[var(--z-hadra)] flex items-center justify-center p-4 max-sm:p-2">
       {/* Dimmed backdrop */}
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
 
       {/* HADRA content container */}
-      <div className="relative rounded-2xl bg-[#0b0f17] p-8 w-[64rem] max-h-[85vh] overflow-hidden shadow-2xl border border-white/10">
+      <div className="relative rounded-2xl bg-[#0b0f17] p-8 w-full max-w-4xl max-h-[85dvh] overflow-hidden shadow-2xl border border-white/10 max-md:p-6 max-sm:p-4 max-sm:max-h-[90dvh]">
         {/* HADRA Live Diagnostics Space */}
         <div className="absolute inset-0 opacity-40 rounded-2xl overflow-hidden">
           <HadraDiagnosticsCanvas severity={diagnosticsSeverity} />
@@ -113,27 +113,28 @@ export default function HadraPanel({
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-300 hover:text-white transition z-10"
+          className="absolute top-4 right-4 text-gray-300 hover:text-white transition z-10 w-8 h-8 flex items-center justify-center text-2xl max-sm:top-2 max-sm:right-2 max-sm:w-10 max-sm:h-10"
+          aria-label="Close panel"
         >
           ×
         </button>
 
         {/* Header */}
-        <h2 className="text-xl font-semibold text-white mb-6">
+        <h2 className="text-xl font-semibold text-white mb-6 max-md:text-lg max-sm:text-base max-sm:mb-4 pr-8">
           HADRA-01 Diagnostic Console
         </h2>
 
         {/* Two-column layout: Stream + Insights */}
-        <div className="flex gap-6">
+        <div className="flex gap-6 max-md:gap-4 max-sm:flex-col max-sm:gap-3">
           {/* LEFT COLUMN — Diagnostic Stream */}
-          <div className="w-1/3 pr-4">
-            <h3 className="text-sm font-medium text-gray-300 mb-3">Diagnostic Stream</h3>
+          <div className="w-1/3 pr-4 max-sm:w-full max-sm:pr-0">
+            <h3 className="text-sm font-medium text-gray-300 mb-3 max-sm:text-xs max-sm:mb-2">Diagnostic Stream</h3>
             <DiagnosticStream events={events} />
           </div>
 
           {/* RIGHT COLUMN — Insights */}
-          <div className="w-2/3 pl-6 pr-2 overflow-y-auto max-h-[65vh]">
-            <h3 className="text-sm font-medium text-gray-300 mb-3">Active Insights</h3>
+          <div className="w-2/3 pl-6 pr-2 overflow-y-auto max-h-[65dvh] max-sm:w-full max-sm:pl-0 max-sm:pr-0 max-sm:max-h-[50dvh]">
+            <h3 className="text-sm font-medium text-gray-300 mb-3 max-sm:text-xs max-sm:mb-2">Active Insights</h3>
             <InsightsList insights={processedInsights} />
           </div>
         </div>

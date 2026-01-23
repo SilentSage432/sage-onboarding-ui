@@ -81,6 +81,8 @@ export default function HadraOrb({
                 pointer-events-auto
                 cursor-pointer select-none
                 max-lg:bottom-6 max-lg:right-6
+                max-md:bottom-20 max-md:right-4
+                max-sm:bottom-16 max-sm:right-2
               "
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
@@ -93,7 +95,9 @@ export default function HadraOrb({
           !open && orbClasses,
           open && "animate-[sage-orb-surge_0.45s_ease-out]",
           "hover:scale-105 hover:shadow-xl hover:brightness-110",
-          "hover:animate-[sage-orb-tilt_0.6s_ease-in-out]"
+          "hover:animate-[sage-orb-tilt_0.6s_ease-in-out]",
+          "max-sm:w-16 max-sm:h-16",
+          "touch-manipulation"
         )}
       >
         {/* Core icon */}

@@ -11,7 +11,7 @@ export default function DesktopPanel({ children }: { children: React.ReactNode }
     >
       {/* Scrollable content area */}
       <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
-        <div className="p-6">
+        <div className="p-6 max-md:p-4 max-sm:p-3">
           {children}
         </div>
       </div>

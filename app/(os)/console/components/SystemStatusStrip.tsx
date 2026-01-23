@@ -30,8 +30,9 @@ export default function SystemStatusStrip() {
         "text-[11px] text-gray-300 tracking-wide uppercase",
         "select-none",
         "max-lg:bottom-4 max-lg:scale-90",
-        "max-sm:gap-4 max-sm:px-4 max-sm:py-1.5",
-        "max-sm:text-[10px]"
+        "max-md:bottom-20",
+        "max-sm:gap-3 max-sm:px-3 max-sm:py-1.5 max-sm:bottom-16",
+        "max-sm:text-[10px] max-sm:scale-85"
       )}
     >
       {/* Mesh Link */}

@@ -80,10 +80,10 @@ export default function HadraConsoleInput() {
         e.preventDefault();
         send();
       }}
-      className="flex items-center gap-2 p-4 border-t border-white/10 bg-black/30 backdrop-blur-xl"
+      className="flex items-center gap-2 p-4 border-t border-white/10 bg-black/30 backdrop-blur-xl max-md:p-3 max-sm:p-2 max-sm:gap-1.5"
     >
       <div className="flex-1 relative">
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-400 text-sm font-mono">
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-400 text-sm font-mono max-sm:text-xs max-sm:left-2">
           ➤
         </span>
         <input
@@ -103,6 +103,8 @@ export default function HadraConsoleInput() {
             focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/30
             transition-all
             font-mono
+            max-sm:pl-7 max-sm:pr-3 max-sm:py-1.5 max-sm:text-xs
+            touch-manipulation
           "
         />
       </div>
@@ -116,6 +118,9 @@ export default function HadraConsoleInput() {
           text-white rounded-lg
           transition-all
           font-medium text-sm
+          max-sm:px-3 max-sm:py-1.5 max-sm:text-xs
+          touch-manipulation
+          min-h-[44px] min-w-[60px]
         "
       >
         Send

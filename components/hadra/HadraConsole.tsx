@@ -30,12 +30,16 @@ export default function HadraConsole({ open }: { open: boolean }) {
             z-[var(--z-hadra)]
             max-lg:w-[380px] max-lg:h-[480px]
             max-lg:bottom-20 max-lg:right-4
+            max-md:w-[calc(100vw-2rem)] max-md:h-[60dvh]
+            max-md:bottom-20 max-md:right-4 max-md:left-4
+            max-sm:w-[calc(100vw-1rem)] max-sm:h-[70dvh]
+            max-sm:bottom-16 max-sm:right-2 max-sm:left-2
           "
         >
           {/* Header */}
-          <div className="p-3 border-b border-white/10 text-gray-200 font-medium text-sm flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
-            HADRA-01 · Diagnostic Console
+          <div className="p-3 border-b border-white/10 text-gray-200 font-medium text-sm flex items-center gap-2 max-md:p-2.5 max-sm:p-2 max-sm:text-xs">
+            <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse max-sm:w-1.5 max-sm:h-1.5 flex-shrink-0" />
+            <span className="truncate">HADRA-01 · Diagnostic Console</span>
           </div>
 
           {/* Feed */}
