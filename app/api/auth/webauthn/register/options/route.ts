@@ -9,8 +9,6 @@ import { query, transaction } from '@/lib/db/client';
 import {
   generateRegOptions,
   isAAGUIDAllowed,
-  ORIGIN,
-  RP_ID,
 } from '@/lib/auth/webauthn';
 import { logAuditEvent } from '@/lib/auth/audit';
 import { checkRateLimit, getRateLimitIdentifier } from '@/lib/auth/rate-limit';

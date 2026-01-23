@@ -48,24 +48,30 @@ export async function createSession(
  * Validate a session and return user ID if valid
  */
 export async function validateSession(sessionId: string): Promise<string | null> {
-  const result = await query<{
-    user_id: string;
-    expires_at: Date;
-    revoked_at: Date | null;
-  }>(
-    `SELECT user_id, expires_at, revoked_at
-     FROM auth_sessions
-     WHERE session_id = $1
-     AND expires_at > NOW()
-     AND revoked_at IS NULL`,
-    [sessionId]
-  );
+  try {
+    const result = await query<{
+      user_id: string;
+      expires_at: Date;
+      revoked_at: Date | null;
+    }>(
+      `SELECT user_id, expires_at, revoked_at
+       FROM auth_sessions
+       WHERE session_id = $1
+       AND expires_at > NOW()
+       AND revoked_at IS NULL`,
+      [sessionId]
+    );
 
-  if (result.rows.length === 0) {
+    if (result.rows.length === 0) {
+      return null;
+    }
+
+    return result.rows[0].user_id;
+  } catch (error) {
+    // If database query fails, return null (no valid session)
+    console.error('Error validating session:', error);
     return null;
   }
-
-  return result.rows[0].user_id;
 }
 
 /**
@@ -109,12 +115,18 @@ export async function cleanupExpiredSessions(): Promise<number> {
  * Get session from cookie
  */
 export async function getSessionFromCookie(): Promise<string | null> {
-  const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME);
-  if (!sessionCookie?.value) {
+  try {
+    const cookieStore = await cookies();
+    const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME);
+    if (!sessionCookie?.value) {
+      return null;
+    }
+    return await validateSession(sessionCookie.value);
+  } catch (error) {
+    // If database connection fails or any other error, return null (no session)
+    console.error('Error getting session from cookie:', error);
     return null;
   }
-  return await validateSession(sessionCookie.value);
 }
 
 /**

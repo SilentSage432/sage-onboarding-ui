@@ -9,8 +9,6 @@ import { query, transaction } from '@/lib/db/client';
 import {
   verifyRegResponse,
   isAAGUIDAllowed,
-  ORIGIN,
-  RP_ID,
 } from '@/lib/auth/webauthn';
 import { logAuditEvent } from '@/lib/auth/audit';
 import { checkRateLimit, getRateLimitIdentifier } from '@/lib/auth/rate-limit';
@@ -80,9 +78,7 @@ export async function POST(request: NextRequest) {
     // Verify registration response
     const verification = await verifyRegResponse(
       response,
-      challenge.challenge,
-      ORIGIN,
-      RP_ID
+      challenge.challenge
     );
 
     if (!verification.verified) {

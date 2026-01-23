@@ -30,6 +30,17 @@ export default function GovernancePanel() {
   const checkSessionStatus = async () => {
     try {
       const response = await fetch("/api/auth/session");
+      
+      // Check if response is OK and content-type is JSON
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Response is not JSON");
+      }
+      
       const data = await response.json();
       setSessionStatus(data);
     } catch (error) {

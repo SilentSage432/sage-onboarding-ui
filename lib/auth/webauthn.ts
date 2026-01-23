@@ -20,17 +20,30 @@ import type {
 } from '@simplewebauthn/server/script/deps';
 
 // Environment configuration
-const RP_ID = process.env.WEBAUTHN_RP_ID || process.env.NEXT_PUBLIC_WEBAUTHN_RP_ID;
+// Use runtime getters to allow for dynamic env var loading
+function getRPId(): string {
+  const rpId = process.env.WEBAUTHN_RP_ID || process.env.NEXT_PUBLIC_WEBAUTHN_RP_ID;
+  if (!rpId) {
+    throw new Error(
+      'WEBAUTHN_RP_ID or NEXT_PUBLIC_WEBAUTHN_RP_ID environment variable is required. ' +
+      'For localhost development, set WEBAUTHN_RP_ID=localhost in .env.local'
+    );
+  }
+  return rpId;
+}
+
+function getOrigin(): string {
+  const origin = process.env.WEBAUTHN_ORIGIN || process.env.NEXT_PUBLIC_WEBAUTHN_ORIGIN;
+  if (!origin) {
+    throw new Error(
+      'WEBAUTHN_ORIGIN or NEXT_PUBLIC_WEBAUTHN_ORIGIN environment variable is required. ' +
+      'For localhost development, set WEBAUTHN_ORIGIN=http://localhost:3000 in .env.local'
+    );
+  }
+  return origin;
+}
+
 const RP_NAME = process.env.WEBAUTHN_RP_NAME || 'SAGE OS';
-const ORIGIN = process.env.WEBAUTHN_ORIGIN || process.env.NEXT_PUBLIC_WEBAUTHN_ORIGIN;
-
-if (!RP_ID) {
-  throw new Error('WEBAUTHN_RP_ID or NEXT_PUBLIC_WEBAUTHN_RP_ID environment variable is required');
-}
-
-if (!ORIGIN) {
-  throw new Error('WEBAUTHN_ORIGIN or NEXT_PUBLIC_WEBAUTHN_ORIGIN environment variable is required');
-}
 
 /**
  * Get allowed YubiKey AAGUIDs from environment
@@ -69,7 +82,7 @@ export async function generateRegOptions(
 ): Promise<ReturnType<typeof generateRegistrationOptions>> {
   const opts: GenerateRegistrationOptionsOpts = {
     rpName: RP_NAME,
-    rpID: RP_ID,
+    rpID: getRPId(),
     userID: Buffer.from(userId),
     userName,
     timeout: 60000, // 60 seconds
@@ -92,14 +105,14 @@ export async function generateRegOptions(
 export async function verifyRegResponse(
   response: any,
   expectedChallenge: string,
-  expectedOrigin: string,
-  expectedRPID: string
+  expectedOrigin?: string,
+  expectedRPID?: string
 ): Promise<ReturnType<typeof verifyRegistrationResponse>> {
   const opts: VerifyRegistrationResponseOpts = {
     response,
     expectedChallenge,
-    expectedOrigin,
-    expectedRPID,
+    expectedOrigin: expectedOrigin || getOrigin(),
+    expectedRPID: expectedRPID || getRPId(),
     requireUserVerification: true,
   };
 
@@ -113,7 +126,7 @@ export async function generateAuthOptions(
   credentials: PublicKeyCredentialDescriptorFuture[]
 ): Promise<ReturnType<typeof generateAuthenticationOptions>> {
   const opts: GenerateAuthenticationOptionsOpts = {
-    rpID: RP_ID,
+    rpID: getRPId(),
     timeout: 60000, // 60 seconds
     allowCredentials: credentials,
     userVerification: 'required',
@@ -128,19 +141,23 @@ export async function generateAuthOptions(
 export async function verifyAuthResponse(
   response: any,
   expectedChallenge: string,
-  expectedOrigin: string,
-  expectedRPID: string,
-  credential: {
+  expectedOrigin?: string,
+  expectedRPID?: string,
+  credential?: {
     id: Buffer;
     publicKey: Buffer;
     counter: number;
   }
 ): Promise<ReturnType<typeof verifyAuthenticationResponse>> {
+  if (!credential) {
+    throw new Error('Credential is required for authentication verification');
+  }
+  
   const opts: VerifyAuthenticationResponseOpts = {
     response,
     expectedChallenge,
-    expectedOrigin,
-    expectedRPID,
+    expectedOrigin: expectedOrigin || getOrigin(),
+    expectedRPID: expectedRPID || getRPId(),
     credential,
     requireUserVerification: true,
   };
@@ -148,4 +165,6 @@ export async function verifyAuthResponse(
   return verifyAuthenticationResponse(opts);
 }
 
-export { RP_ID, RP_NAME, ORIGIN };
+// Export getters for use in API routes (if needed)
+// Most routes will use the functions directly which call these internally
+export { RP_NAME };

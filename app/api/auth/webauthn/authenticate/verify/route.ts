@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { query, transaction } from '@/lib/db/client';
-import { verifyAuthResponse, ORIGIN, RP_ID } from '@/lib/auth/webauthn';
+import { verifyAuthResponse } from '@/lib/auth/webauthn';
 import { createSession, setSessionCookie } from '@/lib/auth/session';
 import { logAuditEvent } from '@/lib/auth/audit';
 import { checkRateLimit, getRateLimitIdentifier } from '@/lib/auth/rate-limit';
@@ -103,8 +103,8 @@ export async function POST(request: NextRequest) {
     const verification = await verifyAuthResponse(
       response,
       challenge.challenge,
-      ORIGIN,
-      RP_ID,
+      undefined, // Will use getOrigin() internally
+      undefined, // Will use getRPId() internally
       {
         id: Buffer.from(credential.credential_id),
         publicKey: Buffer.from(credential.public_key),
