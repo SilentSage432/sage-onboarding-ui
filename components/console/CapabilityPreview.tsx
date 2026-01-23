@@ -1,5 +1,6 @@
 "use client";
 
+import { type ReactElement } from "react";
 import { ModuleDefinition } from "@/lib/console/moduleRegistry";
 import { Eye } from "lucide-react";
 
@@ -17,7 +18,7 @@ export default function CapabilityPreview({
   previewComponent,
 }: {
   module: ModuleDefinition;
-  previewComponent?: () => JSX.Element;
+  previewComponent?: () => ReactElement;
 }) {
   if (previewComponent) {
     // Render custom preview component
