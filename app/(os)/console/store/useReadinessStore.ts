@@ -1,6 +1,12 @@
 "use client";
 
 import { create } from "zustand";
+import type {
+  ObservationEvent,
+  ObservationEventType,
+  ObservationSubsystem,
+  ObservationSeverity,
+} from "@/lib/console/observationVocabulary";
 
 /**
  * Readiness State Store
@@ -79,15 +85,11 @@ export type ReadinessState = {
   automationEventCount: number;
   
   /**
-   * Placeholder for observation events.
-   * Not enforced - structure only.
+   * Observation events recorded over time.
+   * Uses vocabulary types for semantic structure.
+   * This is passive memory - no interpretation or decisions.
    */
-  observationEvents: Array<{
-    id: string;
-    type: string;
-    timestamp: number;
-    data?: unknown;
-  }>;
+  observationEvents: ObservationEvent[];
   
   /**
    * Placeholder for learning milestones.
@@ -156,8 +158,9 @@ export type ReadinessState = {
   /**
    * Add an observation event.
    * Does not unlock anything - just records the event.
+   * Uses vocabulary types for semantic structure.
    */
-  addObservationEvent: (event: ReadinessState['observationEvents'][0]) => void;
+  addObservationEvent: (event: ObservationEvent) => void;
   
   /**
    * Add a learning milestone.
