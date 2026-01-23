@@ -133,10 +133,6 @@ export async function POST(request: NextRequest) {
         id: Buffer.from(credential.credential_id).toString('base64url'),
         publicKey: Buffer.from(credential.public_key),
         counter: credential.counter,
-        // We currently only support hardware authenticators (YubiKeys) via AAGUID allowlist.
-        // These are non-syncable credentials in practice.
-        deviceType: 'singleDevice',
-        backedUp: false,
       }
     );
 
