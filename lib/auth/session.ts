@@ -11,10 +11,19 @@ import { query, transaction } from '@/lib/db/client';
 
 const SESSION_COOKIE_NAME = 'sage_architect_session';
 const SESSION_TTL_HOURS = 12; // Maximum session lifetime
-const SESSION_SECRET = process.env.SESSION_SECRET;
 
-if (!SESSION_SECRET) {
-  throw new Error('SESSION_SECRET environment variable is required');
+/**
+ * Get session secret (checked at runtime)
+ */
+function getSessionSecret(): string {
+  const secret = process.env.SESSION_SECRET;
+  if (!secret) {
+    throw new Error(
+      'SESSION_SECRET environment variable is required. ' +
+      'Set it in .env.local: SESSION_SECRET=your-random-secret-here-min-32-chars'
+    );
+  }
+  return secret;
 }
 
 /**
