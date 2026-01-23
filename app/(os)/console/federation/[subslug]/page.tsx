@@ -23,10 +23,8 @@ export default function FederationPanelPage({
 
   // Observe panel visit for temporal continuity (perceptual infrastructure only)
   useEffect(() => {
-    if (Panel) {
-      observePanelVisit(`federation/${subslug}`);
-    }
-  }, [subslug, Panel, observePanelVisit]);
+    observePanelVisit(`federation/${subslug}`);
+  }, [subslug, observePanelVisit]);
 
   if (!Panel) {
     return (
