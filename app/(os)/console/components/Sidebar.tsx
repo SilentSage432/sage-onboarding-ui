@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Lock } from "lucide-react";
+import React from "react";
 import { moduleRegistry } from "@/lib/console/moduleRegistry";
 import { useReadinessStore } from "@/app/(os)/console/store/useReadinessStore";
 import { isModuleUnlocked, isModuleVisibleToPerspective } from "@/lib/console/readinessUtils";
@@ -19,31 +20,42 @@ export default function Sidebar() {
     isModuleVisibleToPerspective(mod, readinessState.systemPerspective)
   );
   
-  const nav = [
-    { 
-      name: "Overview", 
-      icon: Home, 
-      href: "/console/dashboard", 
-      id: "overview",
-      isLocked: false,
-      module: null,
-    },
-    ...visibleModules.map((mod) => {
-      const isUnlocked = isModuleUnlocked(
-        mod, 
-        readinessState.unlockedCapabilities,
-        readinessState.systemPerspective
-      );
-      return {
-        name: mod.name,
-        icon: mod.icon,
-        href: `/console/${mod.slug}`,
-        id: mod.slug,
-        isLocked: !isUnlocked,
-        module: mod,
-      };
-    }),
-  ];
+  // Overview stays at top
+  const overviewItem = { 
+    name: "Overview", 
+    icon: Home, 
+    href: "/console/dashboard", 
+    id: "overview",
+    isLocked: false,
+    module: null,
+  };
+
+  // Group modules by layer
+  const modulesByLayer = visibleModules.reduce((acc, mod) => {
+    const isUnlocked = isModuleUnlocked(
+      mod, 
+      readinessState.unlockedCapabilities,
+      readinessState.systemPerspective
+    );
+    const navItem = {
+      name: mod.name,
+      icon: mod.icon,
+      href: `/console/${mod.slug}`,
+      id: mod.slug,
+      isLocked: !isUnlocked,
+      module: mod,
+    };
+    
+    const layer = mod.layer || 'capability'; // Default to capability if missing
+    if (!acc[layer]) {
+      acc[layer] = [];
+    }
+    acc[layer].push(navItem);
+    return acc;
+  }, {} as Record<string, typeof visibleModules[0][]>);
+
+  // Define layer order
+  const layerOrder: Array<'orientation' | 'capability' | 'governance'> = ['orientation', 'capability', 'governance'];
 
   return (
     <motion.aside
@@ -69,7 +81,65 @@ export default function Sidebar() {
         scrollbarColor: "rgba(255, 255, 255, 0.1) transparent",
       }}
     >
-      {nav.map((item) => {
+      {/* Render Overview first */}
+      {(() => {
+        const item = overviewItem;
+        const Icon = item.icon;
+        const active =
+          pathname === item.href ||
+          (item.href === "/console/dashboard" && pathname === "/console");
+        
+        const NavContent = (
+          <>
+            {active && (
+              <div className="absolute left-0 w-1 h-6 rounded-r-full bg-gradient-to-b from-blue-400 to-purple-500 shadow-[0_0_6px_rgba(140,90,255,0.6)]" />
+            )}
+            <div className="flex flex-col items-center gap-1 w-24 relative">
+              <div className="relative">
+                <Icon
+                  className={cn(
+                    "h-5 w-5 transition-all duration-200",
+                    active
+                      ? "text-white drop-shadow-[0_0_4px_rgba(180,120,255,0.45)]"
+                      : "text-slate-400 group-hover:text-white"
+                  )}
+                />
+              </div>
+              <span className="text-[11px] leading-tight text-center tracking-wide whitespace-nowrap">
+                {item.name}
+              </span>
+            </div>
+          </>
+        );
+
+        return (
+          <Link
+            key={item.id}
+            href={item.href}
+            className={cn(
+              "group relative flex flex-col items-center gap-1 py-3 transition-all duration-200",
+              active
+                ? "text-white"
+                : "text-slate-400 group-hover:text-white group-hover:animate-[sage-sidebar-hover_200ms_ease-in-out]"
+            )}
+          >
+            {NavContent}
+          </Link>
+        );
+      })()}
+
+      {/* Render grouped modules with dividers between layers */}
+      {layerOrder.map((layer) => {
+        const layerItems = modulesByLayer[layer] || [];
+        if (layerItems.length === 0) return null;
+
+        return (
+          <React.Fragment key={layer}>
+            {/* Divider between groups: creates visual separation */}
+            <div className="w-12 h-px bg-white/5" />
+            
+            {/* Render items in this layer directly (gap-6 from aside applies) */}
+            {layerItems.map((item) => {
         const Icon = item.icon;
         const active =
           pathname === item.href ||
@@ -136,20 +206,23 @@ export default function Sidebar() {
           );
         }
 
-        // Render unlocked items as links
-        return (
-          <Link
-            key={item.id || item.href}
-            href={item.href}
-            className={cn(
-              "group relative flex flex-col items-center gap-1 py-3 transition-all duration-200",
-              active
-                ? "text-white"
-                : "text-slate-400 group-hover:text-white group-hover:animate-[sage-sidebar-hover_200ms_ease-in-out]"
-            )}
-          >
-            {NavContent}
-          </Link>
+              // Render unlocked items as links
+              return (
+                <Link
+                  key={item.id || item.href}
+                  href={item.href}
+                  className={cn(
+                    "group relative flex flex-col items-center gap-1 py-3 transition-all duration-200",
+                    active
+                      ? "text-white"
+                      : "text-slate-400 group-hover:text-white group-hover:animate-[sage-sidebar-hover_200ms_ease-in-out]"
+                  )}
+                >
+                  {NavContent}
+                </Link>
+              );
+            })}
+          </React.Fragment>
         );
       })}
     </motion.aside>
