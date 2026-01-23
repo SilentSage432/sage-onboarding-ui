@@ -97,7 +97,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Get credential from database
-    const credentialId = Buffer.from(response.id, 'base64');
+    // SimpleWebAuthn uses Base64URLString identifiers
+    const credentialId = Buffer.from(response.id, 'base64url');
     const credentialResult = await query<{
       id: string;
       credential_id: Buffer;
@@ -128,9 +129,14 @@ export async function POST(request: NextRequest) {
       undefined, // Will use getOrigin() internally
       undefined, // Will use getRPId() internally
       {
-        id: Buffer.from(credential.credential_id),
+        // WebAuthnCredential.id is a Base64URLString
+        id: Buffer.from(credential.credential_id).toString('base64url'),
         publicKey: Buffer.from(credential.public_key),
         counter: credential.counter,
+        // We currently only support hardware authenticators (YubiKeys) via AAGUID allowlist.
+        // These are non-syncable credentials in practice.
+        deviceType: 'singleDevice',
+        backedUp: false,
       }
     );
 

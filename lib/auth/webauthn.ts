@@ -15,6 +15,7 @@ import {
   type VerifyAuthenticationResponseOpts,
   type AuthenticatorTransportFuture,
   type PublicKeyCredentialDescriptorFuture,
+  type WebAuthnCredential,
 } from '@simplewebauthn/server';
 
 // Environment configuration
@@ -149,11 +150,7 @@ export async function verifyAuthResponse(
   expectedChallenge: string,
   expectedOrigin?: string,
   expectedRPID?: string,
-  credential?: {
-    id: Buffer;
-    publicKey: Buffer;
-    counter: number;
-  }
+  credential?: WebAuthnCredential
 ): Promise<ReturnType<typeof verifyAuthenticationResponse>> {
   if (!credential) {
     throw new Error('Credential is required for authentication verification');
