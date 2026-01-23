@@ -5,7 +5,7 @@
  * All queries use the public schema (search_path = public).
  */
 
-import { Pool, type PoolClient, type QueryResult } from 'pg';
+import { Pool, type PoolClient, type QueryResult, type QueryResultRow } from 'pg';
 
 let pool: Pool | null = null;
 
@@ -43,7 +43,7 @@ function getPool(): Pool {
 /**
  * Execute a query with automatic search_path enforcement
  */
-export async function query<T = any>(
+export async function query<T extends QueryResultRow = QueryResultRow>(
   text: string,
   params?: any[]
 ): Promise<QueryResult<T>> {
