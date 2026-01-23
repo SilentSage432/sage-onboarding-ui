@@ -3,14 +3,21 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import PanelSkeleton from "../components/PanelSkeleton";
+import { useReadinessStore } from "../store/useReadinessStore";
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
+  const { observePanelVisit } = useReadinessStore();
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 450);
     return () => clearTimeout(timer);
   }, []);
+
+  // Observe panel visit for temporal continuity (perceptual infrastructure only)
+  useEffect(() => {
+    observePanelVisit("dashboard");
+  }, [observePanelVisit]);
 
   if (loading) {
     return (

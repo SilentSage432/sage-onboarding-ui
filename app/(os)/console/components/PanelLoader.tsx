@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { moduleRegistry } from "@/lib/console/moduleRegistry";
 import { useReadinessStore } from "@/app/(os)/console/store/useReadinessStore";
 import { isModuleUnlocked, isModuleVisibleToPerspective } from "@/lib/console/readinessUtils";
@@ -7,6 +8,7 @@ import LockedCapability from "@/components/console/LockedCapability";
 
 export default function PanelLoader({ slug }: { slug: string }) {
   const readinessState = useReadinessStore();
+  const { observePanelVisit } = useReadinessStore();
   const mod = moduleRegistry.find((m) => m.slug === slug);
 
   if (!mod) {
@@ -44,6 +46,12 @@ export default function PanelLoader({ slug }: { slug: string }) {
   if (!isUnlocked && mod.layer === 'capability') {
     return <LockedCapability module={mod} />;
   }
+
+  // Observe panel visit for temporal continuity (perceptual infrastructure only)
+  // This is passive observation - no behavior change, no persistence, no authority
+  useEffect(() => {
+    observePanelVisit(slug);
+  }, [slug, observePanelVisit]);
 
   // Otherwise, render the actual component
   const Component = mod.component;

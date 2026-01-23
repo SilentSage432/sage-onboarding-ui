@@ -149,6 +149,17 @@ export type ReadinessState = {
     timestamp: number;
   }>;
   
+  /**
+   * Panel visit observations (session-only, perceptual infrastructure).
+   * Tracks operator attention patterns for temporal continuity awareness.
+   * This is passive observation only - no authority, no persistence, no behavior change.
+   */
+  panelVisits: Array<{
+    panelSlug: string;
+    lastViewedAt: number;
+    viewCount: number;
+  }>;
+  
   // Actions (passive setters - no unlock logic)
   /**
    * Set activation time (typically called on wizard completion).
@@ -221,6 +232,13 @@ export type ReadinessState = {
   setCurrentSessionStartTime: (timestamp: number) => void;
   
   /**
+   * Observe a panel visit (perceptual infrastructure only).
+   * Records operator attention for temporal continuity awareness.
+   * Session-only observation - no persistence, no authority, no behavior change.
+   */
+  observePanelVisit: (panelSlug: string) => void;
+  
+  /**
    * Reset readiness state (for testing/development).
    */
   reset: () => void;
@@ -238,6 +256,7 @@ const initialState: Omit<ReadinessState, keyof {
   setObservationPhase: never;
   setSystemPerspective: never;
   setCurrentSessionStartTime: never;
+  observePanelVisit: never;
   reset: never;
 }> = {
   systemPerspective: 'operator', // Default matches current UI assumptions
@@ -253,6 +272,7 @@ const initialState: Omit<ReadinessState, keyof {
   lockedCapabilities: [],
   observationPhase: 'initial',
   observedPatterns: [],
+  panelVisits: [], // Session-only panel visit observations
 };
 
 export const useReadinessStore = create<ReadinessState>((set, get) => ({
@@ -325,6 +345,32 @@ export const useReadinessStore = create<ReadinessState>((set, get) => ({
   
   setCurrentSessionStartTime: (timestamp: number) => {
     set({ currentSessionStartTime: timestamp });
+  },
+  
+  observePanelVisit: (panelSlug: string) => {
+    const now = Date.now();
+    set((state) => {
+      const existingVisit = state.panelVisits.find(v => v.panelSlug === panelSlug);
+      if (existingVisit) {
+        // Update existing visit: increment count and update timestamp
+        return {
+          panelVisits: state.panelVisits.map(v =>
+            v.panelSlug === panelSlug
+              ? { ...v, lastViewedAt: now, viewCount: v.viewCount + 1 }
+              : v
+          ),
+        };
+      } else {
+        // New visit: add to observations
+        return {
+          panelVisits: [...state.panelVisits, {
+            panelSlug,
+            lastViewedAt: now,
+            viewCount: 1,
+          }],
+        };
+      }
+    });
   },
   
   reset: () => {

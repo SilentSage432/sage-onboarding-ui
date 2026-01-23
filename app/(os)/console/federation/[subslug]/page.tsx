@@ -1,9 +1,10 @@
 "use client";
 
-import { use } from "react";
+import { use, useEffect } from "react";
 import FederationHealthMatrixPanel from "@/components/console/panels/FederationHealthMatrixPanel";
 import FederationHealthCorePanel from "@/components/console/panels/FederationHealthCorePanel";
 import FederationStatePanel from "@/components/console/panels/FederationStatePanel";
+import { useReadinessStore } from "../../store/useReadinessStore";
 
 const federationPanels: Record<string, () => JSX.Element> = {
   "health-matrix": FederationHealthMatrixPanel,
@@ -17,7 +18,15 @@ export default function FederationPanelPage({
   params: Promise<{ subslug: string }>;
 }) {
   const { subslug } = use(params);
+  const { observePanelVisit } = useReadinessStore();
   const Panel = federationPanels[subslug];
+
+  // Observe panel visit for temporal continuity (perceptual infrastructure only)
+  useEffect(() => {
+    if (Panel) {
+      observePanelVisit(`federation/${subslug}`);
+    }
+  }, [subslug, Panel, observePanelVisit]);
 
   if (!Panel) {
     return (
