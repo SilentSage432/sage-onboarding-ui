@@ -17,6 +17,7 @@
  */
 
 import type { ObservationSource } from "./observationProvenance";
+import type { TemporalWindow, TimeRange } from "./temporalFraming";
 
 /**
  * Observation Event Types
@@ -86,12 +87,14 @@ export type ObservationEvent = {
  * 
  * A passive summary of observations grouped by vocabulary dimensions.
  * This is descriptive only - no interpretation or decisions.
+ * Includes all dimensions: vocabulary (type, subsystem, severity) and provenance (source).
  */
 export type ObservationSummary = {
   total: number;
   byType: Record<ObservationEventType, number>;
   bySubsystem: Record<ObservationSubsystem, number>;
   bySeverity: Record<ObservationSeverity, number>;
+  bySource: Record<ObservationSource, number>;
 };
 
 /**
@@ -163,6 +166,15 @@ export function getObservationSummary(
       warning: 0,
       critical: 0,
     },
+    bySource: {
+      hadra: 0,
+      ui: 0,
+      console: 0,
+      system: 0,
+      mesh: 0,
+      agent: 0,
+      unknown: 0,
+    },
   };
 
   // Count by type
@@ -185,6 +197,13 @@ export function getObservationSummary(
     const severity = event.data?.severity;
     if (severity && severity in summary.bySeverity) {
       summary.bySeverity[severity]++;
+    }
+  });
+
+  // Count by source (provenance)
+  events.forEach((event) => {
+    if (event.source in summary.bySource) {
+      summary.bySource[event.source]++;
     }
   });
 
