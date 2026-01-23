@@ -338,17 +338,14 @@ export function getRecommendations(selectedAgents: string[]): RecommendedAgent[]
   return Object.entries(scores)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 6) // Limit to top 6 recommendations
-    .map(([id]) => {
-      const agent = allAgents.find((a) => a.id === id);
-      if (!agent) return null;
-      return {
-        id: agent.id,
-        label: agent.label,
-        category: agent.category,
-        reason: `Recommended based on your current agent selection.`,
-        priority: "optional" as const
-      };
-    })
-    .filter((a): a is RecommendedAgent => a !== null);
+    .map(([id]) => allAgents.find((a) => a.id === id))
+    .filter((agent): agent is NonNullable<typeof agent> => agent !== undefined)
+    .map((agent) => ({
+      id: agent.id,
+      label: agent.label,
+      category: agent.category,
+      reason: `Recommended based on your current agent selection.`,
+      priority: "optional" as const
+    }));
 }
 
