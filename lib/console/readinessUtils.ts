@@ -36,22 +36,29 @@ export function isModuleVisibleToPerspective(
  * - orientation layer: always unlocked (always visible)
  * - governance layer: always unlocked (always accessible)
  * - capability layer: unlocked if in unlockedCapabilities list
+ * - architect-only capability modules: auto-unlocked when perspective is 'architect'
  * 
  * Note: This function assumes the module is already visible to the perspective.
  * Call isModuleVisibleToPerspective() first to check existence.
  * 
  * @param module - The module definition to check
  * @param unlockedCapabilities - List of unlocked capability slugs
+ * @param perspective - Current system perspective (optional, for architect-only auto-unlock)
  * @returns true if the module is unlocked, false otherwise
  */
 export function isModuleUnlocked(
   module: typeof moduleRegistry[0],
-  unlockedCapabilities: string[]
+  unlockedCapabilities: string[],
+  perspective?: SystemPerspective
 ): boolean {
   if (module.layer === 'orientation' || module.layer === 'governance') {
     return true;
   }
   if (module.layer === 'capability') {
+    // Architect-only capability modules are auto-unlocked for architects
+    if (perspective === 'architect' && module.visibleTo?.includes('architect')) {
+      return true;
+    }
     return unlockedCapabilities.includes(module.slug);
   }
   // Default: assume locked if not explicitly unlocked

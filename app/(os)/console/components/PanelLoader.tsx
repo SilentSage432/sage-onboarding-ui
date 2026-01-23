@@ -33,8 +33,12 @@ export default function PanelLoader({ slug }: { slug: string }) {
     );
   }
 
-  // Check if module is locked
-  const isUnlocked = isModuleUnlocked(mod, readinessState.unlockedCapabilities);
+  // Check if module is unlocked (pass perspective for architect-only auto-unlock)
+  const isUnlocked = isModuleUnlocked(
+    mod, 
+    readinessState.unlockedCapabilities,
+    readinessState.systemPerspective
+  );
   
   // If locked and it's a capability (not orientation/governance), show locked view
   if (!isUnlocked && mod.layer === 'capability') {

@@ -29,7 +29,11 @@ export default function Sidebar() {
       module: null,
     },
     ...visibleModules.map((mod) => {
-      const isUnlocked = isModuleUnlocked(mod, readinessState.unlockedCapabilities);
+      const isUnlocked = isModuleUnlocked(
+        mod, 
+        readinessState.unlockedCapabilities,
+        readinessState.systemPerspective
+      );
       return {
         name: mod.name,
         icon: mod.icon,
