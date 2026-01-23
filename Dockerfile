@@ -33,8 +33,11 @@ RUN addgroup --system --gid 1001 nodejs && \
 # Copy package files for production dependencies
 COPY package.json package-lock.json* ./
 
-# Install only production dependencies
-RUN npm ci --only=production && npm cache clean --force
+# Install only production dependencies, plus the minimal TS runtime deps Next may try to auto-install
+# (prevents `next start` from attempting installs on read-only filesystems)
+RUN npm ci --only=production && \
+    npm install --no-save typescript @types/node @types/react && \
+    npm cache clean --force
 
 # Copy built application and source files from builder
 # Next.js needs source files at runtime for server components and API routes
