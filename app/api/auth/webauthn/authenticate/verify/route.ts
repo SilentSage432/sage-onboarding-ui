@@ -136,10 +136,10 @@ export async function POST(request: NextRequest) {
 
     if (!verification.verified) {
       await logAuditEvent('AUTH_VERIFY_FAIL', ARCHITECT_USER_ID, {
-        error: verification.error?.message || 'Verification failed',
+        error: 'Verification failed',
       });
       return NextResponse.json(
-        { error: 'Verification failed', details: verification.error?.message },
+        { error: 'Verification failed' },
         { status: 400 }
       );
     }
