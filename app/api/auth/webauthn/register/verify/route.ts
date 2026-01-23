@@ -35,7 +35,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing response' }, { status: 400 });
     }
 
-    // Get and validate challenge
+    // Extract challenge from clientDataJSON (WebAuthn response format)
+    // The challenge is base64url encoded in the clientDataJSON
+    let challengeFromResponse: string;
+    try {
+      if (response.response?.clientDataJSON) {
+        // Decode base64url clientDataJSON to get the challenge
+        const clientDataJSON = Buffer.from(response.response.clientDataJSON, 'base64url').toString('utf-8');
+        const clientData = JSON.parse(clientDataJSON);
+        challengeFromResponse = clientData.challenge;
+      } else if (response.challenge) {
+        // Fallback: challenge might be at top level (for testing)
+        challengeFromResponse = response.challenge;
+      } else {
+        throw new Error('Challenge not found in response');
+      }
+    } catch (error) {
+      await logAuditEvent('REG_VERIFY_FAIL', ARCHITECT_USER_ID, {
+        error: 'Failed to extract challenge from response',
+      });
+      return NextResponse.json({ error: 'Invalid response format' }, { status: 400 });
+    }
+
+    // Get and validate challenge from database
     const challengeResult = await query<{
       id: string;
       challenge: string;
@@ -49,7 +71,7 @@ export async function POST(request: NextRequest) {
        AND user_id = $2
        ORDER BY created_at DESC
        LIMIT 1`,
-      [response.challenge, ARCHITECT_USER_ID]
+      [challengeFromResponse, ARCHITECT_USER_ID]
     );
 
     if (challengeResult.rows.length === 0) {
