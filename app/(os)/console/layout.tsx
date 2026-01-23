@@ -23,6 +23,7 @@ import { usePatternInsights } from "@/components/hadra/usePatternInsights";
 import { useContextualInsight } from "@/components/hadra/useContextualInsight";
 import { OrbStatus } from "@/lib/hadra/orbPulse";
 import { useObservationBridge } from "@/lib/console/useObservationBridge";
+import { useReadinessStore } from "@/app/(os)/console/store/useReadinessStore";
 // Auto-start HADRA mock engine
 import "@/components/hadra/hadraMockEngine";
 
@@ -30,10 +31,16 @@ export default function ConsoleLayout({ children }: { children: React.ReactNode 
   const [hadraOpen, setHadraOpen] = useState(false);
   const [hadraSync, setHadraSync] = useState(false);
   const [orbStatus, setOrbStatus] = useState<OrbStatus>("idle");
+  const { setCurrentSessionStartTime } = useReadinessStore();
   const insights = useMockInsights();
   const events = useMockEvents();
   const operatorContext = useOperatorContext();
   const systemContext = useSystemContext();
+  
+  // Set session start time when console mounts (temporal boundary marker)
+  useEffect(() => {
+    setCurrentSessionStartTime(Date.now());
+  }, [setCurrentSessionStartTime]);
 
   // Passive observation bridge - records HADRA events into readiness store
   // This is pure data flow: observation → memory, no interpretation or control

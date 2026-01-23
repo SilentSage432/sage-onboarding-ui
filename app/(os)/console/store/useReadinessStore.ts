@@ -77,6 +77,13 @@ export type ReadinessState = {
    */
   daysSinceActivation: number;
   
+  /**
+   * Timestamp when the current console session started.
+   * Set when console layout mounts. Used for temporal framing.
+   * This is a boundary marker - no interpretation or decisions.
+   */
+  currentSessionStartTime: number | null;
+  
   // Behavior-based state (placeholders)
   /**
    * Counter for automation events observed.
@@ -207,6 +214,13 @@ export type ReadinessState = {
   setSystemPerspective: (perspective: SystemPerspective) => void;
   
   /**
+   * Set current session start time.
+   * Called when console session begins. This is a boundary marker only.
+   * Does not unlock anything or change behavior.
+   */
+  setCurrentSessionStartTime: (timestamp: number) => void;
+  
+  /**
    * Reset readiness state (for testing/development).
    */
   reset: () => void;
@@ -223,11 +237,13 @@ const initialState: Omit<ReadinessState, keyof {
   setLockedCapabilities: never;
   setObservationPhase: never;
   setSystemPerspective: never;
+  setCurrentSessionStartTime: never;
   reset: never;
 }> = {
   systemPerspective: 'operator', // Default matches current UI assumptions
   activationTime: null,
   daysSinceActivation: 0,
+  currentSessionStartTime: null,
   automationEventCount: 0,
   observationEvents: [],
   learningMilestones: [],
@@ -305,6 +321,10 @@ export const useReadinessStore = create<ReadinessState>((set, get) => ({
   
   setSystemPerspective: (perspective: SystemPerspective) => {
     set({ systemPerspective: perspective });
+  },
+  
+  setCurrentSessionStartTime: (timestamp: number) => {
+    set({ currentSessionStartTime: timestamp });
   },
   
   reset: () => {
