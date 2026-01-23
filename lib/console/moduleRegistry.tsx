@@ -1,9 +1,15 @@
-import { Cpu, Network, Shield, Activity, KeyRound, Settings, Gavel } from "lucide-react";
+import { Cpu, Network, Shield, Activity, KeyRound, Settings, Gavel, Circle, Hexagon, Octagon, Triangle, X } from "lucide-react";
 import AgentsPanel from "@/components/console/panels/AgentsPanel";
 import MeshPanel from "@/components/console/panels/MeshPanel";
 import SecurityPanel from "@/components/console/panels/SecurityPanel";
 import Rho2Panel from "@/components/console/panels/Rho2Panel";
 import GovernancePanel from "@/components/console/panels/GovernancePanel";
+import ArcThetaPanel from "@/components/console/panels/ArcThetaPanel";
+import ArcSigmaPanel from "@/components/console/panels/ArcSigmaPanel";
+import ArcOmegaPanel from "@/components/console/panels/ArcOmegaPanel";
+import ArcLambdaPanel from "@/components/console/panels/ArcLambdaPanel";
+import ArcChiPanel from "@/components/console/panels/ArcChiPanel";
+import ArcRho2LodgePanel from "@/components/console/panels/ArcRho2LodgePanel";
 import { SystemPerspective } from "@/app/(os)/console/store/useReadinessStore";
 
 /**
@@ -154,6 +160,62 @@ export const moduleRegistry: ModuleDefinition[] = [
     component: Placeholder("Settings Panel"),
     layer: "governance",
     // Governance layer is always accessible
+  },
+  // Arc Panels - Read-only status displays, visible to Operator and Architect
+  // Using "orientation" layer to ensure always visible and unlocked (no readiness gates)
+  {
+    slug: "arc-theta",
+    name: "Arc Theta",
+    description: "Arc Theta operational status and health monitoring.",
+    icon: Circle,
+    component: ArcThetaPanel,
+    layer: "orientation",
+    // Always visible, informational only - no unlock gating required
+  },
+  {
+    slug: "arc-sigma",
+    name: "Arc Sigma",
+    description: "Arc Sigma operational status and health monitoring.",
+    icon: Hexagon,
+    component: ArcSigmaPanel,
+    layer: "orientation",
+    // Always visible, informational only - no unlock gating required
+  },
+  {
+    slug: "arc-omega",
+    name: "Arc Omega",
+    description: "Arc Omega operational status and health monitoring.",
+    icon: Octagon,
+    component: ArcOmegaPanel,
+    layer: "orientation",
+    // Always visible, informational only - no unlock gating required
+  },
+  {
+    slug: "arc-lambda",
+    name: "Arc Lambda",
+    description: "Arc Lambda operational status and health monitoring.",
+    icon: Triangle,
+    component: ArcLambdaPanel,
+    layer: "orientation",
+    // Always visible, informational only - no unlock gating required
+  },
+  {
+    slug: "arc-chi",
+    name: "Arc Chi",
+    description: "Arc Chi operational status and health monitoring.",
+    icon: X,
+    component: ArcChiPanel,
+    layer: "orientation",
+    // Always visible, informational only - no unlock gating required
+  },
+  {
+    slug: "arc-rho2-lodge",
+    name: "Rho² Lodge",
+    description: "Rho² security chamber operational status and health monitoring.",
+    icon: KeyRound,
+    component: ArcRho2LodgePanel,
+    layer: "orientation",
+    // Always visible, informational only - no unlock gating required
   },
 ];
 
