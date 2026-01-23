@@ -108,7 +108,8 @@ export default function Sidebar() {
               </div>
               <span
                 className={cn(
-                  "text-[11px] leading-tight whitespace-nowrap text-center tracking-wide",
+                  "text-[11px] leading-tight text-center tracking-wide",
+                  item.name.includes('\n') ? "whitespace-pre-line" : "whitespace-nowrap",
                   isLocked && "opacity-40"
                 )}
               >

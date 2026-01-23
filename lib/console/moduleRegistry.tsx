@@ -243,7 +243,7 @@ export const moduleRegistry: ModuleDefinition[] = [
   },
   {
     slug: "federation/state",
-    name: "Federation State",
+    name: "Fed\nState",
     description: "Federation operational state and node status.",
     icon: Network,
     component: FederationStatePanel,
