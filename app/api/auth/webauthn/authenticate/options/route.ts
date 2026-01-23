@@ -61,14 +61,17 @@ export async function POST(request: NextRequest) {
       
       // credential_id is stored as BYTEA in database
       // Postgres returns BYTEA as Buffer
-      // @simplewebauthn/server expects credential ID as Buffer for allowCredentials
-      // Match the format used in register/options route
-      const credentialId = Buffer.isBuffer(row.credential_id)
+      // @simplewebauthn/server expects credential ID as base64url string for allowCredentials
+      // Convert Buffer to base64url string
+      const credentialIdBuffer = Buffer.isBuffer(row.credential_id)
         ? row.credential_id
         : Buffer.from(row.credential_id);
       
+      // Convert to base64url string (the library expects string, not Buffer)
+      const credentialIdString = credentialIdBuffer.toString('base64url');
+      
       return {
-        id: credentialId,
+        id: credentialIdString,
         transports,
       };
     });
