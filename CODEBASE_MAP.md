@@ -15,7 +15,7 @@ Onboarding wizard–related files are marked with **[ONBOARDING WIZARD]**.
 - `components.json` — **Component system configuration (e.g., for UI library tooling).**
 - `eslint.config.mjs` — **ESLint configuration for linting and code quality.**
 - `next-env.d.ts` — **TypeScript definitions injected by Next.js.**
-- `next.config.ts` — **Next.js framework configuration.**
+- `next.config.js` — **Next.js framework configuration.**
 - `package.json` — **Project metadata, scripts, and dependencies.**
 - `package-lock.json` — **Locked dependency versions for reproducible installs.**
 - `postcss.config.mjs` — **PostCSS/Tailwind processing configuration.**

@@ -18,7 +18,7 @@ sage-onboarding-ui/
 ├── README.md                    # Project overview
 ├── components.json              # Component system configuration
 ├── eslint.config.mjs           # ESLint configuration
-├── next.config.ts               # Next.js configuration
+├── next.config.js               # Next.js configuration
 ├── next-env.d.ts                # Next.js TypeScript definitions
 ├── package.json                 # Project metadata and dependencies
 ├── package-lock.json            # Locked dependency versions
@@ -210,7 +210,7 @@ public/
 Root/
 ├── components.json             # Component system config (shadcn/ui)
 ├── eslint.config.mjs           # ESLint linting rules
-├── next.config.ts              # Next.js framework config
+├── next.config.js              # Next.js framework config
 ├── next-env.d.ts               # Next.js TypeScript definitions
 ├── package.json                # NPM package manifest
 ├── package-lock.json           # Dependency lock file
