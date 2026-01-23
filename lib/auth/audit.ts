@@ -37,17 +37,28 @@ async function getRequestMetadata(): Promise<{ ip: string | null; userAgent: str
 
 /**
  * Log an audit event
+ * Silently fails if database is unavailable (development mode)
  */
 export async function logAuditEvent(
   eventType: AuditEventType,
   userId?: string,
   metadata?: Record<string, any>
 ): Promise<void> {
-  const { ip, userAgent } = await getRequestMetadata();
+  try {
+    const { ip, userAgent } = await getRequestMetadata();
 
-  await query(
-    `INSERT INTO auth_audit_log (event_type, user_id, ip_address, user_agent, metadata)
-     VALUES ($1, $2, $3, $4, $5)`,
-    [eventType, userId || null, ip, userAgent, metadata ? JSON.stringify(metadata) : null]
-  );
+    await query(
+      `INSERT INTO auth_audit_log (event_type, user_id, ip_address, user_agent, metadata)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [eventType, userId || null, ip, userAgent, metadata ? JSON.stringify(metadata) : null]
+    );
+  } catch (error) {
+    // If database is unavailable, log to console instead
+    // In production, DATABASE_URL should always be set
+    console.warn('Audit logging unavailable (database error):', {
+      eventType,
+      userId,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
 }
