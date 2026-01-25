@@ -13,7 +13,7 @@ import { OrbStatus } from "@/lib/hadra/orbPulse";
 import { hadraSpeak } from "@/lib/hadra/conversation/conversationEngine";
 import HadraDiagnosticsCanvas from "./HadraDiagnosticsCanvas";
 import { useSageSignal } from "@/lib/signals/useSageSignal";
-import { mapReconciliationSignal, mapHealthSignal, diagnosticToEvent } from "@/lib/hadra/signalToLanguage";
+import { mapReconciliationSignal, mapHealthSignal, mapCapacitySignal, diagnosticToEvent } from "@/lib/hadra/signalToLanguage";
 import type { HadraEvent } from "@/lib/hadra/event";
 
 // Type-safe mapping from panel name to HADRA context
@@ -54,6 +54,7 @@ export default function HadraPanel({
   const sageSignals = useSageSignal();
   const lastReconciliationStateRef = useRef<string | null>(null);
   const lastHealthStateRef = useRef<string | null>(null);
+  const lastCapacityStateRef = useRef<string | null>(null);
 
   // Reference implementation for real Signal → Language mapping
   // Map sage.reconciliation signals to diagnostic events
@@ -113,11 +114,40 @@ export default function HadraPanel({
     return [event];
   }, [sageSignals]);
 
-  // Combine real signal events (reconciliation + health) with mock events
+  // Reference implementation for real Signal → Language mapping
+  // Map sage.capacity signals to diagnostic events
+  const capacityEvents = useMemo((): HadraEvent[] => {
+    const capacitySignal = sageSignals.find((s) => s.id === "sage.capacity");
+    
+    if (!capacitySignal) {
+      lastCapacityStateRef.current = null;
+      return [];
+    }
+
+    // Only emit event if state changed (silence is valid if unchanged)
+    const currentState = `${capacitySignal.state}-${capacitySignal.timestamp}`;
+    if (currentState === lastCapacityStateRef.current) {
+      return [];
+    }
+
+    lastCapacityStateRef.current = currentState;
+
+    // Map signal to diagnostic statement
+    const statement = mapCapacitySignal(capacitySignal);
+    if (!statement) {
+      return [];
+    }
+
+    // Convert to HadraEvent
+    const event = diagnosticToEvent(statement, capacitySignal);
+    return [event];
+  }, [sageSignals]);
+
+  // Combine real signal events (reconciliation + health + capacity) with mock events
   // Mock events continue for all other domains
   const events = useMemo(() => {
-    return [...reconciliationEvents, ...healthEvents, ...mockEvents];
-  }, [reconciliationEvents, healthEvents, mockEvents]);
+    return [...reconciliationEvents, ...healthEvents, ...capacityEvents, ...mockEvents];
+  }, [reconciliationEvents, healthEvents, capacityEvents, mockEvents]);
   
   // HADRA Panel Micro-Reaction: Soft welcome pulse when panel opens
   useEffect(() => {

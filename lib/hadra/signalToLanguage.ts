@@ -156,3 +156,46 @@ export function mapHealthSignal(signal: SignalEmitter): DiagnosticStatement | nu
       };
   }
 }
+
+/**
+ * Map sage.capacity signal to diagnostic statement
+ * 
+ * Pure function: no side effects, no randomness, no state.
+ * Returns null if signal is not sage.capacity.
+ * 
+ * Reference implementation for real Signal → Language mapping.
+ * 
+ * @param signal - SignalEmitter to map
+ * @returns DiagnosticStatement | null
+ */
+export function mapCapacitySignal(signal: SignalEmitter): DiagnosticStatement | null {
+  // Only process sage.capacity signals
+  if (signal.id !== "sage.capacity") {
+    return null;
+  }
+
+  // Map state to diagnostic statement
+  switch (signal.state) {
+    case "normal":
+      return {
+        title: "System capacity within normal range",
+        body: "Observed workload levels are operating within expected capacity limits.",
+        confidence: "high",
+      };
+
+    case "constrained":
+      return {
+        title: "System capacity under constraint",
+        body: "Observed workload levels indicate sustained pressure on system resources.",
+        confidence: "high",
+      };
+
+    case "unavailable":
+    default:
+      return {
+        title: "System capacity unavailable",
+        body: "Capacity metrics could not be observed during the current interval.",
+        confidence: "low",
+      };
+  }
+}
