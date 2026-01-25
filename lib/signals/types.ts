@@ -17,13 +17,14 @@ export type SignalSeverity =
  * Signal Emitter
  * Generic interface for passive signal observations
  * 
- * All signal sources (ADRAE, SAGE, system, etc.) emit signals
+ * All signal sources (SAGE, system, etc.) emit signals
  * conforming to this interface for unified aggregation.
+ * Signals are SAGE-driven; UI observes aggregated signals only.
  */
 export interface SignalEmitter {
   /** Unique identifier for this signal instance */
   id: string;
-  /** Source identifier (e.g., "adrae", "sage", "system") */
+  /** Source identifier (e.g., "sage", "system") */
   source: string;
   /** Source-specific state string */
   state: string;

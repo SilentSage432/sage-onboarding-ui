@@ -44,22 +44,13 @@ export function getOrbVisualsFromSeverity(
 
 /**
  * Get source-specific color mapping.
- * LOCKED: adrae+connected → indigo/cyan gradient + indigo glow; adrae+idle → purple/indigo gradient.
+ * Source-specific visual overrides for aggregated signals.
  */
 export function getSourceColorMapping(
   source: string,
   state: string
 ): Partial<OrbVisualProperties> | null {
-  if (source === "adrae") {
-    if (state === "connected") {
-      return {
-        gradient: "bg-gradient-to-br from-indigo-400 via-cyan-500 to-indigo-600",
-        glowColor: "rgba(99, 102, 241, 0.4)",
-      };
-    }
-    if (state === "idle") {
-      return { gradient: "bg-gradient-to-br from-purple-400 to-indigo-600" };
-    }
-  }
+  // Source-specific color mappings can be added here as needed
+  // Example: if (source === "sage") { ... }
   return null;
 }
