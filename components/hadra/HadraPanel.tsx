@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import InsightsList from "./InsightsList";
 import DiagnosticStream from "./DiagnosticStream";
 import { useMockEvents } from "./useMockEvents";
@@ -12,6 +12,9 @@ import { HadraMemory } from "@/lib/hadra/memory";
 import { OrbStatus } from "@/lib/hadra/orbPulse";
 import { hadraSpeak } from "@/lib/hadra/conversation/conversationEngine";
 import HadraDiagnosticsCanvas from "./HadraDiagnosticsCanvas";
+import { useSageSignal } from "@/lib/signals/useSageSignal";
+import { mapReconciliationSignal, mapHealthSignal, diagnosticToEvent } from "@/lib/hadra/signalToLanguage";
+import type { HadraEvent } from "@/lib/hadra/event";
 
 // Type-safe mapping from panel name to HADRA context
 function mapPanelToContext(panel: string): "console" | "onboarding" | "wizard" | "mesh" | "agents" | "security" | undefined {
@@ -47,7 +50,74 @@ export default function HadraPanel({
   memory: HadraMemory;
   setOrbStatus?: (status: OrbStatus) => void;
 }) {
-  const events = useMockEvents();
+  const mockEvents = useMockEvents();
+  const sageSignals = useSageSignal();
+  const lastReconciliationStateRef = useRef<string | null>(null);
+  const lastHealthStateRef = useRef<string | null>(null);
+
+  // Reference implementation for real Signal → Language mapping
+  // Map sage.reconciliation signals to diagnostic events
+  const reconciliationEvents = useMemo((): HadraEvent[] => {
+    const reconciliationSignal = sageSignals.find((s) => s.id === "sage.reconciliation");
+    
+    if (!reconciliationSignal) {
+      lastReconciliationStateRef.current = null;
+      return [];
+    }
+
+    // Only emit event if state changed (silence is valid if unchanged)
+    const currentState = `${reconciliationSignal.state}-${reconciliationSignal.timestamp}`;
+    if (currentState === lastReconciliationStateRef.current) {
+      return [];
+    }
+
+    lastReconciliationStateRef.current = currentState;
+
+    // Map signal to diagnostic statement
+    const statement = mapReconciliationSignal(reconciliationSignal);
+    if (!statement) {
+      return [];
+    }
+
+    // Convert to HadraEvent
+    const event = diagnosticToEvent(statement, reconciliationSignal);
+    return [event];
+  }, [sageSignals]);
+
+  // Reference implementation for real Signal → Language mapping
+  // Map sage.health signals to diagnostic events
+  const healthEvents = useMemo((): HadraEvent[] => {
+    const healthSignal = sageSignals.find((s) => s.id === "sage.health");
+    
+    if (!healthSignal) {
+      lastHealthStateRef.current = null;
+      return [];
+    }
+
+    // Only emit event if state changed (silence is valid if unchanged)
+    const currentState = `${healthSignal.state}-${healthSignal.timestamp}`;
+    if (currentState === lastHealthStateRef.current) {
+      return [];
+    }
+
+    lastHealthStateRef.current = currentState;
+
+    // Map signal to diagnostic statement
+    const statement = mapHealthSignal(healthSignal);
+    if (!statement) {
+      return [];
+    }
+
+    // Convert to HadraEvent
+    const event = diagnosticToEvent(statement, healthSignal);
+    return [event];
+  }, [sageSignals]);
+
+  // Combine real signal events (reconciliation + health) with mock events
+  // Mock events continue for all other domains
+  const events = useMemo(() => {
+    return [...reconciliationEvents, ...healthEvents, ...mockEvents];
+  }, [reconciliationEvents, healthEvents, mockEvents]);
   
   // HADRA Panel Micro-Reaction: Soft welcome pulse when panel opens
   useEffect(() => {
