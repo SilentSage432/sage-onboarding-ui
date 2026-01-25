@@ -1,6 +1,9 @@
 // lib/hadra/orbPulse.ts
 // HADRA Orb Pulse Modulation Engine
-// Controls animation classes based on orb state
+// Controls animation classes based on orb state.
+//
+// LOCKED (Phase C): Orb severity → pulse/ring. Canonical source for status→animation.
+// OrbStatus: idle | analyzing | insight | warning | critical | onboarding | operator-focus.
 
 export type OrbStatus = 
   | "idle" 

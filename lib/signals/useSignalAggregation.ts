@@ -54,17 +54,12 @@ function severityToOrbStatus(severity: SignalSeverity): OrbStatus {
 
 /**
  * useSignalAggregation
- * Pure, deterministic signal aggregation hook
- * 
- * Characteristics:
- * - Accepts array of SignalEmitter observations
- * - Resolves effective HADRA state using precedence rules
- * - Pure function: no side effects, no storage, no logging
- * - Deterministic: same inputs always produce same output
- * 
- * Precedence rules:
- * critical > warning > notice > info > idle > unavailable
- * 
+ * Pure, deterministic signal aggregation hook.
+ *
+ * LOCKED (Phase C): Severity → orb status. Precedence: critical > warning > notice > info > unavailable.
+ * critical→critical, warning→warning, notice|info→insight, unavailable|none→idle.
+ * No side effects, no storage. Observer-only input for HADRA-01 orb.
+ *
  * @param signals - Array of signal emitter observations
  * @returns Aggregated signal state with effective HADRA orb status
  */

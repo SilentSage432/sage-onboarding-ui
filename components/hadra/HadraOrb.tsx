@@ -11,6 +11,11 @@ import { useAdraeSignal } from "@/lib/adrae/useAdraeSignal";
 import { useSignalAggregation } from "@/lib/signals/useSignalAggregation";
 import { getOrbVisualsFromSeverity, getSourceColorMapping } from "@/lib/signals/orbVisuals";
 
+/**
+ * HADRA-01 Orb. Observer-only of aggregated signals.
+ * Visual interpretation only. Never executes, stores, or escalates.
+ */
+
 export default function HadraOrb({ 
   open, 
   setOpen,
@@ -42,13 +47,12 @@ export default function HadraOrb({
   // Aggregate signals to determine effective HADRA state
   const aggregatedState = useSignalAggregation(signals);
 
-  // Compute effective status: aggregated signals override prop status if present
+  // HADRA-01 observer-only: effective status from aggregated signals only.
+  // No signals → idle. Prop status unused for orb display (UI coordination only).
   const effectiveOrbStatus = useMemo(() => {
-    if (aggregatedState.hasSignals) {
-      return aggregatedState.orbStatus;
-    }
-    return status;
-  }, [aggregatedState.hasSignals, aggregatedState.orbStatus, status]);
+    if (aggregatedState.hasSignals) return aggregatedState.orbStatus;
+    return "idle";
+  }, [aggregatedState.hasSignals, aggregatedState.orbStatus]);
 
   // Use multimodal state stack (pulse + gesture)
   const effectiveStatus = isHovered ? "operator-focus" : effectiveOrbStatus;

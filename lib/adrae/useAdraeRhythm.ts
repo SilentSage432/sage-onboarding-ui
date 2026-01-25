@@ -3,16 +3,16 @@
 import { useState, useEffect, useRef } from "react";
 import { AdraeRhythmState, AdraeInferredState, AdraeRhythmTelemetry } from "./telemetry";
 
+/** ADRAE poll cadence (ms). Passive observation only. */
+const ADRAE_POLL_CADENCE_MS = 30_000;
+
 /**
  * useAdraeRhythm
- * Passive observer hook that polls /api/adrae/rhythm every 30 seconds.
- * 
- * Characteristics:
- * - Polls every 30 seconds (passive observation)
- * - Handles absence gracefully (idle / connected / unavailable)
- * - No retries or urgency - graceful degradation
- * - Assumes endpoint may not exist yet (no errors)
- * - Pure observation, no side effects
+ * Passive observer hook that polls /api/adrae/rhythm at fixed cadence.
+ *
+ * Cadence: ADRAE_POLL_CADENCE_MS (30s). Isolated, no retries.
+ * Failures: map only to 'unavailable'. No UI side effects, no throw, no log.
+ * No persistence, no retries, no inferred intent. Graceful degradation only.
  */
 export function useAdraeRhythm(): AdraeRhythmState {
   const [state, setState] = useState<AdraeRhythmState>({
@@ -39,7 +39,6 @@ export function useAdraeRhythm(): AdraeRhythmState {
         if (cancelled) return;
 
         if (!response.ok) {
-          // Endpoint doesn't exist or unavailable - graceful degradation
           setState({
             state: "unavailable",
             telemetry: null,
@@ -72,10 +71,8 @@ export function useAdraeRhythm(): AdraeRhythmState {
           available: true,
           lastFetched: Date.now(),
         });
-      } catch (err) {
+      } catch {
         if (cancelled) return;
-
-        // Network error or fetch failure - graceful degradation
         setState({
           state: "unavailable",
           telemetry: null,
@@ -88,12 +85,9 @@ export function useAdraeRhythm(): AdraeRhythmState {
     // Initial fetch
     fetchRhythm();
 
-    // Poll every 30 seconds
     intervalRef.current = setInterval(() => {
-      if (!cancelled) {
-        fetchRhythm();
-      }
-    }, 30000);
+      if (!cancelled) fetchRhythm();
+    }, ADRAE_POLL_CADENCE_MS);
 
     return () => {
       cancelled = true;

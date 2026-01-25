@@ -1,6 +1,9 @@
 // lib/signals/orbVisuals.ts
 // Signal-based Orb Visual Properties
-// Maps signal severity to subtle visual adjustments
+// Maps signal severity to subtle visual adjustments.
+//
+// LOCKED (Phase C): Severity → glowIntensity; source+state → gradient/glowColor override.
+// No flashing, no escalation. Visual interpretation only.
 
 import { SignalSeverity } from "./types";
 
@@ -18,76 +21,45 @@ export type OrbVisualProperties = {
 };
 
 /**
- * Get orb visual properties from signal severity
- * Subtle adjustments that don't escalate urgency
- * 
- * Characteristics:
- * - No flashing, no animation escalation
- * - Subtle glow intensity changes only
- * - Preserves existing color logic when no override
+ * Get orb visual properties from signal severity.
+ * LOCKED: critical 1.3 | warning 1.2 | notice 1.1 | info 1.0 | unavailable 1.0.
  */
 export function getOrbVisualsFromSeverity(
   severity: SignalSeverity
 ): OrbVisualProperties {
   switch (severity) {
     case "critical":
-      return {
-        glowIntensity: 1.3, // Slightly brighter for critical
-        // No color override - use existing critical styling
-      };
+      return { glowIntensity: 1.3 };
     case "warning":
-      return {
-        glowIntensity: 1.2, // Subtle brightness increase
-        // No color override - use existing warning styling
-      };
+      return { glowIntensity: 1.2 };
     case "notice":
-      return {
-        glowIntensity: 1.1, // Very subtle increase
-        // No color override
-      };
+      return { glowIntensity: 1.1 };
     case "info":
-      return {
-        glowIntensity: 1.0, // Normal intensity
-        // No color override
-      };
+      return { glowIntensity: 1.0 };
     case "unavailable":
     default:
-      return {
-        glowIntensity: 1.0, // Normal intensity
-      };
+      return { glowIntensity: 1.0 };
   }
 }
 
 /**
- * Get source-specific color mapping
- * Allows individual signal sources to provide color overrides
- * 
- * @param source - Signal source identifier
- * @param state - Source-specific state string
- * @returns Optional color mapping override (gradient and/or glow color)
+ * Get source-specific color mapping.
+ * LOCKED: adrae+connected → indigo/cyan gradient + indigo glow; adrae+idle → purple/indigo gradient.
  */
 export function getSourceColorMapping(
   source: string,
   state: string
 ): Partial<OrbVisualProperties> | null {
-  // ADRAE-specific color mapping
   if (source === "adrae") {
     if (state === "connected") {
       return {
         gradient: "bg-gradient-to-br from-indigo-400 via-cyan-500 to-indigo-600",
-        glowColor: "rgba(99, 102, 241, 0.4)", // indigo glow
+        glowColor: "rgba(99, 102, 241, 0.4)",
       };
     }
     if (state === "idle") {
-      return {
-        gradient: "bg-gradient-to-br from-purple-400 to-indigo-600",
-        // No glow color override for idle - use default
-      };
+      return { gradient: "bg-gradient-to-br from-purple-400 to-indigo-600" };
     }
   }
-
-  // Other sources can be added here
-  // SAGE, system, etc.
-
   return null;
 }

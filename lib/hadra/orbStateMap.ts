@@ -1,6 +1,8 @@
 // lib/hadra/orbStateMap.ts
 // HADRA Multimodal State Stack
-// Unifies animation, pulse, and gesture classes for layered behavior
+// Unifies animation, pulse, and gesture classes for layered behavior.
+//
+// LOCKED (Phase C): Orb status → gesture. Canonical map: status → resolveOrbClasses.
 
 import { getOrbPulse, OrbStatus } from "./orbPulse";
 import { cn } from "@/lib/utils";
