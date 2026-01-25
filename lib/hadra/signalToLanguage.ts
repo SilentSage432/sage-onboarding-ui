@@ -199,3 +199,53 @@ export function mapCapacitySignal(signal: SignalEmitter): DiagnosticStatement | 
       };
   }
 }
+
+/**
+ * Map sage.latency signal to diagnostic statement
+ * 
+ * Pure function: no side effects, no randomness, no state.
+ * Returns null if signal is not sage.latency.
+ * 
+ * Reference implementation for real Signal → Language mapping.
+ * 
+ * @param signal - SignalEmitter to map
+ * @returns DiagnosticStatement | null
+ */
+export function mapLatencySignal(signal: SignalEmitter): DiagnosticStatement | null {
+  // Only process sage.latency signals
+  if (signal.id !== "sage.latency") {
+    return null;
+  }
+
+  // Map state to diagnostic statement
+  switch (signal.state) {
+    case "normal":
+      return {
+        title: "System latency within normal bounds",
+        body: "Observed latency metrics are operating within expected parameters.",
+        confidence: "high",
+      };
+
+    case "elevated":
+      return {
+        title: "System latency elevated",
+        body: "Observed latency metrics indicate sustained elevation above baseline.",
+        confidence: "high",
+      };
+
+    case "unstable":
+      return {
+        title: "System latency unstable",
+        body: "Observed latency metrics show significant variability and instability.",
+        confidence: "high",
+      };
+
+    case "unavailable":
+    default:
+      return {
+        title: "System latency unavailable",
+        body: "Latency metrics could not be observed during the current interval.",
+        confidence: "low",
+      };
+  }
+}
