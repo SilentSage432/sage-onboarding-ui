@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { resolveOrbClasses } from "@/lib/hadra/orbStateMap";
 import { useHadraAudio } from "@/lib/hadra/useHadraAudio";
 import { OrbStatus } from "@/lib/hadra/orbPulse";
 import { hadraBus } from "@/lib/hadra/hadraEventBus";
+import { useAdraeRhythm } from "@/lib/adrae/useAdraeRhythm";
+import { mapAdraeStateToOrbStatus, mapAdraeStateToOrbColor, getAdraeGlowIntensity } from "@/lib/adrae/orbMapping";
 
 export default function HadraOrb({ 
   open, 
@@ -23,21 +25,41 @@ export default function HadraOrb({
   const [isHovered, setIsHovered] = useState(false);
   const audio = useHadraAudio();
 
+  // ADRAE rhythm observation (passive, polls every 30s)
+  const adraeState = useAdraeRhythm();
+
+  // Compute effective status: ADRAE override if available, otherwise use prop status
+  const adraeOrbStatus = useMemo(() => {
+    if (adraeState.available && adraeState.state !== "unavailable") {
+      const mapped = mapAdraeStateToOrbStatus(adraeState.state);
+      return mapped || status;
+    }
+    return status;
+  }, [adraeState.available, adraeState.state, status]);
+
   // Use multimodal state stack (pulse + gesture)
-  const effectiveStatus = isHovered ? "operator-focus" : status;
+  const effectiveStatus = isHovered ? "operator-focus" : adraeOrbStatus;
   const orbClasses = resolveOrbClasses(effectiveStatus);
 
+  // ADRAE color mapping (only applies when ADRAE is available)
+  const adraeColorMapping = useMemo(() => {
+    if (adraeState.available && adraeState.state !== "unavailable") {
+      return mapAdraeStateToOrbColor(adraeState.state);
+    }
+    return null;
+  }, [adraeState.available, adraeState.state]);
+
   // Audio cues based on status changes (only trigger on severity changes)
-  const prevStatusRef = useRef<OrbStatus>(status);
+  const prevStatusRef = useRef<OrbStatus>(adraeOrbStatus);
   useEffect(() => {
-    if (status !== prevStatusRef.current) {
-      if (status === "insight") audio.insight();
-      if (status === "warning") audio.warning();
-      if (status === "critical") audio.critical();
-      prevStatusRef.current = status;
+    if (adraeOrbStatus !== prevStatusRef.current) {
+      if (adraeOrbStatus === "insight") audio.insight();
+      if (adraeOrbStatus === "warning") audio.warning();
+      if (adraeOrbStatus === "critical") audio.critical();
+      prevStatusRef.current = adraeOrbStatus;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]); // audio is memoized and stable, no need to include in deps
+  }, [adraeOrbStatus]); // audio is memoized and stable, no need to include in deps
 
   const handleMouseEnter = () => {
     if (!open) {
@@ -106,8 +128,15 @@ export default function HadraOrb({
             className={cn(
               "w-6 h-6 rounded-full shadow-md",
               "transition-all duration-500",
-              "bg-gradient-to-br from-purple-400 to-indigo-600"
+              adraeColorMapping?.gradient || "bg-gradient-to-br from-purple-400 to-indigo-600"
             )}
+            style={
+              adraeColorMapping?.glowColor && adraeState.state !== "unavailable"
+                ? {
+                    boxShadow: `0 0 ${8 * getAdraeGlowIntensity(adraeState.state)}px ${adraeColorMapping.glowColor}`,
+                  }
+                : undefined
+            }
           />
         ) : (
           <div className="text-white text-2xl font-bold">×</div>
