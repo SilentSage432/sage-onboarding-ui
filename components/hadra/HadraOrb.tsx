@@ -9,6 +9,7 @@ import { OrbStatus } from "@/lib/hadra/orbPulse";
 import { hadraBus } from "@/lib/hadra/hadraEventBus";
 import { useSignalAggregation } from "@/lib/signals/useSignalAggregation";
 import { getOrbVisualsFromSeverity, getSourceColorMapping } from "@/lib/signals/orbVisuals";
+import { useSageSignal } from "@/lib/signals/useSageSignal";
 import type { SignalEmitter } from "@/lib/signals/types";
 
 /**
@@ -32,13 +33,10 @@ export default function HadraOrb({
   const audio = useHadraAudio();
 
   // Collect signals from all sources (SAGE-driven only)
+  const sageSignals = useSageSignal();
   const signals = useMemo((): SignalEmitter[] => {
-    const signalArray: SignalEmitter[] = [];
-    // SAGE signals will be added here when implemented:
-    // const sageSignal = useSageSignal();
-    // if (sageSignal) signalArray.push(sageSignal);
-    return signalArray;
-  }, []);
+    return sageSignals;
+  }, [sageSignals]);
 
   // Aggregate signals to determine effective HADRA state
   const aggregatedState = useSignalAggregation(signals);
