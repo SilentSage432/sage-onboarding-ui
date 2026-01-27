@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { Cpu, Network, Shield, Activity, KeyRound, Settings, Gavel, Circle, Hexagon, Octagon, Triangle, X, Grid3x3, Activity as ActivityIcon, Heart } from "lucide-react";
+import { Cpu, Network, Shield, Activity, KeyRound, Settings, Gavel, Circle, Hexagon, Octagon, Triangle, X, Grid3x3, Activity as ActivityIcon, Heart, Square, Diamond, Star, Zap, Radio } from "lucide-react";
 import AgentsPanel from "@/components/console/panels/AgentsPanel";
 import MeshPanel from "@/components/console/panels/MeshPanel";
 import SecurityPanel from "@/components/console/panels/SecurityPanel";
@@ -11,6 +11,14 @@ import ArcOmegaPanel from "@/components/console/panels/ArcOmegaPanel";
 import ArcLambdaPanel from "@/components/console/panels/ArcLambdaPanel";
 import ArcChiPanel from "@/components/console/panels/ArcChiPanel";
 import ArcRho2LodgePanel from "@/components/console/panels/ArcRho2LodgePanel";
+import ArcXiPanel from "@/components/console/panels/ArcXiPanel";
+import ArcMuPanel from "@/components/console/panels/ArcMuPanel";
+import ArcNuPanel from "@/components/console/panels/ArcNuPanel";
+import ArcOmicronPanel from "@/components/console/panels/ArcOmicronPanel";
+import ArcZetaPanel from "@/components/console/panels/ArcZetaPanel";
+import ArcIotaPanel from "@/components/console/panels/ArcIotaPanel";
+import ArcEpsilonPanel from "@/components/console/panels/ArcEpsilonPanel";
+import ArcDeltaPanel from "@/components/console/panels/ArcDeltaPanel";
 import FederationHealthMatrixPanel from "@/components/console/panels/FederationHealthMatrixPanel";
 import FederationHealthCorePanel from "@/components/console/panels/FederationHealthCorePanel";
 import FederationStatePanel from "@/components/console/panels/FederationStatePanel";
@@ -209,6 +217,78 @@ export const moduleRegistry: ModuleDefinition[] = [
     description: "Arc Chi operational status and health monitoring.",
     icon: X,
     component: ArcChiPanel,
+    layer: "orientation",
+    // Always visible, informational only - no unlock gating required
+  },
+  {
+    slug: "arc-xi",
+    name: "Arc Xi",
+    description: "Arc Xi operational status and health monitoring.",
+    icon: Square,
+    component: ArcXiPanel,
+    layer: "orientation",
+    // Always visible, informational only - no unlock gating required
+  },
+  {
+    slug: "arc-mu",
+    name: "Arc Mu",
+    description: "Arc Mu operational status and health monitoring.",
+    icon: Diamond,
+    component: ArcMuPanel,
+    layer: "orientation",
+    // Always visible, informational only - no unlock gating required
+  },
+  {
+    slug: "arc-nu",
+    name: "Arc Nu",
+    description: "Arc Nu operational status and health monitoring.",
+    icon: Star,
+    component: ArcNuPanel,
+    layer: "orientation",
+    // Always visible, informational only - no unlock gating required
+  },
+  {
+    slug: "arc-omicron",
+    name: "Arc Omicron",
+    description: "Arc Omicron operational status and health monitoring.",
+    icon: Zap,
+    component: ArcOmicronPanel,
+    layer: "orientation",
+    // Always visible, informational only - no unlock gating required
+  },
+  {
+    slug: "arc-zeta",
+    name: "Arc Zeta",
+    description: "Arc Zeta operational status and health monitoring.",
+    icon: Radio,
+    component: ArcZetaPanel,
+    layer: "orientation",
+    // Always visible, informational only - no unlock gating required
+  },
+  {
+    slug: "arc-iota",
+    name: "Arc Iota",
+    description: "Arc Iota operational status and health monitoring.",
+    icon: Heart,
+    component: ArcIotaPanel,
+    layer: "orientation",
+    // Always visible, informational only - no unlock gating required
+  },
+  {
+    slug: "arc-epsilon",
+    name: "Arc Epsilon",
+    description: "Arc Epsilon operational status and health monitoring.",
+    icon: Circle,
+    component: ArcEpsilonPanel,
+    layer: "orientation",
+    // Always visible, informational only - no unlock gating required
+  },
+  {
+    slug: "arc-delta",
+    name: "Arc Delta",
+    description: "Arc Delta operational status and health monitoring.",
+    icon: Triangle,
+    component: ArcDeltaPanel,
     layer: "orientation",
     // Always visible, informational only - no unlock gating required
   },
