@@ -9,6 +9,25 @@ export type ArcStatus = {
   version?: string;
   health?: "healthy" | "degraded" | "unhealthy";
   message?: string;
+  // Extended observation data for Chi panel
+  namespace?: string;
+  mode?: string;
+  role?: string;
+  // Kubernetes pod observation
+  pod?: {
+    name?: string;
+    status?: string;
+    restartCount?: number;
+    nodeName?: string;
+    age?: string;
+    startTime?: string;
+  };
+  // Network posture observation
+  network?: {
+    ciliumPolicyPresent?: boolean;
+    policyNames?: string[];
+    defaultDeny?: boolean;
+  };
 };
 
 /**
@@ -26,6 +45,22 @@ export function useArcStatus(arcName: string) {
       version: data.version,
       health: data.health,
       message: data.message,
+      namespace: data.namespace,
+      mode: data.mode,
+      role: data.role,
+      pod: data.pod ? {
+        name: data.pod.name,
+        status: data.pod.status,
+        restartCount: data.pod.restartCount,
+        nodeName: data.pod.nodeName,
+        age: data.pod.age,
+        startTime: data.pod.startTime,
+      } : undefined,
+      network: data.network ? {
+        ciliumPolicyPresent: data.network.ciliumPolicyPresent,
+        policyNames: data.network.policyNames,
+        defaultDeny: data.network.defaultDeny,
+      } : undefined,
     }),
   });
 }
