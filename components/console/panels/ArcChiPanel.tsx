@@ -3,9 +3,16 @@
 import { motion } from "framer-motion";
 import { X, AlertCircle, Eye, Server, Shield, Clock } from "lucide-react";
 import { useArcStatus } from "@/lib/console/useArcStatus";
+import { useArcTelemetry } from "@/lib/signals/useArcTelemetry";
+import ArcTelemetryReadout from "@/components/console/panels/ArcTelemetryReadout";
 
 export default function ArcChiPanel() {
   const { data, loading, error, unavailable } = useArcStatus("chi");
+  const telemetry = useArcTelemetry({
+    arc: "chi",
+    slug: "arc-chi",
+    namespace: "arc-chi",
+  });
 
   if (loading) {
     return (
@@ -109,6 +116,8 @@ export default function ArcChiPanel() {
             <span className="text-white text-sm">{data?.role || "Foundational Bus Anchor"}</span>
           </div>
         </div>
+
+        <ArcTelemetryReadout signal={telemetry.signal} />
       </motion.div>
 
       {/* Kubernetes Status Section */}

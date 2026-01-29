@@ -3,9 +3,16 @@
 import { motion } from "framer-motion";
 import { Triangle, AlertCircle, CheckCircle2, XCircle } from "lucide-react";
 import { useArcStatus } from "@/lib/console/useArcStatus";
+import { useArcTelemetry } from "@/lib/signals/useArcTelemetry";
+import ArcTelemetryReadout from "@/components/console/panels/ArcTelemetryReadout";
 
 export default function ArcLambdaPanel() {
   const { data, loading, error, unavailable } = useArcStatus("lambda");
+  const telemetry = useArcTelemetry({
+    arc: "lambda",
+    slug: "arc-lambda",
+    namespace: "arc-lambda",
+  });
 
   if (loading) {
     return (
@@ -137,6 +144,8 @@ export default function ArcLambdaPanel() {
             <p className="text-gray-300 text-sm">{data.message}</p>
           </div>
         )}
+
+        <ArcTelemetryReadout signal={telemetry.signal} />
       </motion.div>
     </div>
   );

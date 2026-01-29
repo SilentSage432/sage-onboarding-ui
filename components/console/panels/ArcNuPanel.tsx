@@ -2,8 +2,16 @@
 
 import { motion } from "framer-motion";
 import { Eye } from "lucide-react";
+import { useArcTelemetry } from "@/lib/signals/useArcTelemetry";
+import ArcTelemetryReadout from "@/components/console/panels/ArcTelemetryReadout";
 
 export default function ArcNuPanel() {
+  const telemetry = useArcTelemetry({
+    arc: "nu",
+    slug: "arc-nu",
+    namespace: "arc-nu",
+  });
+
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl text-white font-bold">Arc Nu</h1>
@@ -23,6 +31,9 @@ export default function ArcNuPanel() {
             <p className="text-gray-500 text-xs mt-4">
               No controls, no actions, no derived insights.
             </p>
+          </div>
+          <div className="w-full text-left">
+            <ArcTelemetryReadout signal={telemetry.signal} />
           </div>
         </div>
       </motion.div>

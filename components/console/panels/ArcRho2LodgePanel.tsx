@@ -3,9 +3,16 @@
 import { motion } from "framer-motion";
 import { KeyRound, AlertCircle, CheckCircle2, XCircle } from "lucide-react";
 import { useArcStatus } from "@/lib/console/useArcStatus";
+import { useArcTelemetry } from "@/lib/signals/useArcTelemetry";
+import ArcTelemetryReadout from "@/components/console/panels/ArcTelemetryReadout";
 
 export default function ArcRho2LodgePanel() {
   const { data, loading, error, unavailable } = useArcStatus("rho2");
+  const telemetry = useArcTelemetry({
+    arc: "rho2",
+    slug: "arc-rho2-lodge",
+    namespace: "rho2",
+  });
 
   if (loading) {
     return (
@@ -137,6 +144,8 @@ export default function ArcRho2LodgePanel() {
             <p className="text-gray-300 text-sm">{data.message}</p>
           </div>
         )}
+
+        <ArcTelemetryReadout signal={telemetry.signal} />
       </motion.div>
     </div>
   );

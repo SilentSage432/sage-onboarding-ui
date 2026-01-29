@@ -2,8 +2,16 @@
 
 import { motion } from "framer-motion";
 import { Eye } from "lucide-react";
+import { useArcTelemetry } from "@/lib/signals/useArcTelemetry";
+import ArcTelemetryReadout from "@/components/console/panels/ArcTelemetryReadout";
 
 export default function ArcDeltaPanel() {
+  const telemetry = useArcTelemetry({
+    arc: "delta",
+    slug: "arc-delta",
+    namespace: "arc-delta",
+  });
+
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl text-white font-bold">Arc Delta</h1>
@@ -23,6 +31,9 @@ export default function ArcDeltaPanel() {
             <p className="text-gray-500 text-xs mt-4">
               No controls, no actions, no derived insights.
             </p>
+          </div>
+          <div className="w-full text-left">
+            <ArcTelemetryReadout signal={telemetry.signal} />
           </div>
         </div>
       </motion.div>

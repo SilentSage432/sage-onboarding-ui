@@ -2,8 +2,16 @@
 
 import { motion } from "framer-motion";
 import { Eye } from "lucide-react";
+import { useArcTelemetry } from "@/lib/signals/useArcTelemetry";
+import ArcTelemetryReadout from "@/components/console/panels/ArcTelemetryReadout";
 
 export default function ArcIotaPanel() {
+  const telemetry = useArcTelemetry({
+    arc: "iota",
+    slug: "arc-iota",
+    namespace: "arc-iota",
+  });
+
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-2xl text-white font-bold">Arc Iota</h1>
@@ -23,6 +31,9 @@ export default function ArcIotaPanel() {
             <p className="text-gray-500 text-xs mt-4">
               No controls, no actions, no derived insights.
             </p>
+          </div>
+          <div className="w-full text-left">
+            <ArcTelemetryReadout signal={telemetry.signal} />
           </div>
         </div>
       </motion.div>
