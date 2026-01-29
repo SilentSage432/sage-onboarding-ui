@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { X, AlertCircle, Eye, Server, Shield, Clock } from "lucide-react";
 import { useArcStatus } from "@/lib/console/useArcStatus";
 import { useArcTelemetry } from "@/lib/signals/useArcTelemetry";
-import ArcTelemetryReadout from "@/components/console/panels/ArcTelemetryReadout";
 
 export default function ArcChiPanel() {
   const { data, loading, error, unavailable } = useArcStatus("chi");
@@ -117,7 +116,24 @@ export default function ArcChiPanel() {
           </div>
         </div>
 
-        <ArcTelemetryReadout signal={telemetry.signal} />
+        {telemetry.signal?.state === "heartbeat" && (
+          <div className="pt-4 border-t border-white/10 space-y-2 w-full">
+            <div className="flex items-center justify-between">
+              <span className="text-gray-400 text-sm">Last seen</span>
+              <span className="text-white font-mono text-sm">
+                {telemetry.signal.timestamp}
+              </span>
+            </div>
+            {typeof telemetry.signal.metadata?.node === "string" && (
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400 text-sm">Node</span>
+                <span className="text-gray-200 font-mono text-sm">
+                  {telemetry.signal.metadata.node}
+                </span>
+              </div>
+            )}
+          </div>
+        )}
       </motion.div>
 
       {/* Kubernetes Status Section */}

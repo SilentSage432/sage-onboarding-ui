@@ -15,11 +15,13 @@ export function useSageSignal(): SignalEmitter[] {
 
   useEffect(() => {
     let cancelled = false;
+    const intervalMs = 60_000;
 
     async function fetchSignals() {
       try {
         const response = await fetch("/api/sage/signals", {
           method: "GET",
+          cache: "no-store",
           headers: {
             "Content-Type": "application/json",
           },
@@ -71,9 +73,11 @@ export function useSageSignal(): SignalEmitter[] {
     }
 
     fetchSignals();
+    const interval = setInterval(fetchSignals, intervalMs);
 
     return () => {
       cancelled = true;
+      clearInterval(interval);
     };
   }, []);
 
