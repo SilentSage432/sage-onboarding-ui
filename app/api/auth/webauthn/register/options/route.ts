@@ -39,6 +39,24 @@ export async function POST(request: NextRequest) {
     );
 
     const existingCredentials = existingCredsResult.rows.map((row) => {
+      let transports: AuthenticatorTransportFuture[] | undefined = undefined;
+
+      if (row.transports) {
+        try {
+          const parsed = JSON.parse(row.transports);
+          transports = Array.isArray(parsed)
+            ? (parsed as AuthenticatorTransportFuture[])
+            : undefined;
+        } catch {
+          if (typeof row.transports === 'string') {
+            transports = row.transports
+              .split(',')
+              .map(t => t.trim())
+              .filter(Boolean) as AuthenticatorTransportFuture[];
+          }
+        }
+      }
+
       // credential_id is stored as BYTEA in database
       // Postgres returns BYTEA as Buffer
       // @simplewebauthn/server expects credential ID as base64url string for excludeCredentials
@@ -46,11 +64,11 @@ export async function POST(request: NextRequest) {
         ? row.credential_id
         : Buffer.from(row.credential_id);
       const credentialIdString = credentialIdBuffer.toString('base64url');
-      
+
       return {
         type: 'public-key' as const,
         id: credentialIdString,
-        transports: row.transports ? (JSON.parse(row.transports) as AuthenticatorTransportFuture[]) : undefined,
+        transports,
       };
     });
 
