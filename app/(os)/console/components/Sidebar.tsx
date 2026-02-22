@@ -226,6 +226,14 @@ export default function Sidebar({
           const layerItems = modulesByLayer[layer] || [];
           if (layerItems.length === 0) return null;
 
+          // For orientation layer: render ADRAE first (above Arcs), then Arc entries
+          const adraeItem = layer === "orientation" ? layerItems.find((i) => i.id === "adrae") : null;
+          const arcItems =
+            layer === "orientation"
+              ? layerItems.filter((i) => i.id !== "adrae")
+              : layerItems;
+          const orderedItems = adraeItem ? [adraeItem, ...arcItems] : layerItems;
+
           return (
             <React.Fragment key={layer}>
               {/* Divider between groups */}
@@ -238,8 +246,9 @@ export default function Sidebar({
               )}
               
               {/* Render items in this layer */}
-              {layerItems.map((item) => {
+              {orderedItems.map((item) => {
                 const Icon = item.icon;
+                const isTextOnly = !item.icon;
                 const active =
                   pathname === item.href ||
                   (item.href === "/console/dashboard" && pathname === "/console");
@@ -270,12 +279,14 @@ export default function Sidebar({
                           : "text-slate-400 hover:text-white hover:bg-white/5"
                       )}
                     >
-                      <div className="relative flex-shrink-0">
-                        <Icon className="h-5 w-5" />
-                        {isLocked && (
-                          <Lock className="absolute -top-1 -right-1 h-3 w-3 text-slate-500" />
-                        )}
-                      </div>
+                      {!isTextOnly && (
+                        <div className="relative flex-shrink-0">
+                          <Icon className="h-5 w-5" />
+                          {isLocked && (
+                            <Lock className="absolute -top-1 -right-1 h-3 w-3 text-slate-500" />
+                          )}
+                        </div>
+                      )}
                       <span className="text-sm font-medium flex-1">{item.name}</span>
                     </Link>
                   );
@@ -287,21 +298,23 @@ export default function Sidebar({
                       <div className="absolute left-0 w-1 h-6 rounded-r-full bg-gradient-to-b from-blue-400 to-purple-500 shadow-[0_0_6px_rgba(140,90,255,0.6)]" />
                     )}
                     <div className="flex flex-col items-center gap-1 w-24 relative">
-                      <div className="relative">
-                        <Icon
-                          className={cn(
-                            "h-5 w-5 transition-all duration-200",
-                            isLocked
-                              ? "text-slate-600 opacity-40"
-                              : active
-                              ? "text-white drop-shadow-[0_0_4px_rgba(180,120,255,0.45)]"
-                              : "text-slate-400 group-hover:text-white"
+                      {!isTextOnly && (
+                        <div className="relative">
+                          <Icon
+                            className={cn(
+                              "h-5 w-5 transition-all duration-200",
+                              isLocked
+                                ? "text-slate-600 opacity-40"
+                                : active
+                                ? "text-white drop-shadow-[0_0_4px_rgba(180,120,255,0.45)]"
+                                : "text-slate-400 group-hover:text-white"
+                            )}
+                          />
+                          {isLocked && (
+                            <Lock className="absolute -top-1 -right-1 h-3 w-3 text-slate-500" />
                           )}
-                        />
-                        {isLocked && (
-                          <Lock className="absolute -top-1 -right-1 h-3 w-3 text-slate-500" />
-                        )}
-                      </div>
+                        </div>
+                      )}
                       <span
                         className={cn(
                           "text-[11px] leading-tight text-center tracking-wide",

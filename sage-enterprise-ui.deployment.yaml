@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sage-enterprise-ui
+  namespace: sage-ui
+  labels:
+    app: sage-enterprise-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sage-enterprise-ui
+  template:
+    metadata:
+      labels:
+        app: sage-enterprise-ui
+    spec:
+      # 🔑 REQUIRED for single-node Talos control-plane
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
+
+      # 🔐 PodSecurity: restricted compliant
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+
+      containers:
+        - name: ui
+          image: ghcr.io/silentsage432/sage-enterprise-ui:8464191
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 3000
+
+          envFrom:
+            - secretRef:
+                name: sage-ui-secrets
+
+          # 🔐 Container-level security (REQUIRED)
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
+
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 20
+            periodSeconds: 20
+
+          readinessProbe:
+            httpGet:
+              path: /api/ready
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+
+      imagePullSecrets:
+        - name: ghcr-secret

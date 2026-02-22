@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflare-config
+  namespace: sage-ui
+data:
+  config.yaml: |
+    tunnel: ef82f66b-997c-4636-9803-1ddbd8011389
+    credentials-file: /etc/cloudflared/token.json
+
+    ingress:
+      - hostname: ui.sagecraftalchemy.com
+        service: http://sage-enterprise-ui.sage-ui.svc.cluster.local:80
+
+      - service: http_status:404

@@ -5,6 +5,7 @@ import MeshPanel from "@/components/console/panels/MeshPanel";
 import SecurityPanel from "@/components/console/panels/SecurityPanel";
 import Rho2Panel from "@/components/console/panels/Rho2Panel";
 import GovernancePanel from "@/components/console/panels/GovernancePanel";
+import AdraeObserverPanel from "@/components/console/panels/AdraeObserverPanel";
 import ArcThetaPanel from "@/components/console/panels/ArcThetaPanel";
 import ArcSigmaPanel from "@/components/console/panels/ArcSigmaPanel";
 import ArcOmegaPanel from "@/components/console/panels/ArcOmegaPanel";
@@ -43,7 +44,7 @@ export type ModuleDefinition = {
   slug: string;
   name: string;
   description: string;
-  icon: any;
+  icon?: any; // Optional for text-only entries (e.g. ADRAE layer)
   component: () => ReactElement;
   /**
    * Layer classification determines visibility and access rules:
@@ -172,6 +173,15 @@ export const moduleRegistry: ModuleDefinition[] = [
     component: Placeholder("Settings Panel"),
     layer: "governance",
     // Governance layer is always accessible
+  },
+  // ADRAE - Observer Layer, architect-only, above Arcs, text-only, no icon
+  {
+    slug: "adrae",
+    name: "ADRAE",
+    description: "Sovereign Cognitive Substrate observer layer.",
+    component: AdraeObserverPanel,
+    layer: "orientation",
+    visibleTo: ["architect"],
   },
   // Arc Panels - Read-only status displays, visible to Operator and Architect
   // Using "orientation" layer to ensure always visible and unlocked (no readiness gates)

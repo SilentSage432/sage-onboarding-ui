@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflare-config
+  namespace: sage-ui
+data:
+  config.yaml: |
+    ingress:
+      - hostname: ui.sagecraftalchemy.com
+        service: http://sage-enterprise-ui.sage-ui.svc.cluster.local:80
+      - service: http_status:404
