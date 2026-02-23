@@ -41,19 +41,28 @@ export async function POST(request: NextRequest) {
     const existingCredentials = existingCredsResult.rows.map((row) => {
       let transports: AuthenticatorTransportFuture[] | undefined = undefined;
 
-      if (row.transports) {
-        try {
-          const parsed = JSON.parse(row.transports);
-          transports = Array.isArray(parsed)
-            ? (parsed as AuthenticatorTransportFuture[])
-            : undefined;
-        } catch {
-          if (typeof row.transports === 'string') {
-            transports = row.transports
+      if (row.transports && typeof row.transports === 'string') {
+        const raw = row.transports.trim();
+        if (raw.startsWith('[')) {
+          try {
+            const parsed = JSON.parse(row.transports);
+            transports = Array.isArray(parsed)
+              ? (parsed as AuthenticatorTransportFuture[])
+              : undefined;
+          } catch {
+            // malformed JSON array → treat as comma-separated
+            transports = raw
+              .replace(/^\[|\]$/g, '')
               .split(',')
               .map(t => t.trim())
               .filter(Boolean) as AuthenticatorTransportFuture[];
           }
+        } else {
+          // comma-separated string (e.g. "nfc,usb") — never call JSON.parse
+          transports = raw
+            .split(',')
+            .map(t => t.trim())
+            .filter(Boolean) as AuthenticatorTransportFuture[];
         }
       }
 
